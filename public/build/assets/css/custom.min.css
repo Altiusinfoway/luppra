@@ -1,0 +1,79 @@
+.navbar-brand-box,
+.menu-title,
+.navbar-menu .navbar-nav .nav-link {
+    border-bottom: 1px solid #ffffff0f;
+}
+.flatpickr-months .flatpickr-month {
+    background-color: #fff !important;
+}
+
+.profile-wid-bg::before {
+    background: linear-gradient(
+        180deg,
+        #ffffff 0%,
+        #e5e7eb 50%,
+        #cbd5e1 100%
+    ) !important;
+}
+
+@media only screen and (max-width: 1500px) {
+    body {
+        font-size: 0.7rem;
+    }
+
+    .topbar-user {
+        background-color: #ffff;
+    }
+
+    .logo-sm h2 {
+        font-size: 18px;
+    }
+    .navbar-brand-box {
+        padding: 0.4rem 1.3rem;
+    }
+
+    .dashboard-card {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        justify-content: center;
+    }
+
+    .dashboard-card:hover {
+        transform: translateY(-3px);
+    }
+
+    .icon-circle {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+    }
+    .footer {
+        bottom: 0;
+        padding: 10px calc(var(--vz-grid-gutter-width) * 0.5);
+        position: absolute;
+        right: 0;
+        color: var(--vz-footer-color);
+        left: var(--vz-vertical-menu-width);
+        height: 40px;
+        background-color: var(--vz-footer-bg);
+    }
+
+    .cm-light-bg {
+        color: #ffff;
+    }
+
+    .tasks-wrapper {
+        max-height: calc(100vh - 200px);
+    }
+
+    .tasks-board .tasks-list {
+        min-width: 250px;
+        margin-right: 20px;
+    }
+}

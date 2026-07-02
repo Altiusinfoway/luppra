@@ -1,0 +1,15 @@
+node:internal/process/per_thread:225
+      throw new ErrnoException(err, 'kill');
+      ^
+
+Error: kill ENOSYS
+    at process.kill (node:internal/process/per_thread:225:13)
+    at signalHandler (D:\xampp\htdocs\raviagro\node_modules\node-cleanup\node-cleanup.js:65:17)
+    at process.emit (node:events:524:28)
+    at Signal.callbackTrampoline (node:internal/async_hooks:130:17) {
+  errno: -4054,
+  code: 'ENOSYS',
+  syscall: 'kill'
+}
+
+Node.js v20.20.0

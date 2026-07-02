@@ -1,0 +1,1 @@
+<iframe id="invoicePreview" src=" {{ route('quotes.invoice.preview',[$quote->id]) }}?original=1" data-download="{{ route('quotes.invoice_new',$quote->id) }}?original=1" style="width:100%; height:80vh; border:0;"></iframe>
