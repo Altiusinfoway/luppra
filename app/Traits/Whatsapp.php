@@ -43,6 +43,29 @@ trait Whatsapp
         return rtrim($url, '/');
     }
 
+    private function normalizeWhatsappReceiver($receiver): string
+    {
+        $receiver = trim((string) $receiver);
+        if ($receiver === '' || str_contains($receiver, '@')) {
+            return $receiver;
+        }
+
+        $digits = preg_replace('/\D+/', '', $receiver);
+        if (!is_string($digits) || $digits === '') {
+            return $receiver;
+        }
+
+        if (strlen($digits) === 10 && preg_match('/^[6-9]\d{9}$/', $digits) === 1) {
+            return '91' . $digits;
+        }
+
+        if (strlen($digits) === 11 && str_starts_with($digits, '0') && preg_match('/^0[6-9]\d{9}$/', $digits) === 1) {
+            return '91' . substr($digits, 1);
+        }
+
+        return $digits;
+    }
+
     private function resolveAttachmentForNode($attachment)
     {
         $attachment = (string) $attachment;
@@ -185,7 +208,7 @@ trait Whatsapp
         $whatsServer = $this->whatsappServerUrl();
 
         //formating array before sending data to server
-        $body['receiver']=$reciver;
+        $body['receiver']=$this->normalizeWhatsappReceiver($reciver);
         $body['delay']=0;
         $body['message']=$formatedBody;
 

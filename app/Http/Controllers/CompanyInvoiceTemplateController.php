@@ -108,7 +108,7 @@ class CompanyInvoiceTemplateController extends Controller
 
         $creatorId = (int) Auth::user()->creatorId();
 
-        DB::connection('tenant')->table('settings')->updateOrInsert(
+        DB::connection()->table('settings')->updateOrInsert(
             [
                 'name' => 'default_invoice_template_id',
                 'created_by' => $creatorId,
@@ -125,11 +125,11 @@ class CompanyInvoiceTemplateController extends Controller
 
     private function getSelectedTemplateId(int $creatorId): int
     {
-        if (!Schema::connection('tenant')->hasTable('settings')) {
+        if (!Schema::hasTable('settings')) {
             return 0;
         }
 
-        return (int) (DB::connection('tenant')->table('settings')
+        return (int) (DB::connection()->table('settings')
             ->where('created_by', $creatorId)
             ->where('name', 'default_invoice_template_id')
             ->value('value') ?? 0);

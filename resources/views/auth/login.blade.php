@@ -5,8 +5,9 @@
 
     @php
         $website_nm = \App\Models\Utility::getWebsiteName();
-        $website_img = asset('public/build/assets/images/engage-logo.png');
+        $website_img = \App\Models\Utility::websiteLogo();
         $default_img = \App\Models\Utility::defaultImage();
+        // asset('public/build/assets/images/engage-logo.png');
     @endphp
 
     <meta charset="utf-8" />
@@ -416,11 +417,11 @@
                                 @error('password')
                                     <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
                                 @enderror
-                                @if (Route::has('password.request'))
+                                {{-- @if (Route::has('password.request'))
                                     <div class="text-end mt-2">
                                         <a href="{{ route('password.request') }}" class="support-link">Forgot Password?</a>
                                     </div>
-                                @endif
+                                @endif --}}
                             </div>
 
                             <div class="mt-4">

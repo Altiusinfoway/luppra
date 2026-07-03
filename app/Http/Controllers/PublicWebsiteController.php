@@ -864,7 +864,7 @@ class PublicWebsiteController extends Controller
         ];
 
         $settingNames = ['razorpay_enabled', 'razorpay_key_id', 'razorpay_key_secret'];
-        $preferredCreatorIds = User::on('landlord')
+        $preferredCreatorIds = User::query()
             ->where('type', 'super admin')
             ->orderBy('id')
             ->pluck('id')
@@ -872,7 +872,7 @@ class PublicWebsiteController extends Controller
             ->all();
 
         if (empty($preferredCreatorIds)) {
-            $preferredCreatorIds = User::on('landlord')
+            $preferredCreatorIds = User::query()
                 ->where('type', 'company')
                 ->orderBy('id')
                 ->limit(1)
@@ -881,7 +881,7 @@ class PublicWebsiteController extends Controller
                 ->all();
         }
 
-        $settingRows = DB::connection('landlord')
+        $settingRows = DB::connection()
             ->table('settings')
             ->whereIn('name', $settingNames)
             ->orderByDesc('updated_at')

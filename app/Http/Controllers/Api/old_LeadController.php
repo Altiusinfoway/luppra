@@ -90,8 +90,8 @@ class LeadController extends Controller
             $validator = Validator::make($request->all(), [
                 'name'         => 'required|string',
                 'email'        => 'nullable|email',
-                'lead_type_id' => 'required|exists:tenant.lead_types,id',
-                'lead_source'  => 'required|exists:tenant.lead_sources,id',
+                'lead_type_id' => 'required|exists:lead_types,id',
+                'lead_source'  => 'required|exists:lead_sources,id',
                 'phones'       => 'required',
             ]);
 
@@ -414,10 +414,10 @@ class LeadController extends Controller
 
         try {
             $validator = Validator::make($request->all(), [
-                'lead_id'      => 'required|exists:tenant.leads,id',
+                'lead_id'      => 'required|exists:leads,id',
                 'name'         => 'required|string',
                 'email'        => 'nullable|email',
-                'lead_type_id' => 'required|exists:tenant.lead_types,id',
+                'lead_type_id' => 'required|exists:lead_types,id',
                 'lead_source'  => 'required',
                 'phones'       => 'required',
             ]);
@@ -723,7 +723,7 @@ class LeadController extends Controller
         try {
 
             $validator = Validator::make($request->all(), [
-                'lead_id' => 'required|exists:tenant.leads,id',
+                'lead_id' => 'required|exists:leads,id',
             ]);
 
             if ($validator->fails()) {
@@ -811,7 +811,7 @@ foreach ($lead_detail->getLeadProduct as $leadProduct) {
         try {
 
             $validator = Validator::make($request->all(), [
-                'lead_id' => 'required|exists:tenant.leads,id',
+                'lead_id' => 'required|exists:leads,id',
                 'product_list'  => 'required',
             ]);
 
@@ -939,8 +939,8 @@ foreach ($lead_detail->getLeadProduct as $leadProduct) {
          try {
 
             $validator = Validator::make($request->all(), [
-                'id' => 'required|exists:tenant.lead_products,id',
-                'product_id'  => 'required|exists:tenant.products,id',
+                'id' => 'required|exists:lead_products,id',
+                'product_id'  => 'required|exists:products,id',
                 'price'=>'numeric',
                 'qty'=>'numeric'
             ]);
@@ -993,7 +993,7 @@ foreach ($lead_detail->getLeadProduct as $leadProduct) {
 
 
             $validator = Validator::make($request->all(), [
-                'lead_id' => 'required|exists:tenant.leads,id',
+                'lead_id' => 'required|exists:leads,id',
             ]);
 
             if ($validator->fails()) {
@@ -1044,8 +1044,8 @@ foreach ($lead_detail->getLeadProduct as $leadProduct) {
         try
         {
             $validator = Validator::make($request->all(), [
-                'lead_id' => 'required|exists:tenant.leads,id',
-                'stage_id'=> 'required|exists:tenant.lead_stages,id'
+                'lead_id' => 'required|exists:leads,id',
+                'stage_id'=> 'required|exists:lead_stages,id'
             ]);
 
             if ($validator->fails()) {
@@ -1153,7 +1153,7 @@ foreach ($lead_detail->getLeadProduct as $leadProduct) {
     {
         try {
             $validator = Validator::make($request->all(), [
-                'lead_id' => 'required|exists:tenant.leads,id',
+                'lead_id' => 'required|exists:leads,id',
             ]);
 
             if ($validator->fails()) {
@@ -1283,7 +1283,7 @@ foreach ($lead_detail->getLeadProduct as $leadProduct) {
         try
         {
             $validator = Validator::make($request->all(), [
-                'lead_id' => 'required|exists:tenant.leads,id',
+                'lead_id' => 'required|exists:leads,id',
             ]);
 
             if ($validator->fails()) {

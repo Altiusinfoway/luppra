@@ -69,7 +69,7 @@ class InitializeTenancy
         if ($this->shouldUseSessionTenantResolution($request)) {
             $sessionAuthUserId = (int) $request->session()->get(Auth::guard('web')->getName(), 0);
             if ($sessionAuthUserId > 0) {
-                $landlordSessionUser = User::on('landlord')
+                $landlordSessionUser = User::query()
                     ->select('id', 'type')
                     ->find($sessionAuthUserId);
 

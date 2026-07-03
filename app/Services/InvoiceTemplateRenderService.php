@@ -104,11 +104,11 @@ class InvoiceTemplateRenderService
 
     private function getSelectedTemplateId(int $creatorId): int
     {
-        if (!Schema::connection('tenant')->hasTable('settings')) {
+        if (!Schema::hasTable('settings')) {
             return 0;
         }
 
-        return (int) (DB::connection('tenant')
+        return (int) (DB::connection()
             ->table('settings')
             ->where('created_by', $creatorId)
             ->where('name', 'default_invoice_template_id')

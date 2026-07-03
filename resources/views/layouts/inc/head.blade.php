@@ -5,7 +5,7 @@
 
     @php
         $website_nm = \App\Models\Utility::getWebsiteName();
-        $website_img = asset('public/build/assets/images/engage-logo.png');
+        $website_img = \App\Models\Utility::websiteLogo();
          $default_img = \App\Models\Utility::defaultImage();
     @endphp
 

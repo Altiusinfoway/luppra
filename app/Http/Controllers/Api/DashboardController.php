@@ -491,10 +491,6 @@ class DashboardController extends Controller
 
     private function tenantConnectionName(): string
     {
-        if (config('tenancy.enabled', false) && app()->bound('currentTenant')) {
-            return 'tenant';
-        }
-
         return config('database.default', 'mysql');
     }
 }

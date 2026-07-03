@@ -76,7 +76,7 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $this->ensureTenantContext(request());
+        // $this->ensureTenantContext(request());
 
         if(\Auth::user()->can('manage role'))
         {
@@ -98,7 +98,7 @@ class RoleController extends Controller
      */
     public function create()
     {
-        $this->ensureTenantContext(request());
+        // $this->ensureTenantContext(request());
 
         if(\Auth::user()->can('create role'))
         {
@@ -130,15 +130,15 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        $this->ensureTenantContext($request);
+        // $this->ensureTenantContext($request);
 
         if(\Auth::user()->can('create role'))
         {
             $validator = \Validator::make(
                 $request->all(), [
                                    'name' => app()->bound('currentTenant')
-                                       ? 'required|max:100|unique:tenant.roles,name'
-                                       : 'required|max:100|unique:tenant.roles,name,NULL,id,created_by,' . \Auth::user()->creatorId(),
+                                       ? 'required|max:100|unique:roles,name'
+                                       : 'required|max:100|unique:roles,name,NULL,id,created_by,' . \Auth::user()->creatorId(),
                                    'permissions' => 'required',
                                ]
             );
@@ -194,7 +194,7 @@ class RoleController extends Controller
      */
     public function edit(Request $request,$id)
     {
-        $this->ensureTenantContext($request);
+        // $this->ensureTenantContext($request);
 
         if(\Auth::user()->can('edit role'))
         {
@@ -228,10 +228,10 @@ class RoleController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $this->ensureTenantContext($request);
+        // $this->ensureTenantContext($request);
 
-        if(\Auth::user()->can('edit role'))
-        {
+        // if(\Auth::user()->can('edit role'))
+        // {
             $role = $this->resolveRoleOrFail($id);
             $before = [
                 'name' => $role->name,
@@ -240,8 +240,8 @@ class RoleController extends Controller
             $validator = \Validator::make(
                 $request->all(), [
                                    'name' => app()->bound('currentTenant')
-                                       ? 'required|max:100|unique:tenant.roles,name,' . $role['id']
-                                       : 'required|max:100|unique:tenant.roles,name,' . $role['id'] . ',id,created_by,' . \Auth::user()->creatorId(),
+                                       ? 'required|max:100|unique:roles,name,' . $role['id']
+                                       : 'required|max:100|unique:roles,name,' . $role['id'] . ',id,created_by,' . \Auth::user()->creatorId(),
                                    'permissions' => 'required',
                                ]
             );
@@ -285,11 +285,11 @@ class RoleController extends Controller
             }
 
             return redirect()->route('roles.index')->with('success' , 'Role successfully updated.', 'Role ' . $role->name . ' updated!');
-        }
-        else
-        {
-            return redirect()->back()->with('error', 'Permission denied.');
-        }
+        // }
+        // else
+        // {
+        //     return redirect()->back()->with('error', 'Permission denied.');
+        // }
     }
 
     /**
@@ -297,7 +297,7 @@ class RoleController extends Controller
      */
     public function destroy($id)
     {
-        $this->ensureTenantContext(request());
+        // $this->ensureTenantContext(request());
 
         if(\Auth::user()->can('delete role'))
         {

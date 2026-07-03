@@ -63,11 +63,7 @@ class UserController extends Controller
 
     private function userContactUniqueConnections(): array
     {
-        $connections = app()->bound('currentTenant')
-            ? ['tenant', 'landlord']
-            : [config('database.default', 'mysql')];
-
-        return array_values(array_unique($connections));
+        return [config('database.default', 'mysql')];
     }
 
     private function userContactExists(string $connection, string $column, string $value, ?User $currentUser = null): bool
@@ -80,17 +76,6 @@ class UserController extends Controller
             $query->where(function ($query) use ($connection, $currentUser) {
                 $query->where('id', '!=', (int) $currentUser->id);
 
-                if ($connection === 'landlord') {
-                    $tenantId = (int) ($currentUser->tenant_id ?? 0);
-                    $originalEmail = (string) $currentUser->getOriginal('email');
-
-                    if ($tenantId > 0 && $originalEmail !== '') {
-                        $query->where(function ($query) use ($tenantId, $originalEmail) {
-                            $query->where('tenant_id', '!=', $tenantId)
-                                ->orWhere('email', '!=', $originalEmail);
-                        });
-                    }
-                }
             });
         }
 
@@ -115,15 +100,15 @@ class UserController extends Controller
             ]);
         }
 
-        $landlordConnection = DB::connection('landlord');
-        $tenantConnection = DB::connection('tenant');
+        $landlordConnection = DB::connection();
+        $tenantConnection = DB::connection();
 
         $existingLandlordUser = $landlordConnection
             ->table('users')
             ->where(function ($query) use ($email, $payload) {
                 $query->where('email', $email);
 
-                if (!empty($payload['phone']) && Schema::connection('landlord')->hasColumn('users', 'phone')) {
+                if (!empty($payload['phone']) && Schema::hasColumn('users', 'phone')) {
                     $query->orWhere('phone', (string) $payload['phone']);
                 }
             })
@@ -200,7 +185,7 @@ class UserController extends Controller
             return;
         }
 
-        $landlordConnection = DB::connection('landlord');
+        $landlordConnection = DB::connection();
 
         $landlordUser = $landlordConnection
             ->table('users')
@@ -240,7 +225,7 @@ class UserController extends Controller
             'email_verified_at' => $tenantUser->email_verified_at,
         ];
 
-        if (Schema::connection('landlord')->hasColumn('users', 'is_enable_login')) {
+        if (Schema::hasColumn('users', 'is_enable_login')) {
             $payload['is_enable_login'] = (int) ($tenantUser->is_enable_login ?? 1);
         }
 
@@ -261,7 +246,7 @@ class UserController extends Controller
             return;
         }
 
-        DB::connection('landlord')
+        DB::connection()
             ->table('users')
             ->where('email', $tenantUser->email)
             ->where('tenant_id', (int) ($tenantUser->tenant_id ?? 0))
@@ -296,10 +281,10 @@ class UserController extends Controller
             try
             {
                 $user = \Auth::user();
-                 if (\Auth::user()->type == 'super admin') {
-                    $query = User::Isdeleted()->where('created_by', '=', $user->creatorId())->where('type', '=', 'company')->select('id','name','type','avatar','email','phone');
+                 if (\Auth::user()->type == 'company') {
+                    $query = User::Isdeleted()->where('created_by', '=', $user->creatorId())->select('id','name','type','avatar','email','phone');
                 } else {
-                    $query = User::Isdeleted()->where('created_by', '=', $user->creatorId())->where('type', '!=', 'company')->select('id','name','type','avatar','email','phone');
+                    $query = User::Isdeleted()->where('created_by', '=', $user->creatorId())->select('id','name','type','avatar','email','phone');
                 }
 
                 $data = $query->orderBy('id', 'desc')->get();
@@ -395,13 +380,13 @@ class UserController extends Controller
     {
         $req_type = $request->input('type');
         $user = \Auth::user();
-        $roleQuery = Role::query()->whereNotIn('name', ['client', 'super admin']);
+        $roleQuery = Role::query()->whereNotIn('name', ['client', 'super admin','company']);
         if ($user->type === 'company') {
             $roleQuery->where('name', '!=', 'company');
         }
-        if (!app()->bound('currentTenant')) {
-            $roleQuery->where('created_by', '=', $user->creatorId());
-        }
+        // if (!app()->bound('currentTenant')) {
+        //     $roleQuery->where('created_by', '=', $user->creatorId());
+        // }
         $roles = $roleQuery->orderBy('name')->get()->pluck('name', 'id');
         $user_type_list = User::$predefineUserTypeList;
         if (\Auth::user()->can('create user')) {
@@ -419,18 +404,16 @@ class UserController extends Controller
     {
         if (\Auth::user()->can('create user')) {
 
-            $usage = app(TenantUsageService::class);
-            if (!$usage->canCreateUser()) {
-                return response()->json([
-                    'error' => 'User limit reached for your current plan.',
-                ], 403);
-            }
+            // $usage = app(TenantUsageService::class);
+            // if (!$usage->canCreateUser()) {
+            //     return response()->json([
+            //         'error' => 'User limit reached for your current plan.',
+            //     ], 403);
+            // }
 
             $objUser = \Auth::user()->creatorId();
 
-                $emailRule = app()->bound('currentTenant')
-                    ? 'required|email|unique:tenant.users,email|unique:landlord.users,email'
-                    : 'required|email|unique:users,email';
+                $emailRule = 'required|email|unique:users,email';
 
                 $request->validate([
                     'name' => 'required',
@@ -464,7 +447,7 @@ class UserController extends Controller
                 $request['type'] = $request->input('user_type');
                 $request['lang'] = 'en';
                 $request['created_by'] = \Auth::user()->creatorId();
-                $request['tenant_id'] = \Auth::user()->tenant_id;
+                // $request['tenant_id'] = \Auth::user()->tenant_id;
                 if (Schema::hasColumn('users', 'is_enable_login')) {
                     $request['is_enable_login'] = 1;
                 }
@@ -502,13 +485,13 @@ class UserController extends Controller
 
                 }
 
-                if (app()->bound('currentTenant')) {
-                    $user = $this->createTenantUserWithLandlordId($request->all(), $role_r);
-                } else {
+                // if (app()->bound('currentTenant')) {
+                //     $user = $this->createTenantUserWithLandlordId($request->all(), $role_r);
+                // } else {
                     $user = User::create($request->all());
                     $user->assignRole($role_r);
-                    $this->syncTenantUserToLandlord($user);
-                }
+                    // $this->syncTenantUserToLandlord($user);
+                // }
 
                 $this->writeUserActivity(
                     'create',
@@ -555,24 +538,24 @@ class UserController extends Controller
     public function edit(string $id)
     {
         $authUser = \Auth::user();
-        $roleQuery = Role::query()->whereNotIn('name', ['client', 'super admin']);
+        $roleQuery = Role::query()->whereNotIn('name', ['client', 'super admin','company']);
         if ($authUser->type === 'company') {
             $roleQuery->where('name', '!=', 'company');
         }
-        if (!app()->bound('currentTenant')) {
-            $roleQuery->where('created_by', '=', $authUser->creatorId());
-        }
+        // if (!app()->bound('currentTenant')) {
+        //     $roleQuery->where('created_by', '=', $authUser->creatorId());
+        // }
         $roles = $roleQuery->orderBy('name')->get()->pluck('name', 'id');
         $user_type_list = User::$predefineUserTypeList;
         // where('created_by', '=', $user->creatorId())->where('name', '!=', 'client')
-        if (\Auth::user()->can('edit user')) {
+        // if (\Auth::user()->can('edit user')) {
             $user = User::findOrFail($id);
             $activityTimeline = ActivityLogger::activityForRecord($user, null, 12, 'user_activities_page');
 
             return view('user.edit', compact('user', 'roles', 'user_type_list', 'activityTimeline'));
-        } else {
-            return redirect()->back();
-        }
+        // } else {
+        //     return redirect()->back();
+        // }
     }
 
     /**
@@ -580,7 +563,7 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        if (\Auth::user()->can('edit user')) {
+        // if (\Auth::user()->can('edit user')) {
 
             $user = User::findOrFail($id);
             $before = [
@@ -626,9 +609,9 @@ class UserController extends Controller
             }
 
             $role = Role::findById($request->role);
-            if (\Auth::user()->type === 'company' && strtolower((string) $role->name) === 'company') {
-                return redirect()->back()->with('error', __('Company role is not allowed.'));
-            }
+            // if (\Auth::user()->type === 'company' && strtolower((string) $role->name) === 'company') {
+            //     return redirect()->back()->with('error', __('Company role is not allowed.'));
+            // }
             $input = $request->all();
 
             $input['type'] = $request->input('user_type');
@@ -670,7 +653,7 @@ class UserController extends Controller
             $previousEmail = (string) $user->getOriginal('email');
 
             $user->fill($input)->save();
-            $this->syncTenantUserToLandlord($user, $previousEmail);
+            // $this->syncTenantUserToLandlord($user, $previousEmail);
 
             Utility::employeeDetailsUpdate($user->id, \Auth::user()->creatorId());
 
@@ -729,9 +712,9 @@ class UserController extends Controller
                 'success', 'User successfully updated.'
             );
 
-        } else {
-            return redirect()->back();
-        }
+        // } else {
+        //     return redirect()->back();
+        // }
     }
 
     /**
@@ -746,14 +729,14 @@ class UserController extends Controller
 
             $user = User::find($id);
             if ($user) {
-                $tenantUserSnapshot = clone $user;
+                // $tenantUserSnapshot = clone $user;
 
                 if (\Auth::user()->type == 'company') {
 
                     $employee = Employee::where(['user_id' => $user->id])->delete();
                     if ($employee) {
                         $delete_user = User::where(['id' => $user->id])->delete();
-                        $this->removeTenantUserFromLandlord($tenantUserSnapshot);
+                        // $this->removeTenantUserFromLandlord($tenantUserSnapshot);
 
                         if ($delete_user) {
                             return redirect()->route('users.index')->with('success', __('User successfully deleted .'));
@@ -777,7 +760,7 @@ class UserController extends Controller
 
     public function company_profile(Request $request, $id)
     {
-        $settingsConnection = app()->bound('currentTenant') ? 'tenant' : 'landlord';
+        $settingsConnection = config('database.default', 'mysql');
         $creatorId = (int) \Auth::user()->creatorId();
         $data['setting_rcd'] = DB::connection($settingsConnection)
             ->table('settings')
@@ -825,12 +808,8 @@ class UserController extends Controller
 
     public function company_profile_update(Request $request, string $id)
     {
-        $settingsConnection = app()->bound('currentTenant') ? 'tenant' : 'landlord';
-        $regionTablePrefix = $settingsConnection === 'tenant' ? 'tenant.' : 'landlord.';
-
-        if ($settingsConnection === 'tenant' && app()->bound('currentTenant')) {
-            app(TenancyManager::class)->initialize(app('currentTenant'));
-        }
+        $settingsConnection = config('database.default', 'mysql');
+        $regionTablePrefix = '';
 
         $creatorId = (int) \Auth::user()->creatorId();
         $existingSettings = DB::connection($settingsConnection)->table('settings')
@@ -1110,7 +1089,7 @@ class UserController extends Controller
         $previousEmail = (string) $user->getOriginal('email');
 
         $user->update($input);
-        $this->syncTenantUserToLandlord($user, $previousEmail);
+        // $this->syncTenantUserToLandlord($user, $previousEmail);
 
         //emp detail update
         $emp_id = Employee::where('user_id',$id)->first();

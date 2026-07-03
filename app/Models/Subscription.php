@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Subscription extends Model
 {
-    protected $connection = 'landlord';
-
     protected $fillable = [
         'tenant_id',
         'plan_id',

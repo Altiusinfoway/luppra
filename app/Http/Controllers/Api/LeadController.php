@@ -255,11 +255,11 @@ class LeadController extends Controller
             $validator = Validator::make($request->all(), [
                 'name'         => 'required|string',
                 'email'        => 'nullable|email',
-                'lead_type_id' => 'nullable|exists:tenant.lead_types,id',
+                'lead_type_id' => 'nullable|exists:lead_types,id',
                 'lead_source'  => 'required',
                 'phones'       => 'required',
                 'customer_id'  => 'nullable|integer',
-                'stage_id'     => 'nullable|exists:tenant.lead_stages,id',
+                'stage_id'     => 'nullable|exists:lead_stages,id',
             ]);
 
             if ($validator->fails()) {
@@ -614,10 +614,10 @@ class LeadController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'lead_id'      => 'required|exists:tenant.leads,id',
+                'lead_id'      => 'required|exists:leads,id',
                 'name'         => 'required|string',
                 'email'        => 'nullable|email',
-                'lead_type_id' => 'required|exists:tenant.lead_types,id',
+                'lead_type_id' => 'required|exists:lead_types,id',
                 'lead_source'  => 'required',
                 'phones'       => 'required',
             ]);
@@ -1063,7 +1063,7 @@ class LeadController extends Controller
         try {
 
             $validator = Validator::make($request->all(), [
-                'lead_id' => 'required|exists:tenant.leads,id',
+                'lead_id' => 'required|exists:leads,id',
             ]);
 
             if ($validator->fails()) {
@@ -1158,7 +1158,7 @@ class LeadController extends Controller
         try {
 
             $validator = Validator::make($request->all(), [
-                'lead_id' => 'required|exists:tenant.leads,id',
+                'lead_id' => 'required|exists:leads,id',
                 'product_list'  => 'required',
             ]);
 
@@ -1288,8 +1288,8 @@ class LeadController extends Controller
          try {
 
             $validator = Validator::make($request->all(), [
-                'id' => 'required|exists:tenant.lead_products,id',
-                'product_id'  => 'required|exists:tenant.products,id',
+                'id' => 'required|exists:lead_products,id',
+                'product_id'  => 'required|exists:products,id',
                 'price'=>'numeric',
                 'qty'=>'numeric'
             ]);
@@ -1369,7 +1369,7 @@ class LeadController extends Controller
 
 
             $validator = Validator::make($request->all(), [
-                'lead_id' => 'required|exists:tenant.leads,id',
+                'lead_id' => 'required|exists:leads,id',
             ]);
 
             if ($validator->fails()) {
@@ -1420,8 +1420,8 @@ class LeadController extends Controller
         try
         {
             $validator = Validator::make($request->all(), [
-                'lead_id' => 'required|exists:tenant.leads,id',
-                'stage_id'=> 'required|exists:tenant.lead_stages,id'
+                'lead_id' => 'required|exists:leads,id',
+                'stage_id'=> 'required|exists:lead_stages,id'
             ]);
 
             if ($validator->fails()) {
@@ -1574,7 +1574,7 @@ class LeadController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'lead_id' => 'required|exists:tenant.leads,id',
+                'lead_id' => 'required|exists:leads,id',
             ]);
 
             if ($validator->fails()) {
@@ -1729,7 +1729,7 @@ class LeadController extends Controller
         try
         {
             $validator = Validator::make($request->all(), [
-                'lead_id' => 'required|exists:tenant.leads,id',
+                'lead_id' => 'required|exists:leads,id',
             ]);
 
             if ($validator->fails()) {
@@ -1842,7 +1842,7 @@ class LeadController extends Controller
         try
         {
             $validator = Validator::make($request->all(), [
-                'lead_id' => 'required|exists:tenant.leads,id',
+                'lead_id' => 'required|exists:leads,id',
                 'status'=> 'required',
                 'call_duration'=> 'required'
             ]);
@@ -1889,7 +1889,7 @@ class LeadController extends Controller
         try
         {
             $validator = Validator::make($request->all(), [
-                'lead_id' => 'nullable|exists:tenant.leads,id',
+                'lead_id' => 'nullable|exists:leads,id',
             ]);
 
             if ($validator->fails()) {
@@ -1943,7 +1943,7 @@ class LeadController extends Controller
             Log::info('Request :-',$request->all());
 
             $validator = Validator::make($request->all(), [
-                'lead_id' => 'required|exists:tenant.leads,id',
+                'lead_id' => 'required|exists:leads,id',
                 'notes'=> 'required',
             ]);
 
@@ -1984,8 +1984,8 @@ class LeadController extends Controller
             Log::info('Request :-',$request->all());
 
             $validator = Validator::make($request->all(), [
-                'lead_id' => 'required|exists:tenant.leads,id',
-                'status'=> 'required|exists:tenant.lead_stages,id',
+                'lead_id' => 'required|exists:leads,id',
+                'status'=> 'required|exists:lead_stages,id',
             ]);
 
             if ($validator->fails()) {
@@ -2121,10 +2121,6 @@ class LeadController extends Controller
 
     private function tenantConnectionName(): string
     {
-        if (config('tenancy.enabled', false) && app()->bound('currentTenant')) {
-            return 'tenant';
-        }
-
         return (new Lead())->getConnectionName() ?: config('database.default', 'mysql');
     }
 

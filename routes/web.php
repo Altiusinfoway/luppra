@@ -155,18 +155,6 @@ Route::group(['prefix' => '', 'middleware' => ['auth']], function () {
         Route::post('whatsapp-bot/knowledge/{id}', [WhatsappBotController::class, 'updateKnowledge'])->name('whatsapp-bot.knowledge.update');
         Route::get('whatsapp-bot/knowledge/delete/{id}', [WhatsappBotController::class, 'deleteKnowledge'])->name('whatsapp-bot.knowledge.delete');
 
-        // Tenancy Admin Settings
-        Route::get('tenancy', [TenantAdminController::class, 'index'])->name('tenancy.index');
-        Route::post('tenancy', [TenantAdminController::class, 'store'])->name('tenancy.store');
-        Route::post('tenancy/{tenant}/provision', [TenantAdminController::class, 'provision'])->name('tenancy.provision');
-        Route::post('tenancy/{tenant}/seed-masters', [TenantAdminController::class, 'seedMasters'])->name('tenancy.seed');
-        Route::post('tenancy/{tenant}/health', [TenantAdminController::class, 'health'])->name('tenancy.health');
-        Route::post('tenancy/{tenant}/assign-users', [TenantAdminController::class, 'assignUsers'])->name('tenancy.assign-users');
-        Route::post('tenancy/{tenant}/subscription', [TenantAdminController::class, 'saveSubscription'])->name('tenancy.subscription.save');
-        Route::post('tenancy/{tenant}/toggle-status', [TenantAdminController::class, 'toggleStatus'])->name('tenancy.toggle-status');
-        Route::post('tenancy/switch-context', [TenantAdminController::class, 'switchContext'])->name('tenancy.switch-context');
-        Route::post('tenancy/clear-context', [TenantAdminController::class, 'clearContext'])->name('tenancy.clear-context');
-
         // Landlord Invoice Templates
         Route::get('invoice-templates', [LandlordInvoiceTemplateController::class, 'index'])->name('invoice-templates.index');
         Route::get('invoice-templates/create', [LandlordInvoiceTemplateController::class, 'create'])->name('invoice-templates.create');
@@ -179,12 +167,6 @@ Route::group(['prefix' => '', 'middleware' => ['auth']], function () {
         Route::get('company-invoice-templates', [CompanyInvoiceTemplateController::class, 'index'])->name('company-invoice-templates.index');
         Route::get('company-invoice-templates/{invoiceTemplate}', [CompanyInvoiceTemplateController::class, 'show'])->name('company-invoice-templates.show');
         Route::post('company-invoice-templates/{invoiceTemplate}/select', [CompanyInvoiceTemplateController::class, 'select'])->name('company-invoice-templates.select');
-
-        // SaaS Plans
-        Route::get('plans', [PlanController::class, 'index'])->name('plans.index');
-        Route::post('plans', [PlanController::class, 'store'])->name('plans.store');
-        Route::post('plans/{plan}', [PlanController::class, 'update'])->name('plans.update');
-        Route::delete('plans/{plan}', [PlanController::class, 'destroy'])->name('plans.delete');
 
         // Razorpay Settings (Super Admin)
         Route::get('razorpay', [RazorpaySettingsController::class, 'index'])->name('razorpay.index');

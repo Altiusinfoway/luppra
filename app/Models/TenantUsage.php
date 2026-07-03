@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class TenantUsage extends Model
 {
-    protected $connection = 'landlord';
-
     protected $fillable = [
         'tenant_id',
         'metric',

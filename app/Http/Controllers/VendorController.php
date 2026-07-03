@@ -133,7 +133,7 @@ class VendorController extends Controller
             'contact' => [
                 'required',
                 'digits:10',
-                Rule::unique('tenant.entities')->where(function ($query) {
+                Rule::unique('entities')->where(function ($query) {
                     return $query->where('type','vendor');
                 }),
             ],
@@ -227,7 +227,7 @@ class VendorController extends Controller
              'contact' => [
                 'required',
                 'digits:10',
-                Rule::unique('tenant.entities')
+                Rule::unique('entities')
                     ->ignore($id, 'id')
                     ->where(function ($query) {
                         return $query->where('type', 'vendor');

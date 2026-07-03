@@ -1,7 +1,5 @@
 <?php
 
-use App\Models\Tenant;
-use App\Support\Tenancy\TenancyManager;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
@@ -18,31 +16,25 @@ return new class extends Migration
 
     public function up(): void
     {
-        $this->updateLeadSourcesTable('landlord');
-        $this->forEachTenant(function (): void {
-            $this->updateLeadSourcesTable('tenant');
-        });
+        $this->updateLeadSourcesTable();
     }
 
     public function down(): void
     {
-        $this->rollbackLeadSourcesTable('landlord');
-        $this->forEachTenant(function (): void {
-            $this->rollbackLeadSourcesTable('tenant');
-        });
+        $this->rollbackLeadSourcesTable();
     }
 
-    private function updateLeadSourcesTable(string $connection): void
+    private function updateLeadSourcesTable(): void
     {
-        if (!Schema::connection($connection)->hasTable('lead_sources')) {
+        if (!Schema::hasTable('lead_sources')) {
             return;
         }
 
-        $addIsEditable = !Schema::connection($connection)->hasColumn('lead_sources', 'is_editable');
-        $addDeletedAt = !Schema::connection($connection)->hasColumn('lead_sources', 'deleted_at');
+        $addIsEditable = !Schema::hasColumn('lead_sources', 'is_editable');
+        $addDeletedAt = !Schema::hasColumn('lead_sources', 'deleted_at');
 
         if ($addIsEditable || $addDeletedAt) {
-            Schema::connection($connection)->table('lead_sources', function (Blueprint $table) use ($addIsEditable, $addDeletedAt) {
+            Schema::table('lead_sources', function (Blueprint $table) use ($addIsEditable, $addDeletedAt) {
                 if ($addIsEditable) {
                     $table->integer('is_editable')->default(0)->after('order');
                 }
@@ -54,32 +46,30 @@ return new class extends Migration
         }
 
         if ($addIsEditable) {
-            DB::connection($connection)
-                ->table('lead_sources')
+            DB::table('lead_sources')
                 ->whereIn('name', $this->defaultSourceNames)
                 ->update(['is_editable' => 0]);
 
-            DB::connection($connection)
-                ->table('lead_sources')
+            DB::table('lead_sources')
                 ->whereNotIn('name', $this->defaultSourceNames)
                 ->update(['is_editable' => 1]);
         }
     }
 
-    private function rollbackLeadSourcesTable(string $connection): void
+    private function rollbackLeadSourcesTable(): void
     {
-        if (!Schema::connection($connection)->hasTable('lead_sources')) {
+        if (!Schema::hasTable('lead_sources')) {
             return;
         }
 
-        $dropIsEditable = Schema::connection($connection)->hasColumn('lead_sources', 'is_editable');
-        $dropDeletedAt = Schema::connection($connection)->hasColumn('lead_sources', 'deleted_at');
+        $dropIsEditable = Schema::hasColumn('lead_sources', 'is_editable');
+        $dropDeletedAt = Schema::hasColumn('lead_sources', 'deleted_at');
 
         if (!$dropIsEditable && !$dropDeletedAt) {
             return;
         }
 
-        Schema::connection($connection)->table('lead_sources', function (Blueprint $table) use ($dropIsEditable, $dropDeletedAt) {
+        Schema::table('lead_sources', function (Blueprint $table) use ($dropIsEditable, $dropDeletedAt) {
             if ($dropDeletedAt) {
                 $table->dropSoftDeletes();
             }
@@ -90,25 +80,4 @@ return new class extends Migration
         });
     }
 
-    private function forEachTenant(callable $callback): void
-    {
-        $tenancy = app(TenancyManager::class);
-
-        Tenant::query()
-            ->whereNotNull('database')
-            ->where('database', '!=', '')
-            ->orderBy('id')
-            ->get()
-            ->each(function (Tenant $tenant) use ($callback, $tenancy): void {
-                $tenancy->initialize($tenant);
-                app()->instance('currentTenant', $tenant);
-
-                try {
-                    $callback();
-                } finally {
-                    $tenancy->end();
-                    app()->forgetInstance('currentTenant');
-                }
-            });
-    }
 };

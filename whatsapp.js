@@ -1185,6 +1185,23 @@ const isExists = async (session, jid, isGroup = false) => {
     }
 }
 
+const resolveSendJid = async (session, jid, isGroup = false) => {
+    if (isGroup) {
+        return jid
+    }
+
+    try {
+        const [result] = await session.onWhatsApp(jid)
+        if (result?.exists && result?.jid) {
+            return result.jid
+        }
+    } catch {
+        // Fall back to the formatted JID so callers keep their existing validation path.
+    }
+
+    return jid
+}
+
 /**
  * @param {import('baileys').AnyWASocket} session
  */
@@ -1414,6 +1431,7 @@ export {
     getChatList,
     getGroupsWithParticipants,
     isExists,
+    resolveSendJid,
     sendMessage,
     updateProfileStatus,
     updateProfileName,

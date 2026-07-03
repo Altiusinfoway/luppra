@@ -139,7 +139,7 @@ class EmployeeController extends Controller
                  'required'
              ],
              'phone' => 'required|numeric|digits:10',
-             'email' => 'required|email|unique:tenant.users,email,' . $id,
+             'email' => 'required|email|unique:users,email,' . $id,
              'gender' => 'required',
              'dob'   => 'required',
              'company_doj' => 'required',
@@ -219,7 +219,7 @@ class EmployeeController extends Controller
            {
                 $request->validate([
                     'documents' => 'required|file|mimes:doc,pdf,docx|max:2048',
-                    'email' => 'required|email|unique:tenant.users',
+                    'email' => 'required|email|unique:users',
                 ]);
 
                 $image = "";

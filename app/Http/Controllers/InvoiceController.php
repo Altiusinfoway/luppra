@@ -69,12 +69,12 @@ class InvoiceController extends Controller
         ]);
 
         $creatorId = Auth::user()->creatorId();
-        $previousLayout = DB::connection('landlord')->table('settings')
+        $previousLayout = DB::connection()->table('settings')
             ->where('name', 'invoice_layout')
             ->where('created_by', $creatorId)
             ->value('value');
 
-        DB::connection('landlord')->table('settings')->updateOrInsert(
+        DB::connection()->table('settings')->updateOrInsert(
             ['name' => 'invoice_layout', 'created_by' => $creatorId],
             ['value' => $request->invoice_layout]
         );

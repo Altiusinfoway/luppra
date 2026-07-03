@@ -981,7 +981,7 @@
 
             if (!isValid) {
                 show_toastr('error', 'Please fix phone errors before submitting.');
-                // Keep the button disabled until page refresh or user reopens the form
+                $submitBtn.prop('disabled', false);
                 return;
             }
 

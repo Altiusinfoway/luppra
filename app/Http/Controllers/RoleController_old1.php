@@ -137,8 +137,8 @@ class RoleController extends Controller
             $validator = \Validator::make(
                 $request->all(), [
                                    'name' => app()->bound('currentTenant')
-                                       ? 'required|max:100|unique:tenant.roles,name'
-                                       : 'required|max:100|unique:tenant.roles,name,NULL,id,created_by,' . \Auth::user()->creatorId(),
+                                       ? 'required|max:100|unique:roles,name'
+                                       : 'required|max:100|unique:roles,name,NULL,id,created_by,' . \Auth::user()->creatorId(),
                                    'permissions' => 'required',
                                ]
             );
@@ -240,8 +240,8 @@ class RoleController extends Controller
             $validator = \Validator::make(
                 $request->all(), [
                                    'name' => app()->bound('currentTenant')
-                                       ? 'required|max:100|unique:tenant.roles,name,' . $role['id']
-                                       : 'required|max:100|unique:tenant.roles,name,' . $role['id'] . ',id,created_by,' . \Auth::user()->creatorId(),
+                                       ? 'required|max:100|unique:roles,name,' . $role['id']
+                                       : 'required|max:100|unique:roles,name,' . $role['id'] . ',id,created_by,' . \Auth::user()->creatorId(),
                                    'permissions' => 'required',
                                ]
             );

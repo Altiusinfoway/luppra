@@ -107,7 +107,7 @@
                                 --}}
                                  <td>
                                     <span class="product_tol">  {{ number_format($qt_product->total, 2) }}</span>
-                                        <input type="hidden" name="products[product_total][]" class="product-total" value="{{ number_format($qt_product->total, 2) }}">
+                                        <input type="hidden" name="products[product_total][]" class="product-total" value="{{ $qt_product->total }}">
                                 </td>
 
                                 <td class="text-center">
@@ -202,4 +202,3 @@
 <script>
     // applyDiscountVisibility();
 </script>
-

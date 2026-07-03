@@ -45,7 +45,7 @@ class TenantAdminController extends Controller
                 'created_by' => $landlordCompanyUser->id,
             ];
 
-            if (Schema::connection('tenant')->hasColumn('users', 'is_enable_login')) {
+            if (Schema::hasColumn('users', 'is_enable_login')) {
                 $tenantUserData['is_enable_login'] = (int) ($landlordCompanyUser->is_enable_login ?? 1);
             }
 
@@ -54,8 +54,8 @@ class TenantAdminController extends Controller
                 $tenantUserData
             );
 
-            if (Schema::connection('tenant')->hasTable('settings')) {
-                DB::connection('tenant')->table('settings')->updateOrInsert(
+            if (Schema::hasTable('settings')) {
+                DB::connection()->table('settings')->updateOrInsert(
                     ['name' => 'is_allowed_discount', 'created_by' => $landlordCompanyUser->id],
                     ['value' => (string) \App\Models\Utility::isDiscountAllowed($landlordCompanyUser->id)]
                 );
@@ -126,23 +126,23 @@ class TenantAdminController extends Controller
 
             try {
                 app(TenancyManager::class)->initialize($tenant);
-                DB::connection('tenant')->select('SELECT 1');
+                DB::connection()->select('SELECT 1');
                 $status['db_ok'] = true;
 
                 foreach ($requiredTables as $table) {
-                    if (!Schema::connection('tenant')->hasTable($table)) {
+                    if (!Schema::hasTable($table)) {
                         $status['missing_tables'][] = $table;
                     }
                 }
 
-                if (Schema::connection('tenant')->hasTable('leads')) {
-                    $status['leads'] = DB::connection('tenant')->table('leads')->count();
+                if (Schema::hasTable('leads')) {
+                    $status['leads'] = DB::connection()->table('leads')->count();
                 }
-                if (Schema::connection('tenant')->hasTable('quotes')) {
-                    $status['quotes'] = DB::connection('tenant')->table('quotes')->count();
+                if (Schema::hasTable('quotes')) {
+                    $status['quotes'] = DB::connection()->table('quotes')->count();
                 }
-                if (Schema::connection('tenant')->hasTable('orders')) {
-                    $status['orders'] = DB::connection('tenant')->table('orders')->count();
+                if (Schema::hasTable('orders')) {
+                    $status['orders'] = DB::connection()->table('orders')->count();
                 }
             } catch (\Throwable $e) {
                 $status['error'] = $e->getMessage();
@@ -253,8 +253,8 @@ class TenantAdminController extends Controller
         $companyUser = User::query()->create($companyUserData);
         $companyUser->update(['created_by' => $companyUser->id]);
 
-        if (Schema::connection('landlord')->hasTable('settings')) {
-            DB::connection('landlord')->table('settings')->updateOrInsert(
+        if (Schema::hasTable('settings')) {
+            DB::connection()->table('settings')->updateOrInsert(
                 ['name' => 'is_allowed_discount', 'created_by' => $companyUser->id],
                 ['value' => (string) \App\Models\Utility::isDiscountAllowed($companyUser->id)]
             );

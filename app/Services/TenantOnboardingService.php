@@ -422,7 +422,7 @@ class TenantOnboardingService
                 'created_by' => $landlordCompanyUser->id,
             ];
 
-            if (Schema::connection('tenant')->hasColumn('users', 'is_enable_login')) {
+            if (Schema::hasColumn('users', 'is_enable_login')) {
                 $tenantUserData['is_enable_login'] = (int) ($landlordCompanyUser->is_enable_login ?? 1);
             }
 

@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::connection('landlord')->create('website_signups', function (Blueprint $table) {
+        Schema::create('website_signups', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('plan_id')->nullable()->index();
             $table->string('name', 120);
@@ -27,7 +27,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::connection('landlord')->dropIfExists('website_signups');
+        Schema::dropIfExists('website_signups');
     }
 };
 

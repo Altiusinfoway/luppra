@@ -82,7 +82,7 @@ class MasterController extends Controller
         try
         {
             $validator = Validator::make($request->all(), [
-                'country_id' => 'required|exists:tenant.countries,id',
+                'country_id' => 'required|exists:countries,id',
             ]);
 
             if ($validator->fails()) {
@@ -113,7 +113,7 @@ class MasterController extends Controller
         try
         {
             $validator = Validator::make($request->all(), [
-                'state_id' => 'required|exists:tenant.states,id',
+                'state_id' => 'required|exists:states,id',
             ]);
 
             if ($validator->fails()) {
@@ -247,7 +247,7 @@ class MasterController extends Controller
             Log::info('Request :-',$request->all());
 
             $validator = Validator::make($request->all(), [
-                'unit_type_id' => 'required|exists:tenant.unit_types,id',
+                'unit_type_id' => 'required|exists:unit_types,id',
             ]);
 
             if ($validator->fails()) {
@@ -552,7 +552,7 @@ class MasterController extends Controller
             Log::info('Request :-',$request->all());
 
             // $validator = Validator::make($request->all(), [
-            //     // 'unit_type_id' => 'required|exists:tenant.unit_types,id',
+            //     // 'unit_type_id' => 'required|exists:unit_types,id',
             // ]);
 
             // if ($validator->fails()) {

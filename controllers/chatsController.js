@@ -2,6 +2,7 @@ import {
     getSession,
     getChatList,
     isExists,
+    resolveSendJid,
     sendMessage,
     formatPhone,
     formatGroup,
@@ -77,11 +78,17 @@ const send = async (req, res) => {
         }
 
 
-        await sendMessage(session, receiver, message, {}, 0)
+        const sendReceiver = await resolveSendJid(session, receiver, isGroup)
+        const sentMessage = await sendMessage(session, sendReceiver, message, {}, 0)
 
-        response(res, 200, true, 'The message has been successfully sent.')
-    } catch {
-        response(res, 500, false, 'Failed to send the message.')
+        response(res, 200, true, 'The message has been successfully sent.', sentMessage)
+    } catch (error) {
+        console.error('Failed to send message', {
+            sessionId: res.locals.sessionId,
+            receiver,
+            error: error?.message || error,
+        })
+        response(res, 500, false, error?.message || 'Failed to send the message.')
     }
 }
 

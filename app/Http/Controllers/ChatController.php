@@ -22,10 +22,6 @@ class ChatController extends Controller
 
     private function abortUnlessTenantBulkMessageAllowed(): void
     {
-        if (!config('tenancy.enabled', false) || !app()->bound('currentTenant')) {
-            abort(403, 'Bulk message is available only inside a tenant workspace.');
-        }
-
         if (Auth::check() && Auth::user()->type === 'super admin') {
             abort(403, 'Bulk message is not available in super admin.');
         }
@@ -90,7 +86,7 @@ class ChatController extends Controller
             if ($customerCount !== count(array_unique($validated['customer_ids'] ?? []))) {
                 return redirect()
                     ->route('bulk-message.index')
-                    ->with('error', 'Selected customers are invalid for this tenant.');
+                    ->with('error', 'Selected customers are invalid.');
             }
         }
 
@@ -107,7 +103,7 @@ class ChatController extends Controller
         }
 
         SendBulkMessageJob::dispatch(
-            (int) data_get(app('currentTenant'), 'id'),
+            0,
             (int) Auth::id(),
             (string) $validated['send_mode'],
             $stage ? (int) $stage->id : null,
@@ -291,14 +287,14 @@ class ChatController extends Controller
         }
 
         try {
-            $usage = app(TenantUsageService::class);
-            if (!$usage->canSendWhatsapp()) {
-                return $this->whatsappJsonResponse(
-                    'WhatsApp message limit reached for your current plan.',
-                    'whatsapp_send_blocked',
-                    403
-                );
-            }
+            // $usage = app(TenantUsageService::class);
+            // if (!$usage->canSendWhatsapp()) {
+            //     return $this->whatsappJsonResponse(
+            //         'WhatsApp message limit reached for your current plan.',
+            //         'whatsapp_send_blocked',
+            //         403
+            //     );
+            // }
 
             $session = $sessionStatusService->forDevice($device);
             if (($session['status'] ?? 'not_ready') !== 'connected') {
@@ -351,12 +347,12 @@ class ChatController extends Controller
             'device'=>['required','numeric'],
         ]);
 
-        $usage = app(TenantUsageService::class);
-        if (!$usage->canSendWhatsapp()) {
-            return response()->json([
-                'message' => __('WhatsApp message limit reached for your current plan.'),
-            ], 403);
-        }
+        // $usage = app(TenantUsageService::class);
+        // if (!$usage->canSendWhatsapp()) {
+        //     return response()->json([
+        //         'message' => __('WhatsApp message limit reached for your current plan.'),
+        //     ], 403);
+        // }
 
         // if (getUserPlanData('messages_limit') == false) {
         //     return response()->json([
@@ -669,7 +665,7 @@ class ChatController extends Controller
            $logs['type']='single-send';
 
            $this->saveLog($logs);
-           $usage->recordWhatsappSent(1);
+        //    $usage->recordWhatsappSent(1);
 
            return response()->json([
                     'message' => __('Message sent successfully..!!'),

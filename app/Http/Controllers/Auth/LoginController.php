@@ -54,7 +54,7 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
-        if ($this->shouldRedirectToCentralLogin($request)) {
+        if (config('tenancy.enabled', false) && $this->shouldRedirectToCentralLogin($request)) {
             return redirect()
                 ->to($this->centralLoginUrl())
                 ->withErrors([$this->username() => 'Please login from the main domain.']);
@@ -68,6 +68,10 @@ class LoginController extends Controller
         $this->resetTenantLoginContext($request);
 
         $credentials = $request->only($this->username(), 'password');
+        if (!config('tenancy.enabled', false)) {
+            return $credentials;
+        }
+
         $email = (string) $request->input($this->username());
         if ($this->isSuperAdminLogin($email)) {
             return $credentials;
@@ -120,6 +124,10 @@ class LoginController extends Controller
 
     protected function attemptLogin(Request $request): bool
     {
+        if (!config('tenancy.enabled', false)) {
+            return $this->guard()->attempt($this->credentials($request), $request->boolean('remember'));
+        }
+
         $email = (string) $request->input($this->username());
         $plainPassword = (string) $request->input('password');
         if ($email === '' || $plainPassword === '') {
@@ -197,7 +205,7 @@ class LoginController extends Controller
 
     private function attemptLandlordBrokeredTenantLogin(Request $request, string $email, string $plainPassword): ?bool
     {
-        $landlordUser = User::on('landlord')
+        $landlordUser = User::query()
             ->where('email', $email)
             ->where('type', '!=', 'super admin')
             ->first();
@@ -342,6 +350,13 @@ class LoginController extends Controller
 
     protected function authenticated(Request $request, $user)
     {
+        if (!config('tenancy.enabled', false)) {
+            $this->clearTenantSessionState($request);
+            $this->configurePermissionScope(null);
+            $this->recordSingleCompanyUserLogin($request, $user);
+            return;
+        }
+
         if ($user->type === 'super admin') {
             $this->clearTenantSessionState($request);
             $this->configurePermissionScope(null);
@@ -437,6 +452,11 @@ class LoginController extends Controller
 
     public function showLoginForm()
     {
+        if (!config('tenancy.enabled', false)) {
+            $this->clearTenantSessionState(request());
+            return view('auth.login');
+        }
+
         if ($this->shouldRedirectToCentralLogin(request())) {
             return redirect()->to($this->centralLoginUrl());
         }
@@ -453,6 +473,10 @@ class LoginController extends Controller
 
     private function resolveTenantIdForLogin(Request $request): ?int
     {
+        if (!config('tenancy.enabled', false)) {
+            return null;
+        }
+
         $tenantIdHeader = (string) config('tenancy.header_tenant_id', 'X-Tenant-Id');
         $tenantSlugHeader = (string) config('tenancy.header_tenant_slug', 'X-Tenant-Slug');
 
@@ -582,7 +606,26 @@ class LoginController extends Controller
         }
 
         try {
-            if (!Schema::connection('tenant')->hasTable('user_logins')) {
+            if (!Schema::hasTable('user_logins')) {
+                return;
+            }
+
+            UserLogin::create([
+                'user_id' => (int) $user->id,
+                'login_date_time' => now(),
+                'is_web_app_login' => 1,
+                'browser_detail' => (string) ($request->userAgent() ?? ''),
+                'ip_number' => (string) ($request->ip() ?? ''),
+            ]);
+        } catch (\Throwable $e) {
+            // Ignore login-history issues so auth flow is not blocked.
+        }
+    }
+
+    private function recordSingleCompanyUserLogin(Request $request, User $user): void
+    {
+        try {
+            if (!Schema::hasTable('user_logins')) {
                 return;
             }
 
@@ -605,7 +648,7 @@ class LoginController extends Controller
         }
 
         try {
-            if (!Schema::connection('tenant')->hasTable('user_logins')) {
+            if (!Schema::hasTable('user_logins')) {
                 return;
             }
 

@@ -41,6 +41,11 @@
                     </div>
                     <div class="card-body">
                         {{ Form::open(['route' => ['quotes.update', $quote_id], 'method' => 'post', 'enctype' => 'multipart/form-data', 'id' => 'quotesEditForm', 'autocomplete' => 'off']) }}
+                        @if ($errors->any())
+                            <div class="alert alert-danger">
+                                {{ $errors->first() }}
+                            </div>
+                        @endif
 
                         {{-- lead-id store customer-id original --}}
                         <div class="row">
@@ -1010,7 +1015,7 @@ document.getElementById("quotesEditForm").addEventListener("submit", function(e)
     if (customerType === 'regular' && !document.querySelector('input[name="payment_after_days"]')?.value) {
         show_toastr('error', "Payment After Days is required."); valid = false;
     }
-    if (customerType === 'advance' && !document.querySelector('input[name="advance_payment"]')?.value) {
+    if (customerType === 'debitClient' && !document.querySelector('input[name="advance_payment"]')?.value) {
         show_toastr('error', "Advance Payment is required."); valid = false;
     }
 

@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class TenantDomain extends Model
 {
-    protected $connection = 'landlord';
-
     protected $table = 'tenant_domains';
 
     protected $fillable = [
@@ -25,4 +23,3 @@ class TenantDomain extends Model
         return $this->belongsTo(Tenant::class);
     }
 }
-

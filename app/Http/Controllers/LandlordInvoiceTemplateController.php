@@ -111,7 +111,7 @@ class LandlordInvoiceTemplateController extends Controller
                 'required',
                 'string',
                 'max:100',
-                Rule::unique('landlord.invoice_templates', 'code'),
+                Rule::unique('invoice_templates', 'code'),
             ],
             'paper_size' => ['required', 'string', 'max:50'],
             'orientation' => ['required', 'in:portrait,landscape'],
@@ -132,7 +132,7 @@ class LandlordInvoiceTemplateController extends Controller
 
         $template = null;
 
-        DB::connection('landlord')->transaction(function () use ($request, $validated, $normalizedSections, &$template) {
+        DB::connection()->transaction(function () use ($request, $validated, $normalizedSections, &$template) {
             $shouldBeDefault = $request->boolean('is_default')
                 || !InvoiceTemplate::query()->where('is_default', true)->exists();
 
@@ -178,7 +178,7 @@ class LandlordInvoiceTemplateController extends Controller
                 'required',
                 'string',
                 'max:100',
-                Rule::unique('landlord.invoice_templates', 'code')->ignore($invoiceTemplate->id),
+                Rule::unique('invoice_templates', 'code')->ignore($invoiceTemplate->id),
             ],
             'paper_size' => ['required', 'string', 'max:50'],
             'orientation' => ['required', 'in:portrait,landscape'],
@@ -193,7 +193,7 @@ class LandlordInvoiceTemplateController extends Controller
 
         $normalizedSections = $this->normalizeSections($request->input('sections', []));
 
-        DB::connection('landlord')->transaction(function () use ($request, $invoiceTemplate, $validated, $normalizedSections) {
+        DB::connection()->transaction(function () use ($request, $invoiceTemplate, $validated, $normalizedSections) {
             $shouldBeDefault = $request->boolean('is_default')
                 || !InvoiceTemplate::query()
                     ->where('id', '!=', $invoiceTemplate->id)

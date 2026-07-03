@@ -21,7 +21,7 @@ class WhatsappBotController extends Controller
         $creatorId = Auth::user()->creatorId();
         $tablesReady = Schema::hasTable('whatsapp_bot_rules') && Schema::hasTable('whatsapp_bot_knowledge');
 
-        $settings = DB::connection(app()->bound('currentTenant') ? 'tenant' : 'landlord')->table('settings')
+        $settings = DB::connection()->table('settings')
             ->where('created_by', $creatorId)
             ->whereIn('name', [
                 'wa_ai_bot_enabled',
@@ -194,7 +194,7 @@ class WhatsappBotController extends Controller
 
     private function upsertSetting(int $creatorId, string $name, string $value): void
     {
-        DB::connection(app()->bound('currentTenant') ? 'tenant' : 'landlord')->table('settings')->updateOrInsert(
+        DB::connection()->table('settings')->updateOrInsert(
             ['name' => $name, 'created_by' => $creatorId],
             ['value' => $value]
         );

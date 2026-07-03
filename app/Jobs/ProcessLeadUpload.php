@@ -14,8 +14,6 @@ use App\Models\Address;
 use App\Models\Country;
 use App\Models\State;
 use App\Models\City;
-use App\Models\Tenant;
-use App\Support\Tenancy\TenancyManager;
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Queue\SerializesModels;
@@ -49,17 +47,6 @@ class ProcessLeadUpload implements ShouldQueue
     {
         Log::info('------ Handle --------');
 
-        $tenant = null;
-        if (!empty($this->tenantId)) {
-            $tenant = Tenant::query()->find($this->tenantId);
-        }
-
-        if ($tenant) {
-            app(TenancyManager::class)->initialize($tenant);
-            app()->instance('currentTenant', $tenant);
-        }
-
-        try {
             $user_data = User::find($this->user);
             $stage     = LeadStage::orderBy('order')->first();
 
@@ -315,11 +302,5 @@ class ProcessLeadUpload implements ShouldQueue
 
         Cache::put($this->jobKey, 'completed', now()->addMinutes(10));
         $this->delete();
-        } finally {
-            if ($tenant) {
-                app()->forgetInstance('currentTenant');
-                app(TenancyManager::class)->end();
-            }
-        }
     }
 }

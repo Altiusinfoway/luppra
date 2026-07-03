@@ -56,7 +56,7 @@ class PlanController extends Controller
                 'required',
                 'string',
                 'max:100',
-                Rule::unique('landlord.plans', 'name')->where(fn ($q) => $q->where('created_by', $creatorId)),
+                Rule::unique('plans', 'name')->where(fn ($q) => $q->where('created_by', $creatorId)),
             ],
             'code' => 'nullable|string|max:50',
             'price' => 'required|numeric|min:0',
@@ -113,7 +113,7 @@ class PlanController extends Controller
                 'required',
                 'string',
                 'max:100',
-                Rule::unique('landlord.plans', 'name')
+                Rule::unique('plans', 'name')
                     ->where(fn ($q) => $q->where('created_by', $creatorId))
                     ->ignore($plan->id),
             ],

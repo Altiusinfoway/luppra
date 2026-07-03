@@ -7,27 +7,27 @@ use Illuminate\Support\Facades\Schema;
 
 class TermsAndConditionService
 {
-    public function getInvoiceTerms(string $connection = 'tenant'): array
+    public function getInvoiceTerms(?string $connection = null): array
     {
         $terms = $this->getTerms('invoice', $connection);
 
         return !empty($terms) ? $terms : $this->defaultInvoiceTerms();
     }
 
-    public function getConfiguredInvoiceTerms(string $connection = 'tenant'): array
+    public function getConfiguredInvoiceTerms(?string $connection = null): array
     {
         return $this->getTerms('invoice', $connection);
     }
 
-    public function getQuotationTerms(string $connection = 'tenant'): array
+    public function getQuotationTerms(?string $connection = null): array
     {
         return $this->getTerms('quotation', $connection);
     }
 
-    private function getTerms(string $column, string $connection): array
+    private function getTerms(string $column, ?string $connection): array
     {
-        if (!in_array($connection, ['tenant', 'landlord'], true)) {
-            $connection = 'tenant';
+        if ($connection === null || in_array($connection, ['tenant', 'landlord'], true)) {
+            $connection = (string) config('database.default', 'mysql');
         }
 
         if (!Schema::connection($connection)->hasTable('terms_and_conditions')

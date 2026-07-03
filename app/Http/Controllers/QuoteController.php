@@ -368,21 +368,21 @@ class QuoteController extends Controller
         $input = $request->all();
 
         $save_next_btn = $request->input('save');
-        $products = $request->input('products');
+        $products = $request->input('products', []);
 
         $request->validate([
-            'lead_id' => 'required|exists:tenant.entities,id',
+            'lead_id' => 'required|exists:entities,id',
             'customer_type' => 'required|in:regular,debitClient',
             'date' => 'required|date',
-            'transport_id' => 'nullable|exists:tenant.entities,id',
+            'transport_id' => 'nullable|exists:entities,id',
             'company_name' => 'nullable|string|max:120',
-            'adhar_no' => 'nullable|digits:12',
-            'udhaym_no' => 'nullable|string|max:20',
+            'adhar_no' => 'nullable',
+            'udhaym_no' => 'nullable',
             'payment_after_days' => 'required_if:customer_type,regular|nullable|integer|min:0|max:365',
             'advance_payment' => 'required_if:customer_type,debitClient|nullable|numeric|min:0',
             'products' => 'required|array',
             'products.id' => 'required|array|min:1',
-            'products.id.*' => 'required|exists:tenant.products,id',
+            'products.id.*' => 'required|exists:products,id',
             'products.qty' => 'required|array',
             'products.qty.*' => 'required|numeric|gt:0',
             'products.price' => 'required|array',
@@ -432,8 +432,14 @@ class QuoteController extends Controller
         //gst_no update in entity section
         // $leadId = Lead::where('id', $input['lead_id'])->first();
 
-        $customerId = Entity::where('id', $input['lead_id'])->first();
-        if ($customerId  || $request['gst_no'] || $request['adhar_no'] || $input['udhaym_no'] || $request['company_name']) {
+        $customerId = Entity::where('id', $request->input('lead_id'))->where('type', 'customer')->first();
+        if (!$customerId) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['lead_id' => 'Selected customer was not found.']);
+        }
+
+        if ($request->filled('gst_no') || $request->filled('adhar_no') || $request->filled('udhaym_no') || $request->filled('company_name')) {
             $customer = Entity::isCustomer()->where('id', $customerId['id'])->first();
             if (isset($request->gst_no)) {
                 $isAvailGST = Entity::where('id', '!=', $customer['id'])->where('gst_no', $input['gst_no'])->first();
@@ -472,25 +478,25 @@ class QuoteController extends Controller
         $qt['customer_type'] = $input['customer_type'];
         $qt['lead_id']      = $request->new_lead_id ?? null; //$input['lead_id'];
         $qt['date'] = $input['date'];
-        $qt['transport_id'] = $input['transport_id'];
-        $qt['gst'] = $input['tax']; //gst value not percentage
+        $qt['transport_id'] = $request->input('transport_id') ?: null;
+        $qt['gst'] = (float) $request->input('tax', 0); //gst value not percentage
         $qt['grand_total'] = (float) $input['total_amt'];
 
         if ($input['customer_type'] == 'regular') {
             $qt['is_advance_payment'] = 0;
-            $qt['payment_after_days'] = $input['payment_after_days'];
+            $qt['payment_after_days'] = $request->input('payment_after_days');
         } else {
             $qt['is_advance_payment'] = 1;
-            $qt['advance_payment'] = $input['advance_payment'];
+            $qt['advance_payment'] = (float) $request->input('advance_payment', 0);
         }
 
         $qt['created_by'] = \Auth::user()->creatorId();
         // \Log::info('quote create created_by ',[\Auth::user()->creatorId()]);
 
-        $qt['where_from'] = $input['new_lead_id'] ? 'Lead' : 'Customer';
+        $qt['where_from'] = $request->filled('new_lead_id') ? 'Lead' : 'Customer';
         $qt['customer_id'] = $customerId['id'];
-        $qt['tax_detail_json'] = $input['tax_json_data'];
-        $qt['total_tax_sum'] = $input['tax_rate_sum']; // not used bcz product based gst add
+        $qt['tax_detail_json'] = $request->input('tax_json_data', '{}');
+        $qt['total_tax_sum'] = (float) $request->input('tax_rate_sum', 0); // not used bcz product based gst add
         $qt['user_id'] = isset($lead_data) ? $lead_data->user_id : \Auth::user()->id;  //$leadId->user_id;
 
         $quote_id = Quotes::create($qt);
@@ -499,12 +505,13 @@ class QuoteController extends Controller
 
             $product_id = $products['id'][$index];
             $qty = (float) $products['qty'][$index];
-            $mrp = (float) $products['mrp'][$index]; // not used product
-            $units = (float) $products['units'][$index];
+            $product = Products::find($product_id);
+            $mrp = (float) ($products['mrp'][$index] ?? $product?->price ?? 0); // not used product
+            $units = $products['units'][$index] ?? null;
             $dealer_price = (float) $products['price'][$index];
             $discount = (float) ($products['discount'][$index] ?? 0);
             $product_total = (float) $products['product_total'][$index];
-            $short_note = $products['short_notes'][$index];
+            $short_note = $products['short_notes'][$index] ?? null;
             $product_gst = (float) ($products['gst_value'][$index] ?? 0);
             QuoteProducts::create([
                 'quote_id' => $quote_id['id'],
@@ -600,8 +607,34 @@ class QuoteController extends Controller
         $input = $request->all();
         $save_next_btn = $request->input('save');
 
+        $request->validate([
+            'date' => 'required|date',
+            'transport_id' => 'nullable|exists:entities,id',
+            'company_name' => 'nullable|string|max:120',
+            'adhar_no' => 'nullable',
+            'udhaym_no' => 'nullable',
+            'payment_after_days' => 'nullable|integer|min:0|max:365',
+            'advance_payment' => 'nullable|numeric|min:0',
+            'products' => 'required|array',
+            'products.id' => 'required|array|min:1',
+            'products.id.*' => 'required|exists:products,id',
+            'products.qty' => 'required|array',
+            'products.qty.*' => 'required|numeric|gt:0',
+            'products.price' => 'required|array',
+            'products.price.*' => 'required|numeric|min:0',
+            'products.discount' => 'nullable|array',
+            'products.discount.*' => 'nullable|numeric|min:0|max:100',
+            'products.gst_value' => 'nullable|array',
+            'products.gst_value.*' => 'nullable|numeric|min:0',
+            'products.product_total' => 'required|array',
+            'products.product_total.*' => 'required|numeric|min:0',
+            'tax' => 'nullable|numeric|min:0',
+            'total_amt' => 'required|numeric|gt:0',
+        ], [
+            'products.id.min' => 'Please add at least one product.',
+        ]);
 
-        $quote_id =  Quotes::find($id);
+        $quote_id =  Quotes::findOrFail($id);
         $quoteBefore = $this->quoteActivitySnapshot($quote_id);
         // \Log::info('quote edit ',[\Auth::user()->id]);
 
@@ -622,15 +655,21 @@ class QuoteController extends Controller
             }
         }
 
-        $products = $request->input('products');
+        $products = $request->input('products', []);
 
         $qt['date'] = $input['date'];
-        $qt['transport_id'] = $input['transport_id'];
-        $qt['gst'] = $input['tax'];//gst value not percentage
+        $qt['transport_id'] = $request->input('transport_id') ?: null;
+        $qt['gst'] = (float) $request->input('tax', 0);//gst value not percentage
         $qt['grand_total'] = (float) $input['total_amt'];
 
         //gst_no update in entity section
         $customerId = Entity::where('id', $quote_id->customer_id)->first();
+        if (!$customerId) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['lead_id' => 'Quote customer was not found.']);
+        }
+
         if (
             $customerId
             && !empty($customerId)
@@ -665,11 +704,31 @@ class QuoteController extends Controller
         }
 
         if ($quote_id['customer_type'] == 'regular') {
+            if (!$request->filled('payment_after_days')) {
+                return redirect()->back()
+                    ->withInput()
+                    ->withErrors(['payment_after_days' => 'Payment After Days is required for regular customer.']);
+            }
+
             $qt['is_advance_payment'] = 0;
-            $qt['payment_after_days'] = $input['payment_after_days'];
+            $qt['payment_after_days'] = $request->input('payment_after_days');
+            $qt['advance_payment'] = null;
         } else {
+            if (!$request->filled('advance_payment')) {
+                return redirect()->back()
+                    ->withInput()
+                    ->withErrors(['advance_payment' => 'Advance Payment is required for debit client.']);
+            }
+
+            if ((float) $request->input('advance_payment', 0) > (float) $request->input('total_amt', 0)) {
+                return redirect()->back()
+                    ->withInput()
+                    ->withErrors(['advance_payment' => 'Advance Payment cannot be greater than Total Amount.']);
+            }
+
             $qt['is_advance_payment'] = 1;
-            $qt['advance_payment'] = $input['advance_payment'];
+            $qt['advance_payment'] = (float) $request->input('advance_payment', 0);
+            $qt['payment_after_days'] = null;
         }
 
         $qt['created_by'] = \Auth::user()->creatorId();
@@ -677,9 +736,9 @@ class QuoteController extends Controller
 
         // $qt['transport_id'] = $input['transport_id'];
         // $qt['date'] = $input['date'];
-        $qt['tax_detail_json'] = $input['tax_json_data'];
-        $qt['total_tax_sum'] = $input['tax_rate_sum']; // not used bcz product based gst add
-        $qt['gst'] = $input['tax'];
+        $qt['tax_detail_json'] = $request->input('tax_json_data', '{}');
+        $qt['total_tax_sum'] = (float) $request->input('tax_rate_sum', 0); // not used bcz product based gst add
+        $qt['gst'] = (float) $request->input('tax', 0);
         $qt['grand_total'] = (float) $input['total_amt'];
 
         $quote_id->update($qt);
@@ -1877,7 +1936,7 @@ class QuoteController extends Controller
     {
         $quote = $this->resolveQuoteFromRoute($quote);
         $quotationTerms = app(TermsAndConditionService::class)
-            ->getQuotationTerms(app()->bound('currentTenant') ? 'tenant' : 'landlord');
+            ->getQuotationTerms(config('database.default', 'mysql'));
 
         $printOptions = empty(request()->query())
             ? ['original' => 1]
@@ -1925,7 +1984,7 @@ class QuoteController extends Controller
     {
         $quote = $this->resolveQuoteFromRoute($quote);
         $quotationTerms = app(TermsAndConditionService::class)
-            ->getQuotationTerms(app()->bound('currentTenant') ? 'tenant' : 'landlord');
+            ->getQuotationTerms(config('database.default', 'mysql'));
         $printOptions = empty($request->query())
             ? ['original' => 1]
             : $request->query();

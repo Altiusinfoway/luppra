@@ -467,18 +467,19 @@ class CustomerController extends Controller
         }
 
 
-        foreach ($validated['companies'] as $companyData) {
+        $companies = $request->input('companies', []);
+        foreach ($companies as $companyData) {
 
             //address
             $billingAddress = Address::create([
                 'name'           => $request->name ?? null,
                 'email'          => $request->email ?? null,
                 'phone'          => $request->phone ?? null,
-                'country'        => $companyData['billing_country'],
-                'state'          => $companyData['billing_state'],
-                'city'           => $companyData['billing_city'],
-                'zipcode'        => $companyData['billing_zipcode'],
-                'address_line_1' => $companyData['billing_address_line_1'],
+                'country'        => $companyData['billing_country'] ?? null,
+                'state'          => $companyData['billing_state'] ?? null,
+                'city'           => $companyData['billing_city'] ?? null,
+                'zipcode'        => $companyData['billing_zipcode'] ?? null,
+                'address_line_1' => $companyData['billing_address_line_1'] ?? null,
                 'address_line_2' => $companyData['billing_address_line_2'] ?? null,
             ]);
 
@@ -487,12 +488,12 @@ class CustomerController extends Controller
                 'name'           => $request->name ?? null,
                 'email'          => $request->email ?? null,
                 'phone'          => $request->phone ?? null,
-                'country'        => $companyData['shipping_country'] ?? $companyData['billing_country'],
-                'state'          => $companyData['shipping_state'] ?? $companyData['billing_state'],
-                'city'           => $companyData['shipping_city'] ?? $companyData['billing_city'],
-                'zipcode'        => $companyData['shipping_zipcode'] ?? $companyData['billing_zipcode'],
-                'address_line_1' => $companyData['shipping_address_line_1'] ?? $companyData['billing_address_line_1'],
-                'address_line_2' => $companyData['shipping_address_line_2'] ?? $companyData['billing_address_line_2'],
+                'country'        => $companyData['shipping_country'] ?? $companyData['billing_country'] ?? null,
+                'state'          => $companyData['shipping_state'] ?? $companyData['billing_state'] ?? null,
+                'city'           => $companyData['shipping_city'] ?? $companyData['billing_city'] ?? null,
+                'zipcode'        => $companyData['shipping_zipcode'] ?? $companyData['billing_zipcode'] ?? null,
+                'address_line_1' => $companyData['shipping_address_line_1'] ?? $companyData['billing_address_line_1'] ?? null,
+                'address_line_2' => $companyData['shipping_address_line_2'] ?? $companyData['billing_address_line_2'] ?? null,
             ]);
 
             $cust->update([
@@ -726,31 +727,36 @@ class CustomerController extends Controller
 
 
         //---------- multiple company ------------
-        foreach ($validated['companies'] as $companyData) {
+        $companies = $request->input('companies', []);
+        foreach ($companies as $companyData) {
             // Billing
             if ($cust->billing_address_id) {
                 $billingAddress = Address::find($cust->billing_address_id);
-                $billingAddress->update([
+                if (!$billingAddress) {
+                    $billingAddress = new Address();
+                }
+                $billingAddress->fill([
                     'name'           => $request->name ?? null,
                     'email'          => $request->email ?? null,
                     'phone'          => $request->phone ?? null,
-                    'country'        => $companyData['billing_country'],
-                    'state'          => $companyData['billing_state'],
-                    'city'           => $companyData['billing_city'],
-                    'zipcode'        => $companyData['billing_zipcode'],
-                    'address_line_1' => $companyData['billing_address_line_1'],
+                    'country'        => $companyData['billing_country'] ?? null,
+                    'state'          => $companyData['billing_state'] ?? null,
+                    'city'           => $companyData['billing_city'] ?? null,
+                    'zipcode'        => $companyData['billing_zipcode'] ?? null,
+                    'address_line_1' => $companyData['billing_address_line_1'] ?? null,
                     'address_line_2' => $companyData['billing_address_line_2'] ?? null,
                 ]);
+                $billingAddress->save();
             } else {
                 $billingAddress = Address::create([
                     'name'           => $request->name ?? null,
                     'email'          => $request->email ?? null,
                     'phone'          => $request->phone ?? null,
-                    'country'        => $companyData['billing_country'],
-                    'state'          => $companyData['billing_state'],
-                    'city'           => $companyData['billing_city'],
-                    'zipcode'        => $companyData['billing_zipcode'],
-                    'address_line_1' => $companyData['billing_address_line_1'],
+                    'country'        => $companyData['billing_country'] ?? null,
+                    'state'          => $companyData['billing_state'] ?? null,
+                    'city'           => $companyData['billing_city'] ?? null,
+                    'zipcode'        => $companyData['billing_zipcode'] ?? null,
+                    'address_line_1' => $companyData['billing_address_line_1'] ?? null,
                     'address_line_2' => $companyData['billing_address_line_2'] ?? null,
                 ]);
             }
@@ -758,28 +764,32 @@ class CustomerController extends Controller
             // Shipping
             if ($cust->shipping_address_id) {
                 $shippingAddress = Address::find($cust->shipping_address_id);
-                $shippingAddress->update([
+                if (!$shippingAddress) {
+                    $shippingAddress = new Address();
+                }
+                $shippingAddress->fill([
                     'name'           => $request->name ?? null,
                     'email'          => $request->email ?? null,
                     'phone'          => $request->phone ?? null,
-                    'country'        => $companyData['shipping_country'] ?? $companyData['billing_country'],
-                    'state'          => $companyData['shipping_state'] ?? $companyData['billing_state'],
-                    'city'           => $companyData['shipping_city'] ?? $companyData['billing_city'],
-                    'zipcode'        => $companyData['shipping_zipcode'] ?? $companyData['billing_zipcode'],
-                    'address_line_1' => $companyData['shipping_address_line_1'] ?? $companyData['billing_address_line_1'],
-                    'address_line_2' => $companyData['shipping_address_line_2'] ?? $companyData['billing_address_line_2'],
+                    'country'        => $companyData['shipping_country'] ?? $companyData['billing_country'] ?? null,
+                    'state'          => $companyData['shipping_state'] ?? $companyData['billing_state'] ?? null,
+                    'city'           => $companyData['shipping_city'] ?? $companyData['billing_city'] ?? null,
+                    'zipcode'        => $companyData['shipping_zipcode'] ?? $companyData['billing_zipcode'] ?? null,
+                    'address_line_1' => $companyData['shipping_address_line_1'] ?? $companyData['billing_address_line_1'] ?? null,
+                    'address_line_2' => $companyData['shipping_address_line_2'] ?? $companyData['billing_address_line_2'] ?? null,
                 ]);
+                $shippingAddress->save();
             } else {
                 $shippingAddress = Address::create([
                     'name'           => $request->name ?? null,
                     'email'          => $request->email ?? null,
                     'phone'          => $request->phone ?? null,
-                    'country'        => $companyData['shipping_country'] ?? $companyData['billing_country'],
-                    'state'          => $companyData['shipping_state'] ?? $companyData['billing_state'],
-                    'city'           => $companyData['shipping_city'] ?? $companyData['billing_city'],
-                    'zipcode'        => $companyData['shipping_zipcode'] ?? $companyData['billing_zipcode'],
-                    'address_line_1' => $companyData['shipping_address_line_1'] ?? $companyData['billing_address_line_1'],
-                    'address_line_2' => $companyData['shipping_address_line_2'] ?? $companyData['billing_address_line_2'],
+                    'country'        => $companyData['shipping_country'] ?? $companyData['billing_country'] ?? null,
+                    'state'          => $companyData['shipping_state'] ?? $companyData['billing_state'] ?? null,
+                    'city'           => $companyData['shipping_city'] ?? $companyData['billing_city'] ?? null,
+                    'zipcode'        => $companyData['shipping_zipcode'] ?? $companyData['billing_zipcode'] ?? null,
+                    'address_line_1' => $companyData['shipping_address_line_1'] ?? $companyData['billing_address_line_1'] ?? null,
+                    'address_line_2' => $companyData['shipping_address_line_2'] ?? $companyData['billing_address_line_2'] ?? null,
                 ]);
             }
 

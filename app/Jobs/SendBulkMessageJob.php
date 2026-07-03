@@ -7,9 +7,7 @@ use App\Models\Device;
 use App\Models\Entity;
 use App\Models\Lead;
 use App\Models\LeadStage;
-use App\Models\Tenant;
 use App\Services\WhatsappSessionStatusService;
-use App\Support\Tenancy\TenancyManager;
 use App\Support\Tenancy\TenantUsageService;
 use App\Traits\Whatsapp;
 use Illuminate\Bus\Queueable;
@@ -39,21 +37,11 @@ class SendBulkMessageJob implements ShouldQueue
 
     public function handle(WhatsappSessionStatusService $sessionStatusService): void
     {
-        $tenant = Tenant::query()->find($this->tenantId);
-        if (!$tenant || !$tenant->is_active) {
-            Log::warning('bulk_message_job_tenant_unavailable', ['tenant_id' => $this->tenantId]);
-            return;
-        }
-
-        app(TenancyManager::class)->initialize($tenant);
-        app()->instance('currentTenant', $tenant);
-
-        try {
-            $stage = $this->stageId ? LeadStage::query()->find($this->stageId) : null;
-            $device = Device::query()
-                ->where('user_id', $this->userId)
-                ->where('status', 1)
-                ->find($this->deviceId);
+        $stage = $this->stageId ? LeadStage::query()->find($this->stageId) : null;
+        $device = Device::query()
+            ->where('user_id', $this->userId)
+            ->where('status', 1)
+            ->find($this->deviceId);
 
             if (($this->sendMode === 'lead_status' && !$stage) || !$device) {
                 Log::warning('bulk_message_job_invalid_stage_or_device', [
@@ -144,10 +132,6 @@ class SendBulkMessageJob implements ShouldQueue
                 'failed_count' => count($errors),
                 'errors' => array_slice($errors, 0, 10),
             ]);
-        } finally {
-            app()->forgetInstance('currentTenant');
-            app(TenancyManager::class)->end();
-        }
     }
 
     private function recipientsForStage(int $stageId)

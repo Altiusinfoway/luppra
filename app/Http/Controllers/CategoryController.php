@@ -112,7 +112,7 @@ class CategoryController extends Controller
 
         $request->validate([
             'name'      => 'required|string|max:255',
-            'parent_id' => 'nullable|exists:tenant.categories,id'
+            'parent_id' => 'nullable|exists:categories,id'
         ]);
 
         Category::create([
@@ -167,7 +167,7 @@ class CategoryController extends Controller
 
         $request->validate([
             'name'      => 'required|string|max:255',
-            'parent_id' => 'nullable|exists:tenant.categories,id|not_in:' . $id,
+            'parent_id' => 'nullable|exists:categories,id|not_in:' . $id,
         ]);
 
         $category = Category::findOrFail($id);

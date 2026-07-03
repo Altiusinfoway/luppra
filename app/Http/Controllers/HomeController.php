@@ -79,11 +79,11 @@ class HomeController extends Controller
                     $schemaOk = false;
                     try {
                         app(TenancyManager::class)->initialize($tenant);
-                        DB::connection('tenant')->select('SELECT 1');
+                        DB::connection()->select('SELECT 1');
                         $dbOk = true;
                         $missingTables = [];
                         foreach ($requiredTables as $table) {
-                            if (!Schema::connection('tenant')->hasTable($table)) {
+                            if (!Schema::hasTable($table)) {
                                 $missingTables[] = $table;
                             }
                         }
@@ -821,10 +821,6 @@ class HomeController extends Controller
 
     private function tenantConnectionName(): string
     {
-        if (config('tenancy.enabled', false) && app()->bound('currentTenant')) {
-            return 'tenant';
-        }
-
         return config('database.default', 'mysql');
     }
 }

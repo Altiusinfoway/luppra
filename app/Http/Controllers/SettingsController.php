@@ -62,7 +62,7 @@ class SettingsController extends Controller
 
     public function terms()
     {
-        $connection = app()->bound('currentTenant') ? 'tenant' : 'landlord';
+        $connection = config('database.default', 'mysql');
         $this->ensureTermsAndConditionsTable($connection);
 
         if (!Schema::connection($connection)->hasTable('terms_and_conditions')) {
@@ -91,7 +91,7 @@ class SettingsController extends Controller
             'quotation' => 'nullable|string',
         ]);
 
-        $connection = app()->bound('currentTenant') ? 'tenant' : 'landlord';
+        $connection = config('database.default', 'mysql');
         $this->ensureTermsAndConditionsTable($connection);
 
         if (!Schema::connection($connection)->hasTable('terms_and_conditions')) {
@@ -120,9 +120,9 @@ class SettingsController extends Controller
 
     private function ensureTermsAndConditionsTable(string $connection): void
     {
-        if ($connection === 'tenant' && !Schema::connection('tenant')->hasTable('terms_and_conditions') && Schema::connection('landlord')->hasTable('terms_and_conditions')) {
+        if ($connection === 'tenant' && !Schema::hasTable('terms_and_conditions') && Schema::hasTable('terms_and_conditions')) {
             $landlordDatabase = str_replace('`', '``', (string) config('database.connections.landlord.database'));
-            DB::connection('tenant')->statement("CREATE TABLE `terms_and_conditions` LIKE `{$landlordDatabase}`.`terms_and_conditions`");
+            DB::connection()->statement("CREATE TABLE `terms_and_conditions` LIKE `{$landlordDatabase}`.`terms_and_conditions`");
         }
 
         if (!Schema::connection($connection)->hasTable('terms_and_conditions')) {

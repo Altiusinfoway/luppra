@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class WebsiteSignup extends Model
 {
-    protected $connection = 'landlord';
-
     protected $fillable = [
         'plan_id',
         'name',
@@ -27,4 +25,3 @@ class WebsiteSignup extends Model
         'meta' => 'array',
     ];
 }
-

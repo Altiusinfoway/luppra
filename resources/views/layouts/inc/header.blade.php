@@ -1,12 +1,7 @@
 <header id="page-topbar">
     @php
         $default_img = \App\Models\Utility::defaultImage();
-        $brandLogo = asset('public/build/assets/images/engage-logo.png');
-        $currentTenant = app()->bound('currentTenant') ? app('currentTenant') : null;
-        $isSuperAdmin = \Auth::check() && \Auth::user()->type === 'super admin';
-        $tenantOptions = $isSuperAdmin
-            ? \App\Models\Tenant::query()->orderBy('name')->get(['id', 'name', 'slug'])
-            : collect();
+        $brandLogo = \App\Models\Utility::websiteLogo();
     @endphp
     <div class="layout-width">
         <div class="navbar-header">
@@ -15,19 +10,19 @@
                 <div class="navbar-brand-box horizontal-logo">
                     <a href="{{ route('dashboard') }}" class="logo logo-dark">
                         <span class="logo-sm">
-                            <img src="{{ $brandLogo }}" alt="Engage Net" height="38">
+                            <img src="{{ $brandLogo ?? $default_img }}" alt="Engage Net" height="38">
                         </span>
                         <span class="logo-lg">
-                            <img src="{{ $brandLogo }}" alt="Engage Net" height="42">
+                            <img src="{{ $brandLogo   ?? $default_img }}" alt="Engage Net" height="42">
                         </span>
                     </a>
 
                     <a href="{{ route('dashboard') }}" class="logo logo-light">
                         <span class="logo-sm">
-                            <img src="{{ $brandLogo }}" alt="Engage Net" height="38">
+                            <img src="{{ $brandLogo  ?? $default_img }}" alt="Engage Net" height="38">
                         </span>
                         <span class="logo-lg">
-                            <img src="{{ $brandLogo }}" alt="Engage Net" height="42">
+                            <img src="{{ $brandLogo  ?? $default_img }}" alt="Engage Net" height="42">
                         </span>
                     </a>
                 </div>
@@ -138,8 +133,7 @@
             </div>
 
             @php
-                $settingsConnection = app()->bound('currentTenant') ? 'tenant' : 'landlord';
-                $isError = DB::connection($settingsConnection)->table('settings')
+                $isError = DB::connection()->table('settings')
                             ->where('name', 'facebook_token_is_error')
                             ->where('created_by', auth()->id())
                             ->value('value');
@@ -153,32 +147,6 @@
             @endif
 
             <div class="d-flex align-items-center">
-                @if ($currentTenant)
-                    <span class="badge rounded-pill bg-success-subtle text-success me-2 d-none d-md-inline">
-                        Tenant: {{ $currentTenant->name }} ({{ $currentTenant->slug }})
-                    </span>
-                @endif
-
-                @if ($isSuperAdmin)
-                    <form method="POST" action="{{ route('setting.tenancy.switch-context') }}" class="d-none d-md-flex align-items-center me-2">
-                        @csrf
-                        <select name="tenant_id" class="form-select form-select-sm me-2" style="min-width: 220px;" onchange="this.form.submit()">
-                            <option value="">Switch Tenant Context</option>
-                            @foreach ($tenantOptions as $tenantOption)
-                                <option value="{{ $tenantOption->id }}" {{ (int) optional($currentTenant)->id === (int) $tenantOption->id ? 'selected' : '' }}>
-                                    {{ $tenantOption->name }} ({{ $tenantOption->slug }})
-                                </option>
-                            @endforeach
-                        </select>
-                    </form>
-                    @if ($currentTenant)
-                        <form method="POST" action="{{ route('setting.tenancy.clear-context') }}" class="d-none d-md-inline me-2">
-                            @csrf
-                            <button type="submit" class="btn btn-sm btn-outline-secondary">Clear Tenant</button>
-                        </form>
-                    @endif
-                @endif
-
                 <div class="dropdown d-md-none topbar-head-dropdown header-item">
                     <button type="button"
                         class="btn btn-icon btn-topbar material-shadow-none btn-ghost-secondary rounded-circle"

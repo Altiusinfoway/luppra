@@ -44,7 +44,7 @@ class WhatsappBotConfigController extends Controller
         }
 
         $creatorId = $device->user->creatorId();
-        $settings = DB::connection(app()->bound('currentTenant') ? 'tenant' : 'landlord')->table('settings')
+        $settings = DB::connection()->table('settings')
             ->where('created_by', $creatorId)
             ->whereIn('name', [
                 'wa_ai_bot_enabled',

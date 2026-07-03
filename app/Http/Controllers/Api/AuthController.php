@@ -272,7 +272,7 @@ class AuthController extends Controller
             return null;
         }
 
-        $landlordUser = User::on('landlord')
+        $landlordUser = User::query()
             ->where('email', $email)
             ->select('tenant_id', 'created_by')
             ->first();
@@ -288,7 +288,7 @@ class AuthController extends Controller
 
         $creatorId = (int) ($landlordUser->created_by ?? 0);
         if ($creatorId > 0) {
-            $creatorTenantId = (int) (User::on('landlord')
+            $creatorTenantId = (int) (User::query()
                 ->where('id', $creatorId)
                 ->value('tenant_id') ?? 0);
 

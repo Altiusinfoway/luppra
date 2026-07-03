@@ -7,9 +7,7 @@ use App\Models\Concerns\UsesTenantConnection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Schema;
 use Spatie\Permission\Traits\HasRoles;
-use Throwable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
@@ -97,50 +95,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function getConnectionName()
     {
-        if ($this->type === 'super admin') {
-            return 'landlord';
-        }
-
-        $currentTenantId = app()->bound('currentTenant')
-            ? (int) data_get(app('currentTenant'), 'id', 0)
-            : 0;
-
-        if ($currentTenantId > 0) {
-            $userTenantId = (int) ($this->tenant_id ?? 0);
-
-            if ($userTenantId === 0 || $userTenantId === $currentTenantId) {
-                if ($this->shouldUseTenantConnectionForUser()) {
-                    return 'tenant';
-                }
-            }
-        }
-
-        if ((int) ($this->tenant_id ?? 0) <= 0) {
-            return 'landlord';
-        }
-
-        if ($this->shouldUseTenantConnectionForUser()) {
-            return 'tenant';
-        }
-
-        return 'landlord';
-    }
-
-    private function shouldUseTenantConnectionForUser(): bool
-    {
-        if (!config('tenancy.enabled', false)) {
-            return false;
-        }
-
-        if (!app()->bound('currentTenant')) {
-            return false;
-        }
-
-        try {
-            return Schema::connection('tenant')->hasTable($this->getTable());
-        } catch (Throwable $e) {
-            return false;
-        }
+        return parent::getConnectionName();
     }
 
     public function creatorId()

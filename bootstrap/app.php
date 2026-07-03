@@ -13,21 +13,11 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->web(append: [
-            \App\Http\Middleware\InitializeTenancy::class,
-            \App\Http\Middleware\EnsureTenantSessionIsValid::class,
             \App\Http\Middleware\EnsureCompanySettingsCompleted::class,
-            \App\Http\Middleware\EnsureTenantDefaultsInitialized::class,
-            \App\Http\Middleware\EnsureSuperAdminLandlordAccess::class,
-            \App\Http\Middleware\EnsureTenantSubscriptionIsValid::class,
-            \App\Http\Middleware\EnsureTenantModuleAccess::class,
         ]);
 
         $middleware->api(append: [
-            \App\Http\Middleware\InitializeTenancy::class,
-            \App\Http\Middleware\EnsureTenantSessionIsValid::class,
-            \App\Http\Middleware\EnsureSuperAdminLandlordAccess::class,
-            \App\Http\Middleware\EnsureTenantSubscriptionIsValid::class,
-            \App\Http\Middleware\EnsureTenantModuleAccess::class,
+            //
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

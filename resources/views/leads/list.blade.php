@@ -59,8 +59,8 @@
                                                             <i class="ri-octagon-fill align-bottom me-2 text-muted"></i>
                                                             India Mart
                                                         </a>
-                                                    </li> --}}
-                                                    {{-- <li>
+                                                    </li>
+                                                    <li>
                                                         <a class="dropdown-item remove-item-btn" href="javascript:void(0)"
                                                             data-bs-toggle="modal" data-bs-target="#facebookModel">
                                                             <i class="ri-octagon-fill align-bottom me-2 text-muted"></i>

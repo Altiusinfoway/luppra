@@ -215,7 +215,7 @@ class OrdersController extends Controller
     {
 	          $order = $this->resolveOrderFromRoute($order);
               $invoiceTerms = app(TermsAndConditionService::class)
-                  ->getConfiguredInvoiceTerms(app()->bound('currentTenant') ? 'tenant' : 'landlord');
+                  ->getConfiguredInvoiceTerms(config('database.default', 'mysql'));
 	          $data['order'] = $order;
 	            $data['order_products'] = $order->orderProducts;
             $data['bank_detail'] = BankDetail::first();
@@ -529,8 +529,8 @@ class OrdersController extends Controller
     public function updateStatus(Request $request)
     {
         $request->validate([
-            'order_id'  => 'required|exists:tenant.orders,id',
-            'status_id' => 'required|exists:tenant.order_stages,id',
+            'order_id'  => 'required|exists:orders,id',
+            'status_id' => 'required|exists:order_stages,id',
         ]);
 
 	        $order = Order::find($request->order_id);
@@ -586,7 +586,7 @@ class OrdersController extends Controller
 	        $invoiceLayout = Utility::getInvoiceLayout();
 	        $invoiceTemplate = Utility::resolveOrderInvoiceTemplate(false);
 	        $invoiceTerms = app(TermsAndConditionService::class)
-	            ->getConfiguredInvoiceTerms(app()->bound('currentTenant') ? 'tenant' : 'landlord');
+	            ->getConfiguredInvoiceTerms(config('database.default', 'mysql'));
 
         $device = \App\Models\Device::where('user_id', \Auth::user()->id)->first();
         $cust_phone = CustomerPhone::where('customer_id', $order->customer_id)
@@ -644,7 +644,7 @@ class OrdersController extends Controller
 	        $invoiceLayout = Utility::getInvoiceLayout();
 	        $invoiceTemplate = Utility::resolveOrderInvoiceTemplate(true);
 	        $invoiceTerms = app(TermsAndConditionService::class)
-	            ->getConfiguredInvoiceTerms(app()->bound('currentTenant') ? 'tenant' : 'landlord');
+	            ->getConfiguredInvoiceTerms(config('database.default', 'mysql'));
 
 
         $full_path = storage_path('temp');
@@ -752,7 +752,7 @@ class OrdersController extends Controller
 	        $invoiceTemplate = Utility::resolveOrderInvoiceTemplate(true);
 	        $invoiceLayout = Utility::getInvoiceLayout();
 	        $invoiceTerms = app(TermsAndConditionService::class)
-	            ->getConfiguredInvoiceTerms(app()->bound('currentTenant') ? 'tenant' : 'landlord');
+	            ->getConfiguredInvoiceTerms(config('database.default', 'mysql'));
 	        $pdfFile = 'invoice-' . $invoiceNumber . '-whatsapp-' . time() . '.pdf';
         $pdfPath = $folderPath . DIRECTORY_SEPARATOR . $pdfFile;
         $invoices = '';

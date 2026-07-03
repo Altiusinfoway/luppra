@@ -94,7 +94,7 @@ class InvoiceTemplateSeeder extends Seeder
             );
 
             foreach ($sections as $sectionData) {
-                DB::connection('landlord')->table('invoice_template_sections')->updateOrInsert(
+                DB::connection()->table('invoice_template_sections')->updateOrInsert(
                     [
                         'invoice_template_id' => $template->id,
                         'section_key' => $sectionData['section_key'],

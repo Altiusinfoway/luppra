@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::connection('landlord')->dropIfExists('invoice_template_sections');
+        Schema::dropIfExists('invoice_template_sections');
 
-        Schema::connection('landlord')->create('invoice_template_sections', function (Blueprint $table) {
+        Schema::create('invoice_template_sections', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->bigIncrements('id');
             $table->unsignedBigInteger('invoice_template_id');
@@ -39,6 +39,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::connection('landlord')->dropIfExists('invoice_template_sections');
+        Schema::dropIfExists('invoice_template_sections');
     }
 };

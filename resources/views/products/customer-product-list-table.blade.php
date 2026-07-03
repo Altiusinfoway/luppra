@@ -66,7 +66,7 @@
                         </td>
                         <td class="text-end">
                            <span class="product_tol">  {{ $product->pivot->price * $product->pivot->qty  }}</span>
-                             <input type="hidden" name="products[product_total][]" class="product-total">
+                             <input type="hidden" name="products[product_total][]" class="product-total" value="{{ $product->pivot->price * $product->pivot->qty }}">
                         </td>
 
                          <td class="text-center">

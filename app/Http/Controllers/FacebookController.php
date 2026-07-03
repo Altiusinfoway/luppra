@@ -115,7 +115,7 @@ class FacebookController extends Controller
         ]);
 
         $firstPage = $pages['data'][0] ?? [];
-        $settingsConnection = app()->bound('currentTenant') ? 'tenant' : 'landlord';
+        $settingsConnection = config('database.default', 'mysql');
 
         \Log::info('tenant db ',[$settingsConnection]);
 
@@ -148,7 +148,7 @@ class FacebookController extends Controller
     {
         \Log::info('========== checkTokenExpiry Scheduled Run ==============');
 
-        $settingsConnection = app()->bound('currentTenant') ? 'tenant' : 'landlord';
+        $settingsConnection = config('database.default', 'mysql');
         $today = Carbon::now()->toDateString(); // Current System Date
 
         // 1. Get all settings blocks where token is not marked as error yet

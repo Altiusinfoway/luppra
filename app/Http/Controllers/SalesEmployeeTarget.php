@@ -205,8 +205,8 @@ class SalesEmployeeTarget extends Controller
         'user_id' => 'required|array',
         'sales_target_id' => 'required|array',
 
-        'user_id.*' => 'required|exists:tenant.users,id',
-        'sales_target_id.*' => 'required|exists:tenant.sales_targets,id',
+        'user_id.*' => 'required|exists:users,id',
+        'sales_target_id.*' => 'required|exists:sales_targets,id',
         'incentive' => 'nullable|array',
         'incentive.*' => 'nullable|numeric|min:0',
         ]);

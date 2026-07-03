@@ -488,14 +488,6 @@
                                 <li class="nav-item">
                                     <a href="{{ route('setting.whatsapp-bot.index') }}" class="nav-link">WhatsApp AI Bot</a>
                                 </li>
-                                @if (\Auth::check() && \Auth::user()->type === 'super admin')
-                                    <li class="nav-item">
-                                        <a href="{{ route('setting.tenancy.index') }}" class="nav-link">Tenancy</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{ route('setting.plans.index') }}" class="nav-link">SaaS Plans</a>
-                                    </li>
-                                @endif
                             </ul>
                         </div>
                     </li>
@@ -985,12 +977,12 @@
                 @endcan
                 @endif
 
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                         <a href="{{ route('facebooks.create') }}"
                             class="nav-link {{ $isOrderRoute ? 'active' : '' }} menu-link">
                             <i class="ri-file-list-3-line"></i> <span>Facebook</span>
                         </a>
-                </li>
+                </li> --}}
 
 
                 @if(($uiCanSales || $uiCanWhatsapp))
@@ -1288,33 +1280,21 @@
                 @if (\Auth::check() && \Auth::user()->type === 'super admin')
                     <li class="menu-title cm-light-bg"><span>Platform Control</span></li>
                     <li class="nav-item">
-                        <a class="nav-link menu-link {{ request()->routeIs('setting.tenancy.*') || request()->routeIs('setting.plans.*') || request()->routeIs('setting.invoice-templates.*') ? 'active' : '' }}"
+                        <a class="nav-link menu-link {{ request()->routeIs('setting.invoice-templates.*') || request()->routeIs('setting.razorpay.*') ? 'active' : '' }}"
                             href="#saas-admin-menu" data-bs-toggle="collapse" role="button"
-                            aria-expanded="{{ request()->routeIs('setting.tenancy.*') || request()->routeIs('setting.plans.*') || request()->routeIs('setting.invoice-templates.*') ? 'true' : 'false' }}"
+                            aria-expanded="{{ request()->routeIs('setting.invoice-templates.*') || request()->routeIs('setting.razorpay.*') ? 'true' : 'false' }}"
                             aria-controls="saas-admin-menu">
-                            <i class="ri-shield-star-line"></i> <span>SaaS Admin</span>
+                            <i class="ri-shield-star-line"></i> <span>Admin Settings</span>
                         </a>
-                        <div class="collapse menu-dropdown {{ request()->routeIs('setting.tenancy.*') || request()->routeIs('setting.plans.*') || request()->routeIs('setting.invoice-templates.*') ? 'show' : '' }}"
+                        <div class="collapse menu-dropdown {{ request()->routeIs('setting.invoice-templates.*') || request()->routeIs('setting.razorpay.*') ? 'show' : '' }}"
                             id="saas-admin-menu">
                             <ul class="nav nav-sm flex-column">
-                                <li class="nav-item">
-                                    <a href="{{ route('setting.tenancy.index') }}"
-                                        class="nav-link {{ request()->routeIs('setting.tenancy.*') ? 'active' : '' }}">
-                                        Tenant Management
-                                    </a>
-                                </li>
                                 {{-- <li class="nav-item">
                                     <a href="{{ route('setting.invoice-templates.index') }}"
                                         class="nav-link {{ request()->routeIs('setting.invoice-templates.*') ? 'active' : '' }}">
                                         Invoice Templates
                                     </a>
                                 </li> --}}
-                                <li class="nav-item">
-                                    <a href="{{ route('setting.plans.index') }}"
-                                        class="nav-link {{ request()->routeIs('setting.plans.*') ? 'active' : '' }}">
-                                        Plan Management
-                                    </a>
-                                </li>
                                 <li class="nav-item">
                                     <a href="{{ route('setting.razorpay.index') }}"
                                         class="nav-link {{ request()->routeIs('setting.razorpay.*') ? 'active' : '' }}">

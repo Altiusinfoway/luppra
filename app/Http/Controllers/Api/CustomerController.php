@@ -82,7 +82,7 @@ class CustomerController extends Controller
                 'email' => 'nullable|email',
                 'company_name' => 'required',
                 // 'product_rate' => 'required|integer|between:1,5',
-                'lead_type_id' => 'nullable|exists:tenant.lead_types,id',
+                'lead_type_id' => 'nullable|exists:lead_types,id',
                 // 'description' => 'required',
                 'phone_list' => 'required',
                 // 'billing_country' => 'required',
@@ -811,7 +811,7 @@ class CustomerController extends Controller
     //             'email' => 'required|email',
     //             'company_name' => 'required',
     //             'product_rate' => 'required|integer|between:1,5',
-    //             'lead_type_id' => 'required|exists:tenant.lead_types,id',
+    //             'lead_type_id' => 'required|exists:lead_types,id',
     //             'description' => 'required',
     //             'phone_list' => 'required',
     //             'billing_country' => 'required',
@@ -1168,10 +1168,6 @@ class CustomerController extends Controller
 
     private function tenantConnectionName(): string
     {
-        if (config('tenancy.enabled', false) && app()->bound('currentTenant')) {
-            return 'tenant';
-        }
-
         return (new Entity())->getConnectionName() ?: config('database.default', 'mysql');
     }
 

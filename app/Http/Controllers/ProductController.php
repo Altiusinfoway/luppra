@@ -183,12 +183,12 @@ class ProductController extends Controller
             $validator = \Validator::make(
                 $request->all(),
                 [
-                    'name' => 'required|unique:tenant.products,name,NULL,id,created_by,' . \Auth::user()->creatorId(),
-                    'category_id' => 'nullable|exists:tenant.categories,id',
+                    'name' => 'required|unique:products,name,NULL,id,created_by,' . \Auth::user()->creatorId(),
+                    'category_id' => 'nullable|exists:categories,id',
                     // 'code' => 'required',
                     'price' => 'required|numeric',
                     'image' => 'required|file|mimes:jpg,jpeg,png|max:2048',
-                     'gst_slab_master_id' => 'required|not_in:0|exists:tenant.gst_slab_masters,id',
+                     'gst_slab_master_id' => 'required|not_in:0|exists:gst_slab_masters,id',
                 ]
             );
 
@@ -240,11 +240,11 @@ class ProductController extends Controller
 
             $product->save();
 
-            ProductStockActivity::create([
-                'product_id'=>$product->id,
-                'message'=>'Product added by',
-                'user_id'=>\Auth::user()->id,
-            ]);
+            // ProductStockActivity::create([
+            //     'product_id'=>$product->id,
+            //     'message'=>'Product added by',
+            //     'user_id'=>\Auth::user()->id,
+            // ]);
 
             return redirect()->route('products.index')->with('success', 'Product successfully created.', 'Product ' . $product->name . ' added!');
         } else {
@@ -295,12 +295,12 @@ class ProductController extends Controller
 
                 $request->all(),
                 [
-                    'name' => 'required|max:100|unique:tenant.products,name,' . $id . ',id,created_by,' . \Auth::user()->creatorId(),
-                    'category_id' => 'nullable|exists:tenant.categories,id',
+                    'name' => 'required|max:100|unique:products,name,' . $id . ',id,created_by,' . \Auth::user()->creatorId(),
+                    'category_id' => 'nullable|exists:categories,id',
                     // 'sku_code' => 'required',
                     'price' => 'required|numeric',
                     'image' => 'file|mimes:jpg,jpeg,png|max:2048',
-                    'gst_slab_master_id' => 'required|not_in:0|exists:tenant.gst_slab_masters,id',
+                    'gst_slab_master_id' => 'required|not_in:0|exists:gst_slab_masters,id',
 
                 ]
 
@@ -402,10 +402,10 @@ class ProductController extends Controller
             $validator = \Validator::make(
                 $request->all(),
                 [
-                    'name' => 'required|max:100|unique:tenant.products,name,NULL,id,created_by,' . \Auth::user()->creatorId(),
+                    'name' => 'required|max:100|unique:products,name,NULL,id,created_by,' . \Auth::user()->creatorId(),
                     'code' => 'required',
                     'price' => 'required|numeric',
-                    'gst_slab_master_id' => 'required|exists:tenant.gst_slab_masters,id',
+                    'gst_slab_master_id' => 'required|exists:gst_slab_masters,id',
                     'image' => 'required|file|mimes:jpg,jpeg,png|max:2048',
                 ]
             );

@@ -10,7 +10,7 @@
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
                             <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('setting.tenancy.index') }}">SaaS Admin</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Admin</a></li>
                             <li class="breadcrumb-item active">Razorpay</li>
                         </ol>
                     </div>
@@ -52,7 +52,7 @@
 
                             <div class="d-flex gap-2">
                                 <button type="submit" class="btn btn-primary">Save Settings</button>
-                                <a href="{{ route('setting.tenancy.index') }}" class="btn btn-outline-secondary">Back</a>
+                                <a href="{{ route('dashboard') }}" class="btn btn-outline-secondary">Back</a>
                             </div>
                         </form>
                     </div>

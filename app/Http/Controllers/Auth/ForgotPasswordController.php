@@ -28,7 +28,7 @@ class ForgotPasswordController extends Controller
         $this->validateEmail($request);
 
         $email = trim((string) $request->input('email'));
-        $user = User::on('landlord')
+        $user = User::query()
             ->where('email', $email)
             ->first();
 

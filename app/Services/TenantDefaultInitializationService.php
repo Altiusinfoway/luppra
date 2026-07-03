@@ -25,12 +25,12 @@ class TenantDefaultInitializationService
             return true;
         }
 
-        if (!Schema::connection('tenant')->hasTable('settings')) {
+        if (!Schema::hasTable('settings')) {
             return false;
         }
 
         $creatorId = (int) $user->creatorId();
-        $settings = DB::connection('tenant')
+        $settings = DB::connection()
             ->table('settings')
             ->where('created_by', $creatorId)
             ->whereIn('name', [
@@ -70,7 +70,7 @@ class TenantDefaultInitializationService
             return;
         }
 
-        if (Schema::connection('tenant')->hasTable('settings')) {
+        if (Schema::hasTable('settings')) {
             $this->ensureLeadImportSettings((int) $user->creatorId());
         }
 
@@ -78,7 +78,7 @@ class TenantDefaultInitializationService
             return;
         }
 
-        if (!Schema::connection('tenant')->hasTable('settings')) {
+        if (!Schema::hasTable('settings')) {
             return;
         }
 
@@ -89,7 +89,7 @@ class TenantDefaultInitializationService
         $creatorId = (int) $user->creatorId();
         $tenantId = (int) data_get(app('currentTenant'), 'id', 0);
 
-        DB::connection('tenant')->transaction(function () use ($user, $creatorId, $tenantId) {
+        DB::connection()->transaction(function () use ($user, $creatorId, $tenantId) {
             $this->initializeCompanySettings($user);
             $this->initializeLeadSettings($creatorId);
             $this->initializeGstSlabs($creatorId);
@@ -119,8 +119,8 @@ class TenantDefaultInitializationService
 
     public function initializeLeadSettings(int $creatorId): void
     {
-        if (Schema::connection('tenant')->hasTable('lead_stages')) {
-            $hasIsEditableColumn = Schema::connection('tenant')->hasColumn('lead_stages', 'is_editable');
+        if (Schema::hasTable('lead_stages')) {
+            $hasIsEditableColumn = Schema::hasColumn('lead_stages', 'is_editable');
             $stageDefaults = [
                 ['name' => 'New', 'color' => '#0e66f3'],
                 ['name' => 'Proposal', 'color' => '#1ca6e6'],
@@ -176,8 +176,8 @@ class TenantDefaultInitializationService
             }
         }
 
-        if (Schema::connection('tenant')->hasTable('lead_sources')) {
-            $hasSourceIsEditableColumn = Schema::connection('tenant')->hasColumn('lead_sources', 'is_editable');
+        if (Schema::hasTable('lead_sources')) {
+            $hasSourceIsEditableColumn = Schema::hasColumn('lead_sources', 'is_editable');
             $sourceDefaults = ['facebook', 'others', 'instagram', 'india mart'];
             $order = (int) (LeadSource::query()->max('order') ?? 0);
 
@@ -222,7 +222,7 @@ class TenantDefaultInitializationService
             }
         }
 
-        if (Schema::connection('tenant')->hasTable('lead_types')) {
+        if (Schema::hasTable('lead_types')) {
             foreach (['Information Qualified Lead', 'Marketing Qualified Leads'] as $type) {
                 $exists = LeadType::query()
                     ->where('created_by', $creatorId)
@@ -253,7 +253,7 @@ class TenantDefaultInitializationService
 
     public function initializeGstSlabs(int $creatorId): void
     {
-        if (!Schema::connection('tenant')->hasTable('gst_slab_masters')) {
+        if (!Schema::hasTable('gst_slab_masters')) {
             return;
         }
 
@@ -286,14 +286,14 @@ class TenantDefaultInitializationService
 
     public function initializeOrderSettings(int $creatorId): void
     {
-        if (Schema::connection('tenant')->hasTable('order_stages')) {
+        if (Schema::hasTable('order_stages')) {
             $stageDefaults = [
                 ['name' => 'New', 'color' => '#3b82f6'],
                 ['name' => 'Confirmed', 'color' => '#8b5cf6'],
                 ['name' => 'Delivered', 'color' => '#22c55e'],
             ];
 
-            $hasOrderColumn = Schema::connection('tenant')->hasColumn('order_stages', 'order');
+            $hasOrderColumn = Schema::hasColumn('order_stages', 'order');
             $order = $hasOrderColumn
                 ? (int) (OrderStage::query()->max('order') ?? 0)
                 : 0;
@@ -387,7 +387,7 @@ class TenantDefaultInitializationService
             return;
         }
 
-        if (!Schema::connection('landlord')->hasTable('invoice_templates')) {
+        if (!Schema::hasTable('invoice_templates')) {
             return;
         }
 
@@ -402,7 +402,7 @@ class TenantDefaultInitializationService
 
     public function initializeDefaultBankAccountsIfNeeded(int $creatorId): void
     {
-        if (!Schema::connection('tenant')->hasTable('bank_details')) {
+        if (!Schema::hasTable('bank_details')) {
             return;
         }
 
@@ -425,7 +425,7 @@ class TenantDefaultInitializationService
 
     private function getSettingValue(int $creatorId, string $name): ?string
     {
-        return DB::connection('tenant')
+        return DB::connection()
             ->table('settings')
             ->where('created_by', $creatorId)
             ->where('name', $name)
@@ -434,7 +434,7 @@ class TenantDefaultInitializationService
 
     private function upsertSetting(int $creatorId, string $name, string $value): void
     {
-        DB::connection('tenant')->table('settings')->updateOrInsert(
+        DB::connection()->table('settings')->updateOrInsert(
             ['name' => $name, 'created_by' => $creatorId],
             ['value' => $value]
         );

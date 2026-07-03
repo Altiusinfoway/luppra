@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class TenantAuditLog extends Model
 {
-    protected $connection = 'landlord';
-
     protected $fillable = [
         'tenant_id',
         'user_id',
@@ -22,4 +20,3 @@ class TenantAuditLog extends Model
         'meta' => 'array',
     ];
 }
-

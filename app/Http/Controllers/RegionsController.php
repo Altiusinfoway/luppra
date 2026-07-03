@@ -101,7 +101,7 @@ class RegionsController extends Controller
         $this->ensureTenantContext($request);
 
         $validated = $request->validate([
-            'name' => ['required', Rule::unique('tenant.countries', 'name')]
+            'name' => ['required', Rule::unique('countries', 'name')]
         ]);
 
         Country::create($request->only('name','code','is_active'));
@@ -128,7 +128,7 @@ class RegionsController extends Controller
         abort_if(!$country, 404, 'Country not found for this tenant.');
 
         $validated = $request->validate([
-            'name' => ['required', Rule::unique('tenant.countries', 'name')->ignore($country->id)]
+            'name' => ['required', Rule::unique('countries', 'name')->ignore($country->id)]
         ]);
 
         $country->update($request->only('name','code','is_active'));
@@ -192,7 +192,7 @@ class RegionsController extends Controller
 
         $validated = $request->validate([
             'country_id' => 'required',
-            'name' => ['required', Rule::unique('tenant.states', 'name')]
+            'name' => ['required', Rule::unique('states', 'name')]
         ]);
 
         State::create($request->only('name','country_id','is_active'));
@@ -219,7 +219,7 @@ class RegionsController extends Controller
         abort_if(!$state, 404, 'State not found for this tenant.');
 
         $validated = $request->validate([
-            'name' => ['required', Rule::unique('tenant.states', 'name')->ignore($state->id)]
+            'name' => ['required', Rule::unique('states', 'name')->ignore($state->id)]
         ]);
 
         $state->update($request->only('name','country_id','is_active'));
@@ -296,7 +296,7 @@ class RegionsController extends Controller
 
         $validated = $request->validate([
             'state_id' => 'required',
-            'name' => ['required', Rule::unique('tenant.cities', 'name')]
+            'name' => ['required', Rule::unique('cities', 'name')]
         ]);
 
         City::create($request->only('name','state_id','is_active'));
@@ -328,7 +328,7 @@ class RegionsController extends Controller
         abort_if(!$city, 404, 'City not found for this tenant.');
 
         $validated = $request->validate([
-            'name' => ['required', Rule::unique('tenant.cities', 'name')->ignore($city->id)]
+            'name' => ['required', Rule::unique('cities', 'name')->ignore($city->id)]
         ]);
 
         $city->update($request->only('name','state_id','is_active'));

@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::connection('landlord')->create('tenant_usages', function (Blueprint $table) {
+        Schema::create('tenant_usages', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('tenant_id');
             $table->string('metric', 50);
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::connection('landlord')->dropIfExists('tenant_usages');
+        Schema::dropIfExists('tenant_usages');
     }
 };

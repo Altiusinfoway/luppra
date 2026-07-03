@@ -102,7 +102,7 @@ class QuoteController extends Controller
 
     //          $validator = Validator::make($request->all(), [
 
-    //             'customer_id' => 'required|exists:tenant.entities,id',
+    //             'customer_id' => 'required|exists:entities,id',
     //             'customer_type' => 'required|string',
     //             'date' => 'required|date',
     //             'payment_after_days' => 'required|numeric',
@@ -110,7 +110,7 @@ class QuoteController extends Controller
     //             // 'total_tax_sum' => 'required|numeric',
     //             'tax_detail_json' => 'required',
     //             'product_json_list' => 'required',
-    //             'lead_id' => 'nullable|exists:tenant.leads,id',
+    //             'lead_id' => 'nullable|exists:leads,id',
     //         ]);
 
     //         if ($validator->fails()) {
@@ -300,14 +300,14 @@ class QuoteController extends Controller
             }
 
             $validator = Validator::make($request->all(), [
-                'customer_id' => 'required|exists:tenant.entities,id',
+                'customer_id' => 'required|exists:entities,id',
                 'customer_type' => 'required|string',
                 'date' => 'required|date',
                 'payment_after_days' => 'required|numeric',
                 'grand_total' => 'required|numeric',
                 'tax_detail_json' => 'required',
                 'product_json_list' => 'required',
-                'lead_id' => 'nullable|exists:tenant.leads,id',
+                'lead_id' => 'nullable|exists:leads,id',
             ]);
 
             if ($validator->fails()) {
@@ -532,13 +532,13 @@ class QuoteController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'id' => 'required|exists:tenant.quotes,id',
+                'id' => 'required|exists:quotes,id',
                 'grand_total' => 'required|numeric',
                 'gst' => 'required|numeric',
 
                 'tax_detail_json' => 'required',
                 'product_json_list' => 'required',
-                'lead_id' => 'nullable|exists:tenant.leads,id',
+                'lead_id' => 'nullable|exists:leads,id',
             ]);
 
             if ($validator->fails()) {
@@ -752,8 +752,8 @@ class QuoteController extends Controller
             Log::info('Request :-', $request->all());
 
             $validator = Validator::make($request->all(), [
-                'customer_id' => 'required|exists:tenant.entities,id',
-                'product_id' => 'required|exists:tenant.products,id',
+                'customer_id' => 'required|exists:entities,id',
+                'product_id' => 'required|exists:products,id',
             ]);
 
             if ($validator->fails()) {
@@ -829,7 +829,7 @@ class QuoteController extends Controller
             Log::info('Request :-', $request->all());
 
             $validator = Validator::make($request->all(), [
-                'customer_id' => 'required|exists:tenant.entities,id',
+                'customer_id' => 'required|exists:entities,id',
             ]);
 
             if ($validator->fails()) {
@@ -868,7 +868,7 @@ class QuoteController extends Controller
             Log::info('Request :-', $request->all());
 
             $validator = Validator::make($request->all(), [
-                'quote_id' => 'required|exists:tenant.quotes,id',
+                'quote_id' => 'required|exists:quotes,id',
             ]);
 
             if ($validator->fails()) {
@@ -911,7 +911,7 @@ class QuoteController extends Controller
             Log::info('Request :-', $request->all());
 
             $validator = Validator::make($request->all(), [
-                'quote_id' => 'required|exists:tenant.quotes,id',
+                'quote_id' => 'required|exists:quotes,id',
                 'billing_country' => 'required',
                 'billing_state' => 'required',
                 'billing_city' => 'required',
@@ -1069,7 +1069,7 @@ class QuoteController extends Controller
             Log::info('Request :-', $request->all());
 
             $validator = Validator::make($request->all(), [
-                'customer_id' => 'required|exists:tenant.entities,id',
+                'customer_id' => 'required|exists:entities,id',
             ]);
 
             if ($validator->fails()) {
@@ -1342,11 +1342,11 @@ class QuoteController extends Controller
     private function addQuoteFromAdminPayload(Request $request, User $user): Quotes
     {
         $validator = Validator::make($request->all(), [
-            'lead_id' => 'required|exists:tenant.entities,id',
-            'new_lead_id' => 'nullable|exists:tenant.leads,id',
+            'lead_id' => 'required|exists:entities,id',
+            'new_lead_id' => 'nullable|exists:leads,id',
             'customer_type' => 'required|in:regular,debitClient',
             'date' => 'required|date',
-            'transport_id' => 'nullable|exists:tenant.entities,id',
+            'transport_id' => 'nullable|exists:entities,id',
             'company_name' => 'nullable|string|max:120',
             'gst_no' => 'nullable|string|max:15',
             'adhar_no' => 'nullable|digits:12',
@@ -1355,11 +1355,11 @@ class QuoteController extends Controller
             'advance_payment' => 'required_if:customer_type,debitClient|nullable|numeric|min:0',
             'products' => 'required|array',
             'products.id' => 'required|array|min:1',
-            'products.id.*' => 'required|exists:tenant.products,id',
+            'products.id.*' => 'required|exists:products,id',
             'products.qty' => 'required|array',
             'products.qty.*' => 'required|numeric|gt:0',
             'products.units' => 'required|array',
-            'products.units.*' => 'required|exists:tenant.units,id',
+            'products.units.*' => 'required|exists:units,id',
             'products.price' => 'required|array',
             'products.price.*' => 'required|numeric|min:0',
             'products.discount' => 'nullable|array',
@@ -1845,10 +1845,6 @@ class QuoteController extends Controller
 
     private function tenantConnectionName(): string
     {
-        if (config('tenancy.enabled', false) && app()->bound('currentTenant')) {
-            return 'tenant';
-        }
-
         return (new Quotes())->getConnectionName() ?: config('database.default', 'mysql');
     }
 

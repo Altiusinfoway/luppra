@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class InvoiceTemplate extends Model
 {
-    protected $connection = 'landlord';
-
     protected $fillable = [
         'name',
         'code',

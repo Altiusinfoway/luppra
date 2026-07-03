@@ -896,7 +896,7 @@ class LeadController extends Controller
                     // 'products.*'   => 'required|exists:products,id',
 
                     'sources'     => 'required|array|min:1',
-                    'sources.*'   => 'required|exists:tenant.lead_sources,id',
+                    'sources.*'   => 'required|exists:lead_sources,id',
                     //  'billing_country'=>'required',
                     // 'billing_state'=>'required',
                     // 'billing_city'=>'required',
@@ -1279,13 +1279,13 @@ class LeadController extends Controller
         ];
 
         try {
-            if (Schema::connection('tenant')->hasColumn('lead_calls', 'status')) {
+            if (Schema::hasColumn('lead_calls', 'status')) {
                 $callData['status'] = 0;
             }
-            if (Schema::connection('tenant')->hasColumn('lead_calls', 'created_by')) {
+            if (Schema::hasColumn('lead_calls', 'created_by')) {
                 $callData['created_by'] = \Auth::id();
             }
-            if (Schema::connection('tenant')->hasColumn('lead_calls', 'call_duration')) {
+            if (Schema::hasColumn('lead_calls', 'call_duration')) {
                 $callData['call_duration'] = '00:00:00';
             }
         } catch (\Throwable $e) {

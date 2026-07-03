@@ -27,12 +27,12 @@
                         <div class="card-header">
                             <div class="d-flex justify-content-between">
                                 <h5 class="card-title  mb-0">Roles List</h5>
-                                @can('create role')
+                                {{-- @can('create role') --}}
                                     <div>
                                         <a href="{{ route('roles.create') }}" class="btn btn-sm btn-success" id="addproduct-btn"><i
                                                 class="ri-add-line align-bottom me-1"></i> Add Role</a>
                                     </div>
-                                @endcan
+                                {{-- @endcan --}}
                             </div>
                         </div>
                         <div class="card-body">

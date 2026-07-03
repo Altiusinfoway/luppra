@@ -1,15 +1,4 @@
-node:internal/process/per_thread:225
-      throw new ErrnoException(err, 'kill');
-      ^
-
-Error: kill ENOSYS
-    at process.kill (node:internal/process/per_thread:225:13)
-    at signalHandler (D:\xampp\htdocs\raviagro\node_modules\node-cleanup\node-cleanup.js:65:17)
-    at process.emit (node:events:524:28)
-    at Signal.callbackTrampoline (node:internal/async_hooks:130:17) {
-  errno: -4054,
-  code: 'ENOSYS',
-  syscall: 'kill'
-}
-
-Node.js v20.20.0
+Error: ENOENT: no such file or directory, open 'C:\xampp\htdocs\git_main\engagenet_single\sessions\md_device_8d63daf6-ac9a-441c-9ea9-4db382411cdf\creds.json'
+    at async open (node:internal/fs/promises:639:25)
+    at async writeFile (node:internal/fs/promises:1219:14)
+    at async file:///C:/xampp/htdocs/git_main/engagenet_single/node_modules/baileys/lib/Utils/use-multi-file-auth-state.js:35:17

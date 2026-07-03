@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Plan extends Model
 {
-    protected $connection = 'landlord';
-
     protected $fillable = [
         'name',
         'code',

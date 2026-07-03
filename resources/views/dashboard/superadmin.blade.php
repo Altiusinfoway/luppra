@@ -6,10 +6,9 @@
         <div class="row">
             <div class="col-12">
                 <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-galaxy-transparent">
-                    <h4 class="mb-sm-0">Superadmin SaaS Dashboard</h4>
+                    <h4 class="mb-sm-0">Superadmin Dashboard</h4>
                     <div class="d-flex gap-2">
-                        <a href="{{ route('setting.tenancy.index') }}" class="btn btn-sm btn-success">Manage Tenants</a>
-                        <a href="{{ route('setting.plans.index') }}" class="btn btn-sm btn-outline-success">Manage Plans</a>
+                        <a href="{{ route('setting.razorpay.index') }}" class="btn btn-sm btn-outline-success">Razorpay Settings</a>
                     </div>
                 </div>
             </div>
@@ -18,25 +17,25 @@
         <div class="row g-3 mb-3">
             <div class="col-md-6 col-xl-3">
                 <div class="card"><div class="card-body">
-                    <p class="text-muted mb-1">Total Tenants</p>
+                    <p class="text-muted mb-1">Companies</p>
                     <h3 class="mb-0">{{ number_format($saas_kpis['tenants_total'] ?? 0) }}</h3>
                 </div></div>
             </div>
             <div class="col-md-6 col-xl-3">
                 <div class="card"><div class="card-body">
-                    <p class="text-muted mb-1">Active Tenants</p>
+                    <p class="text-muted mb-1">Active Companies</p>
                     <h3 class="mb-0">{{ number_format($saas_kpis['tenants_active'] ?? 0) }}</h3>
                 </div></div>
             </div>
             <div class="col-md-6 col-xl-3">
                 <div class="card"><div class="card-body">
-                    <p class="text-muted mb-1">Active Subscriptions</p>
+                    <p class="text-muted mb-1">Active Users</p>
                     <h3 class="mb-0">{{ number_format($saas_kpis['subs_active'] ?? 0) }}</h3>
                 </div></div>
             </div>
             <div class="col-md-6 col-xl-3">
                 <div class="card"><div class="card-body">
-                    <p class="text-muted mb-1">Estimated MRR</p>
+                    <p class="text-muted mb-1">Revenue</p>
                     <h3 class="mb-0">&#8377;{{ number_format($saas_kpis['estimated_mrr'] ?? 0, 2) }}</h3>
                 </div></div>
             </div>
@@ -46,8 +45,7 @@
             <div class="col-xl-9">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0">Tenant Health Snapshot</h5>
-                        <a href="{{ route('setting.tenancy.index') }}" class="btn btn-sm btn-primary">Open Tenancy Health</a>
+                        <h5 class="card-title mb-0">Application Snapshot</h5>
                     </div>
                     <div class="card-body">
                         <div class="row g-3">
@@ -83,9 +81,7 @@
                 <div class="card h-100">
                     <div class="card-header"><h5 class="card-title mb-0">Quick Actions</h5></div>
                     <div class="card-body d-grid gap-2">
-                        <a href="{{ route('setting.tenancy.index') }}" class="btn btn-outline-success">Tenant Admin</a>
-                        <a href="{{ route('setting.plans.index') }}" class="btn btn-outline-primary">Plans & Limits</a>
-                        <a href="{{ route('setting.tenancy.index') }}#subscriptions" class="btn btn-outline-warning">Subscription Ops</a>
+                        <a href="{{ route('setting.razorpay.index') }}" class="btn btn-outline-primary">Razorpay Settings</a>
                     </div>
                 </div>
             </div>

@@ -48,24 +48,6 @@ class Utility extends Model
 
     private static function settingsConnectionName(): string
     {
-        if (
-            config('tenancy.enabled', false)
-            && app()->bound('currentTenant')
-        ) {
-            try {
-                if (Schema::connection('tenant')->hasTable('settings')) {
-                    return 'tenant';
-                }
-            } catch (\Throwable $e) {
-            }
-        }
-
-        try {
-            DB::connection('landlord')->getPdo();
-            return 'landlord';
-        } catch (\Throwable $e) {
-        }
-
         try {
             $default = (string) config('database.default', 'mysql');
             DB::connection($default)->getPdo();
@@ -73,7 +55,7 @@ class Utility extends Model
         } catch (\Throwable $e) {
         }
 
-        return 'landlord';
+        return 'mysql';
     }
 
     private static function settingsTable()
@@ -468,7 +450,7 @@ class Utility extends Model
 	            $company_name=$company_detail->company_name;
 	        }
 	        $quotationTerms = app(TermsAndConditionService::class)
-	            ->getQuotationTerms(app()->bound('currentTenant') ? 'tenant' : 'landlord');
+	            ->getQuotationTerms(config('database.default', 'mysql'));
 
 	        foreach (array_keys($printOptions) as $val) {
             $print++;
@@ -1925,7 +1907,7 @@ class Utility extends Model
 	            $company_name=$company_detail->company_name;
 	        }
 	        $invoiceTerms = app(TermsAndConditionService::class)
-	            ->getConfiguredInvoiceTerms(app()->bound('currentTenant') ? 'tenant' : 'landlord');
+	            ->getConfiguredInvoiceTerms(config('database.default', 'mysql'));
 
 	        foreach (array_keys($printOptions) as $val) {
             $print++;

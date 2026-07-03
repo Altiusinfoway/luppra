@@ -143,6 +143,11 @@
                         </div>
                         <div class="card-body quote-form-wrap">
                             {{ Form::open(['route' => 'quotes.store', 'method' => 'post', 'enctype' => 'multipart/form-data', 'id' => 'quotesForm', 'autocomplete' => 'off']) }}
+                            @if ($errors->any())
+                                <div class="alert alert-danger">
+                                    {{ $errors->first() }}
+                                </div>
+                            @endif
                             <div class="row">
                                 <div class="col-12">
                                     <div class="quote-form-section">

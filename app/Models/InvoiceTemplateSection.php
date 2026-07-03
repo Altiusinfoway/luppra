@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class InvoiceTemplateSection extends Model
 {
-    protected $connection = 'landlord';
-
     protected $fillable = [
         'invoice_template_id',
         'section_key',
