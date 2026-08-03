@@ -1,21 +1,126 @@
 @extends('layouts.app')
 
+@section('page-css')
+<style>
+    .settings-suite {
+        background: linear-gradient(180deg, rgba(248, 250, 252, 0.78) 0%, rgba(245, 247, 251, 0) 100%);
+    }
+    .settings-suite .hero-shell,
+    .settings-suite .settings-shell {
+        border: 1px solid rgba(255, 255, 255, 0.78);
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 14px 32px rgba(15, 23, 42, 0.05);
+    }
+    .settings-suite .hero-shell {
+        border-radius: 28px;
+        background:
+            radial-gradient(circle at top right, rgba(15, 118, 110, 0.14), transparent 28%),
+            radial-gradient(circle at left center, rgba(37, 99, 235, 0.16), transparent 30%),
+            linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        box-shadow: 0 20px 48px rgba(15, 23, 42, 0.08);
+        margin-bottom: 1rem;
+    }
+    .settings-suite .settings-shell {
+        border-radius: 22px;
+    }
+    .settings-suite .hero-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 12px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.76);
+        border: 1px solid #dbeafe;
+        color: #1d4ed8;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+    }
+    .settings-suite .hero-title {
+        font-size: clamp(2rem, 3vw, 2.7rem);
+        line-height: 1.05;
+        letter-spacing: -0.04em;
+        font-weight: 800;
+        margin: 1rem 0 .45rem;
+        color: #0f172a;
+    }
+    .settings-suite .hero-subtitle {
+        color: #64748b;
+    }
+    .settings-suite .status-banner {
+        border: 1px solid #dce4ee;
+        border-radius: 18px;
+        padding: 1rem 1.15rem;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+    }
+    .settings-suite .status-banner.status-danger {
+        background: linear-gradient(135deg, #fef2f2 0%, #fff1f2 100%);
+        border-color: #fecdd3;
+        color: #be123c;
+    }
+    .settings-suite .info-panel {
+        border: 1px solid #bfdbfe;
+        border-radius: 18px;
+        background: linear-gradient(135deg, #eff6ff 0%, #f8fbff 100%);
+        color: #1e3a8a;
+        padding: 1rem 1.1rem;
+    }
+    .settings-suite .warning-panel {
+        border: 1px solid #fde68a;
+        border-radius: 18px;
+        background: linear-gradient(135deg, #fffbeb 0%, #fff7d6 100%);
+        color: #92400e;
+        padding: 1rem 1.1rem;
+    }
+    .settings-suite .section-row-card {
+        border: 1px solid #dce4ee;
+        border-radius: 20px;
+        background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+        box-shadow: 0 12px 24px rgba(15, 23, 42, 0.04);
+        padding: 1rem;
+    }
+    .settings-suite .section-row-card .section-row-meta {
+        color: #64748b;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+        font-weight: 700;
+    }
+    .settings-suite .form-actions {
+        border-top: 1px solid #e2e8f0;
+        background: linear-gradient(180deg, rgba(248, 250, 252, 0.88) 0%, rgba(255, 255, 255, 0.96) 100%);
+        padding: 1rem 1.5rem 1.25rem;
+    }
+</style>
+@endsection
+
 @section('content')
-<div class="page-content">
+<div class="page-content settings-suite">
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
-                <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-galaxy-transparent">
-                    <h4 class="mb-sm-0">Create Invoice Template</h4>
-                    <div class="d-flex gap-2">
-                        <a href="{{ route('setting.invoice-templates.index') }}" class="btn btn-sm btn-outline-primary">Back</a>
+                <div class="hero-shell">
+                    <div class="card-body p-4 p-lg-5">
+                        <div class="row align-items-center g-4">
+                            <div class="col-lg-8">
+                                <span class="hero-eyebrow">Templates</span>
+                                <h1 class="hero-title">Create Invoice Template</h1>
+                                <p class="hero-subtitle mb-0">Build a new invoice template, configure section blocks, and keep the template management flow visually consistent with the refreshed admin UI.</p>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="d-flex justify-content-lg-end gap-2">
+                                    <a href="{{ route('setting.invoice-templates.index') }}" class="btn btn-sm btn-outline-primary">Back</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
         @if($errors->any())
-            <div class="alert alert-danger">
+            <div class="status-banner status-danger mb-3">
                 <ul class="mb-0">
                     @foreach($errors->all() as $error)
                         <li>{{ $error }}</li>
@@ -27,7 +132,7 @@
         <form method="POST" action="{{ route('setting.invoice-templates.store') }}">
             @csrf
 
-            <div class="card mb-3">
+            <div class="card mb-3 settings-shell">
                 <div class="card-header">
                     <h5 class="card-title mb-0">Template Setup</h5>
                 </div>
@@ -73,7 +178,7 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="alert alert-info mb-0">
+                            <div class="info-panel mb-0">
                                 New templates start with the standard invoice blocks so they work immediately in the shared Dompdf-safe PDF layout.
                             </div>
                         </div>
@@ -88,21 +193,24 @@
                     : $defaultSections;
             @endphp
 
-            <div class="card">
+            <div class="card settings-shell">
                 <div class="card-header d-flex align-items-center justify-content-between">
                     <h5 class="card-title mb-0">Template Sections</h5>
                     <button type="button" class="btn btn-sm btn-outline-primary" id="add-section-row">Add Section</button>
                 </div>
                 <div class="card-body">
-                    <div class="alert alert-warning">
+                    <div class="warning-panel mb-3">
                         Keep the known invoice section keys if you want full invoice structure by default. You can still add custom sections and they will render safely in the new template output.
                     </div>
 
                     <div id="section-rows">
                         @foreach($formSections as $index => $section)
-                            <div class="border rounded p-3 mb-3 section-row">
+                            <div class="section-row-card mb-3 section-row">
                                 <div class="d-flex align-items-center justify-content-between mb-3">
-                                    <h6 class="mb-0">Section Row</h6>
+                                    <div>
+                                        <div class="section-row-meta">Section Block</div>
+                                        <h6 class="mb-0">Section Row</h6>
+                                    </div>
                                     <button type="button" class="btn btn-sm btn-outline-danger remove-section-row">Remove</button>
                                 </div>
 
@@ -141,7 +249,7 @@
                         @endforeach
                     </div>
                 </div>
-                <div class="card-footer d-flex justify-content-end gap-2">
+                <div class="card-footer form-actions d-flex justify-content-end gap-2">
                     <a href="{{ route('setting.invoice-templates.index') }}" class="btn btn-light">Cancel</a>
                     <button type="submit" class="btn btn-primary">Create Template</button>
                 </div>
@@ -151,9 +259,12 @@
 </div>
 
 <template id="section-row-template">
-    <div class="border rounded p-3 mb-3 section-row">
+    <div class="section-row-card mb-3 section-row">
         <div class="d-flex align-items-center justify-content-between mb-3">
-            <h6 class="mb-0">Section Row</h6>
+            <div>
+                <div class="section-row-meta">Section Block</div>
+                <h6 class="mb-0">Section Row</h6>
+            </div>
             <button type="button" class="btn btn-sm btn-outline-danger remove-section-row">Remove</button>
         </div>
 

@@ -1,58 +1,89 @@
 @extends('layouts.app')
 
+@section('page-css')
+<style>
+.regions-suite{background:linear-gradient(180deg,rgba(248,250,252,.72) 0%,rgba(245,247,251,0) 100%)}
+.regions-suite .hero-shell,.regions-suite .shell-card{border:1px solid rgba(255,255,255,.8);border-radius:24px;background:rgba(255,255,255,.9);box-shadow:0 18px 40px rgba(15,23,42,.06)}
+.regions-suite .hero-shell{background:radial-gradient(circle at top right, rgba(59,130,246,.16), transparent 30%),radial-gradient(circle at left center, rgba(99,102,241,.12), transparent 30%),linear-gradient(135deg,#ffffff 0%,#f8fafc 100%)}
+.regions-suite .hero-eyebrow{display:inline-flex;align-items:center;padding:7px 12px;border-radius:999px;border:1px solid #bfdbfe;background:rgba(255,255,255,.86);color:#1d4ed8;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.regions-suite .metric-tile{height:100%;border:1px solid rgba(255,255,255,.78);border-radius:20px;background:rgba(255,255,255,.84);box-shadow:0 12px 28px rgba(15,23,42,.05)}
+.regions-suite .metric-tile .label{display:block;margin-bottom:8px;color:#64748b;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.regions-suite .metric-tile h3{margin:0;font-size:1.8rem;font-weight:800;letter-spacing:-.03em}
+.regions-suite .toolbar-strip{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;padding:1rem 1.1rem 1.4rem;border-bottom:1px solid rgba(226,232,240,.8)}
+.regions-suite .table-note{max-width:620px}
+.regions-suite .table-shell-wrap{padding:0 1.1rem 1.1rem}
+.regions-suite .table-responsive{border:1px solid #e2e8f0;border-radius:20px;overflow:hidden;background:#fff}
+.regions-suite table thead th{background:#f8fafc!important}
+</style>
+@endsection
+
 @section('content')
-<div class="page-content">
+<div class="page-content regions-suite">
     <div class="container-fluid">
-        <!-- start page title -->
         <div class="row">
             <div class="col-12">
-                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <h4 class="mb-sm-0">Cities Management</h4>
-                    <div class="page-title-right">
-                        <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="javascript: void(0);">Administration</a></li>
-                            <li class="breadcrumb-item"><a href="javascript: void(0);">Regions</a></li>
-                            <li class="breadcrumb-item active">Cities</li>
-                        </ol>
+                <div class="card hero-shell mb-4">
+                    <div class="card-body p-4 p-lg-5">
+                        <div class="row align-items-center g-4">
+                            <div class="col-lg-7">
+                                <span class="hero-eyebrow">Region Admin</span>
+                                <h2 class="mt-3 mb-2">Cities Management</h2>
+                                <p class="text-muted mb-0">Keep city records organized inside the same lighter regional administration layout used across the refreshed app.</p>
+                            </div>
+                            <div class="col-lg-5">
+                                <div class="d-flex justify-content-lg-end">
+                                    <ol class="breadcrumb m-0">
+                                        <li class="breadcrumb-item"><a href="javascript: void(0);">Administration</a></li>
+                                        <li class="breadcrumb-item"><a href="javascript: void(0);">Regions</a></li>
+                                        <li class="breadcrumb-item active">Cities</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- end page title -->
-
-
         <div class="row">
+            <div class="col-md-6 col-xl-3 mb-4">
+                <div class="card metric-tile">
+                    <div class="card-body">
+                        <span class="label">Region Layer</span>
+                        <h3>Cities</h3>
+                        <p class="text-muted mb-0 mt-2">City records stay close to the address workflows your team updates every day.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3 mb-4">
+                <div class="card metric-tile">
+                    <div class="card-body">
+                        <span class="label">Management Mode</span>
+                        <h3>Server Sync</h3>
+                        <p class="text-muted mb-0 mt-2">The data grid keeps server-side search while fitting the lighter UI system.</p>
+                    </div>
+                </div>
+            </div>
             <div class="col-lg-12">
-                <div class="card">
+                <div class="card shell-card">
                     <div class="card-header">
                         <h5 class="card-title mb-0">Cities List</h5>
                     </div>
                     <div class="card-body">
-                        <!-- Toolbar -->
-                        <div class="row g-3 mb-4">
-                            <div class="col-sm-4 col-md-6">
-                                {{-- <div class="search-box">
-                                    <input type="text" class="form-control search" placeholder="Search countries...">
-                                    <i class="ri-search-line search-icon"></i>
-                                </div> --}}
+                        <div class="toolbar-strip">
+                            <div class="table-note">
+                                <h6 class="mb-1">City Directory</h6>
+                                <p class="text-muted mb-0">Create and manage city records inside the same polished CRUD layout used for the rest of the refreshed back office.</p>
                             </div>
-                            <div class="col-sm-8 col-md-6">
-                                <div class="d-flex justify-content-sm-end gap-2">
-
-
-                                    <a href="javascript:void(0);"
-                                        class="btn btn-success"
-                                        data-size="md"
-                                        data-url="{{ route('regions.cities.create') }}"
-                                        data-ajax-popup="true"
-                                        data-bs-original-title="{{__('Add New City')}}"><i class="ri-barcode-box-line align-bottom me-1"></i> Add City</a>
-
-                                </div>
-                            </div>
+                            <a href="javascript:void(0);"
+                                class="btn btn-success"
+                                data-size="md"
+                                data-url="{{ route('regions.cities.create') }}"
+                                data-ajax-popup="true"
+                                data-bs-original-title="{{__('Add New City')}}"><i class="ri-add-line align-bottom me-1"></i> Add City</a>
                         </div>
 
-                        <!-- Countries Table -->
-                        <div class="-table-responsive">
+                        <div class="table-shell-wrap">
+                        <div class="table-responsive">
                             <table class="table table-bordered table-nowrap align-middle mb-0" id="cityTbl">
                                 <thead class="table-light">
                                     <tr>
@@ -67,6 +98,7 @@
                                 </thead>
                                 <tbody></tbody>
                             </table>
+                        </div>
                         </div>
 
                     </div>

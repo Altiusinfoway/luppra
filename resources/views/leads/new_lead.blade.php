@@ -1,31 +1,100 @@
 @extends('layouts.app')
 
+@section('page-css')
+    <style>
+        .workflow-suite {
+            background: linear-gradient(180deg, rgba(248, 250, 252, 0.78) 0%, rgba(245, 247, 251, 0) 100%);
+        }
+
+        .workflow-suite .hero-shell,
+        .workflow-suite .toolbar-shell,
+        .workflow-suite .table-shell {
+            border: 1px solid rgba(255, 255, 255, 0.78);
+            border-radius: 26px;
+            background:
+                radial-gradient(circle at top right, rgba(15, 118, 110, 0.12), transparent 28%),
+                radial-gradient(circle at left center, rgba(37, 99, 235, 0.12), transparent 30%),
+                #ffffff;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.07);
+        }
+
+        .workflow-suite .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.76);
+            border: 1px solid #dbeafe;
+            color: #1d4ed8;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+        .workflow-suite .toolbar-shell .card-header {
+            padding-bottom: .5rem !important;
+        }
+        .workflow-suite .toolbar-stack {
+            gap: .65rem;
+            flex-wrap: wrap;
+        }
+        .workflow-suite .table-wrap {
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #fff;
+        }
+        .workflow-suite .table-wrap table {
+            margin-bottom: 0;
+        }
+        .workflow-suite .filters-panel .offcanvas-header {
+            border-bottom: 1px solid #e2e8f0;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        }
+        .workflow-suite .filters-panel .offcanvas-title {
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+        .workflow-suite .filters-panel .offcanvas-body {
+            background: #f8fafc;
+        }
+        .workflow-suite .filters-panel .offcanvas-footer {
+            background: #ffffff;
+        }
+    </style>
+@endsection
+
 @section('content')
-    <div class="page-content">
+    <div class="page-content workflow-suite">
         <div class="container-fluid">
-            <!-- start page title -->
             <div class="row">
                 <div class="col-12">
-                    <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-galaxy-transparent">
-                        <h4 class="mb-sm-0"> New Leads</h4>
-
-                        <div class="page-title-right">
-                            <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a href="{{ route('leads.list') }}">Leads</a></li>
-                                <li class="breadcrumb-item active">List</li>
-                            </ol>
+                    <div class="hero-shell mb-4">
+                        <div class="card-body p-4 p-lg-5">
+                            <div class="row align-items-center g-4">
+                                <div class="col-lg-8">
+                                    <span class="hero-eyebrow">Pipeline Table</span>
+                                    <h1 class="mb-3">Lead Table View</h1>
+                                    <p class="text-muted mb-0">Search, filter, and manage leads from a cleaner table workspace while keeping the same CRM actions available.</p>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="d-flex justify-content-lg-end">
+                                        <ol class="breadcrumb m-0">
+                                            <li class="breadcrumb-item"><a href="{{ route('leads.list') }}">Leads</a></li>
+                                            <li class="breadcrumb-item active">Table View</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-
                     </div>
                 </div>
             </div>
-            <!-- end page title -->
-
-            <!-- Content -->
 
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="card">
+                    <div class="card toolbar-shell mb-4">
                         <div class="card-header">
                             <div class="row align-item-center justify-content-between">
                                 <div class="col-auto">
@@ -34,7 +103,7 @@
 
                                 <div class="col-auto d-flex">
                                     <div class="">
-                                        <div class="hstack gap-2">
+                                        <div class="hstack toolbar-stack">
 
                                             <button class="btn btn-soft-danger" id="remove-actions"
                                                 onClick="deleteMultiple()"><i class="ri-delete-bin-2-line"></i></button>
@@ -80,7 +149,7 @@
 
                                             <button type="button" class="btn btn-sm btn-info" data-bs-toggle="offcanvas"
                                                 href="#offcanvasExample">
-                                                <i class="ri-filter-3-line align-bottom me-1"></i> Fliters
+                                                <i class="ri-filter-3-line align-bottom me-1"></i> Filters
                                             </button>
 
 
@@ -138,7 +207,15 @@
 
                             </div>
                         </div>
+                    </div>
+                </div><!--end col-->
+            </div><!--end row-->
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card table-shell">
                         <div class="card-body">
+                            <div class="table-responsive table-wrap">
                             <table id="leadListNew"
                                 class="table table-bordered dt-responsive nowrap table-striped align-middle"
                                 style="width:100%">
@@ -163,17 +240,17 @@
                                 </thead>
                                 <tbody></tbody>
                             </table>
+                            </div>
                         </div>
                     </div>
                 </div><!--end col-->
             </div><!--end row-->
-            <!-- end Content -->
 
             <!-- filter model -->
-            <div class="offcanvas offcanvas-end fade" tabindex="-1" id="offcanvasExample"
+            <div class="offcanvas offcanvas-end fade filters-panel" tabindex="-1" id="offcanvasExample"
                 aria-labelledby="offcanvasExampleLabel" aria-modal="true" role="dialog">
                 <div class="offcanvas-header bg-light">
-                    <h5 class="offcanvas-title" id="offcanvasExampleLabel">Leads Fliters</h5>
+                    <h5 class="offcanvas-title" id="offcanvasExampleLabel">Lead Filters</h5>
                     <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
                         aria-label="Close"></button>
                 </div>
@@ -228,7 +305,7 @@
 
                 <div class="offcanvas-footer border-top p-3 text-center hstack gap-2">
                     <button class="btn btn-light w-100">Clear Filter</button>
-                    <button type="submit" class="btn btn-success w-100">Filters</button>
+                    <button type="submit" class="btn btn-success w-100">Apply Filters</button>
                 </div>
                 {{ Form::close() }}
 

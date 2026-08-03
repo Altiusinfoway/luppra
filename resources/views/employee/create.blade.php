@@ -1,26 +1,211 @@
 @extends('layouts.app')
 
+@section('page-css')
+    <style>
+        .hr-suite {
+            background: linear-gradient(180deg, rgba(248, 250, 252, 0.78) 0%, rgba(245, 247, 251, 0) 100%);
+        }
+
+        .hr-suite .hero-shell,
+        .hr-suite .profile-shell {
+            border: 1px solid rgba(255, 255, 255, 0.78);
+            border-radius: 26px;
+            background:
+                radial-gradient(circle at top right, rgba(15, 118, 110, 0.12), transparent 28%),
+                radial-gradient(circle at left center, rgba(37, 99, 235, 0.12), transparent 30%),
+                #ffffff;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.07);
+        }
+
+        .hr-suite .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.76);
+            border: 1px solid #dbeafe;
+            color: #1d4ed8;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .hr-suite .profile-banner {
+            overflow: hidden;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.78);
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06);
+        }
+
+        .hr-suite .profile-banner .profile-wid-img {
+            min-height: 180px;
+            object-fit: cover;
+            filter: saturate(1.05);
+        }
+
+        .hr-suite .profile-shell {
+            background: rgba(255, 255, 255, 0.92);
+        }
+
+        .hr-suite .profile-user img.user-profile-image {
+            width: 112px;
+            height: 112px;
+            object-fit: cover;
+            border: 4px solid rgba(255, 255, 255, 0.94);
+            box-shadow: 0 18px 34px rgba(15, 23, 42, 0.12);
+        }
+
+        .hr-suite .profile-photo-edit {
+            right: 0;
+            bottom: 0;
+        }
+
+        .hr-suite .photo-edit-trigger {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 999px;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1d4ed8;
+            box-shadow: 0 10px 18px rgba(37, 99, 235, 0.16);
+        }
+
+        .hr-suite .profile-nav-card .nav-link {
+            min-height: 72px;
+            justify-content: center;
+        }
+
+        .hr-suite .form-section-intro {
+            margin-bottom: 1.25rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .hr-suite .form-section-intro h5 {
+            margin-bottom: 0.3rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #0f172a;
+        }
+
+        .hr-suite .form-actions {
+            padding-top: 1rem;
+            border-top: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .hr-suite .summary-card {
+            border: 1px solid rgba(255, 255, 255, 0.78);
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.84);
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.05);
+        }
+
+        .hr-suite .summary-card .label {
+            display: block;
+            margin-bottom: 8px;
+            color: #64748b;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .hr-suite .summary-card h3 {
+            margin: 0;
+            font-size: 1.7rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: #0f172a;
+        }
+
+        .hr-suite .tab-shell {
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            background: #f8fafc;
+            padding: 8px;
+            gap: 8px;
+        }
+
+        .hr-suite .tab-shell .nav-link {
+            border: 0;
+            border-radius: 14px;
+            color: #475569;
+            font-weight: 700;
+            padding: 10px 16px;
+        }
+
+        .hr-suite .tab-shell .nav-link.active {
+            background: #ffffff;
+            color: #0f172a;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+        }
+
+        .hr-suite .status-banner {
+            border: 1px solid #dbe4f0;
+            border-radius: 18px;
+            padding: 0.95rem 1rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+            box-shadow: 0 12px 26px rgba(15, 23, 42, 0.05);
+        }
+
+        .hr-suite .status-banner .banner-label {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-size: 0.76rem;
+            font-weight: 800;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            opacity: .82;
+        }
+
+        .hr-suite .status-banner.status-success {
+            border-color: #bbf7d0;
+            background: linear-gradient(180deg, #ecfdf3 0%, #f7fffb 100%);
+            color: #067647;
+        }
+
+        .hr-suite .status-banner.status-danger {
+            border-color: #fecaca;
+            background: linear-gradient(180deg, #fef2f2 0%, #fffafa 100%);
+            color: #b91c1c;
+        }
+    </style>
+@endsection
+
 @section('content')
-    <div class="page-content">
+    <div class="page-content hr-suite">
         <div class="container-fluid">
             <div class="container-fluid">
-                <!-- start page title -->
                 <div class="row">
                     <div class="col-12">
-                        <div
-                            class="page-title-box d-sm-flex align-items-center justify-content-between bg-galaxy-transparent">
-                            <h4 class="mb-sm-0">Employee Section</h4>
-                            <div class="page-title-right">
-                                <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item"><a href="{{ route('employees.index') }}">Employee</a></li>
-                                    <li class="breadcrumb-item active"> Profile</li>
-                                </ol>
+                        <div class="hero-shell mb-4">
+                            <div class="card-body p-4 p-lg-5">
+                                <div class="row align-items-center g-4">
+                                    <div class="col-lg-8">
+                                        <span class="hero-eyebrow">Workforce Profile</span>
+                                        <h1 class="mb-3">Employee Profile</h1>
+                                        <p class="text-muted mb-0">Manage employee profile details, bank information, and account settings inside the refreshed workforce workspace.</p>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="d-flex justify-content-lg-end">
+                                            <ol class="breadcrumb m-0">
+                                                <li class="breadcrumb-item"><a href="{{ route('employees.index') }}">Employee</a></li>
+                                                <li class="breadcrumb-item active">Profile</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- end page title -->
-                <div class="position-relative mx-n4 mt-n4">
+                <div class="position-relative mx-n4 mt-n4 profile-banner">
                     <div class="profile-wid-bg profile-setting-img">
                         <img src="https://kk.asiantechnocast.com/assets/images/profile-bg.jpg" class="profile-wid-img"
                             alt="">
@@ -28,8 +213,26 @@
                 </div>
 
                 <div class="row">
+                    <div class="col-md-6 col-xl-3 mb-4">
+                        <div class="card summary-card h-100">
+                            <div class="card-body">
+                                <span class="label">Profile</span>
+                                <h3>Employee</h3>
+                                <p class="text-muted mb-0 mt-2">Manage personal, banking, and password data in one organized workforce workspace.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-xl-3 mb-4">
+                        <div class="card summary-card h-100">
+                            <div class="card-body">
+                                <span class="label">Sections</span>
+                                <h3>3 Tabs</h3>
+                                <p class="text-muted mb-0 mt-2">Use clearer segmented tabs so profile tasks feel closer to a modern dashboard app.</p>
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-md-3">
-                        <div class="card mt-n5">
+                        <div class="card profile-shell mt-n5">
                             <div class="card-body p-4">
                                 <div class="text-center">
                                     <div class="profile-user position-relative d-inline-block mx-auto  mb-4">
@@ -43,7 +246,7 @@
 
                                             <label for="profile-img-file-input" class="profile-photo-edit avatar-xs">
                                                 <span
-                                                    class="avatar-title rounded-circle bg-light text-body material-shadow">
+                                                    class="photo-edit-trigger">
                                                     <i class="ri-camera-fill"></i>
                                                 </span>
                                             </label>
@@ -55,7 +258,7 @@
                             </div>
                         </div>
                         <!--end card-->
-                        <div class="card">
+                        <div class="card profile-shell profile-nav-card">
                             <div class="card-body">
                                 <div class="nav nav-pills flex-column nav-pills-tab custom-verti-nav-pills text-center">
                                     <a class="nav-link show active" href="#">
@@ -70,9 +273,9 @@
                     </div>
                     <!--end col-->
                     <div class="col-md-9">
-                        <div class="card mt-xxl-n5">
+                        <div class="card profile-shell mt-xxl-n5">
                             <div class="card-header">
-                                <ul class="nav nav-tabs-custom rounded card-header-tabs border-bottom-0" role="tablist">
+                                <ul class="nav nav-tabs-custom rounded card-header-tabs border-bottom-0 tab-shell" role="tablist">
                                     <li class="nav-item" role="presentation">
                                         <a class="nav-link active" data-bs-toggle="tab" href="#personalDetails"
                                             role="tab" aria-selected="true">
@@ -96,6 +299,10 @@
                             <div class="card-body p-4">
                                 <div class="tab-content">
                                     <div class="tab-pane active" id="personalDetails" role="tabpanel">
+                                        <div class="form-section-intro">
+                                            <h5>Personal Details</h5>
+                                            <p class="text-muted mb-0">Update identity, role, department, and contact information for this employee profile.</p>
+                                        </div>
                                         @if (isset($user_id))
                                             <form action="{{ route('employees.update', [$user_id, 'user' => 'user']) }}"
                                                 method="post" enctype="multipart/form-data">
@@ -326,11 +533,11 @@
                                             </div> --}}
                                             <!--end col-->
 
-                                            <div class="col-lg-12">
+                                            <div class="col-lg-12 form-actions">
                                                 <div class="hstack gap-2 justify-content-end">
-                                                    <button type="submit" class="btn btn-primary">Updates</button>
+                                                    <button type="submit" class="btn btn-primary">Update Profile</button>
                                                     <a href="{{ route('employees.index') }}"
-                                                        class="btn btn-soft-success">Cancel</a>
+                                                        class="btn btn-light">Cancel</a>
                                                 </div>
                                             </div>
                                             <!--end col-->
@@ -341,8 +548,14 @@
                                     <!--end tab-pane-->
 
                                     <div class="tab-pane bank-detail-form" id="bankDetail" role="tabpanel">
-                                        <div id="success-message" class="alert alert-success d-none">Employee has been
-                                            updated successfully</div>
+                                        <div id="success-message" class="status-banner status-success d-none">
+                                            <span class="banner-label">Bank details updated</span>
+                                            Employee has been updated successfully
+                                        </div>
+                                        <div class="form-section-intro">
+                                            <h5>Bank Details</h5>
+                                            <p class="text-muted mb-0">Keep salary, account, and banking information in sync for payroll and reporting flows.</p>
+                                        </div>
                                         <form id="bankDetailForm"
                                             action="{{ route('employees.update_bank_detail', isset($user_id) ? [$user_id, 'user' => 'user'] : [$emp_id, 'emp' => 'emp']) }}"
                                             method="POST">
@@ -483,11 +696,11 @@
                                         </div> --}}
                                                 @endif
 
-                                                <div class="col-lg-12">
+                                                <div class="col-lg-12 form-actions">
                                                     <div class="hstack gap-2 justify-content-end">
-                                                        <button type="submit" class="btn btn-primary">Updates</button>
+                                                        <button type="submit" class="btn btn-primary">Update Bank Details</button>
                                                         <a href="{{ route('employees.index') }}"
-                                                            class="btn btn-soft-success">Cancel</a>
+                                                            class="btn btn-light">Cancel</a>
                                                     </div>
                                                 </div>
                                                 <!--end col-->
@@ -498,9 +711,17 @@
                                     <!--end tab-pane-->
 
                                     <div class="tab-pane" id="changePassword" role="tabpanel">
-                                        <div id="success-message_password" class="alert alert-success d-none">Passowrd has
-                                            been updated successfully</div>
-                                        <div id="error-general" class="alert alert-danger d-none"></div>
+                                        <div id="success-message_password" class="status-banner status-success d-none">
+                                            <span class="banner-label">Password updated</span>
+                                            Passowrd has been updated successfully
+                                        </div>
+                                        <div id="error-general" class="status-banner status-danger d-none">
+                                            <span class="banner-label">Password update issue</span>
+                                        </div>
+                                        <div class="form-section-intro">
+                                            <h5>Change Password</h5>
+                                            <p class="text-muted mb-0">Reset the employee account password from the same secure profile workspace.</p>
+                                        </div>
                                         <form id="chagePasswordForm"
                                             action="{{ route('employees.update_pwd', isset($user_id) ? [$user_id, 'user' => 'user'] : [$emp_id, 'emp' => 'emp']) }}"
                                             method="POST">
@@ -550,7 +771,7 @@
                                                     </div>
                                                 </div>
                                                 <!--end col-->
-                                                <div class="col-lg-12">
+                                                <div class="col-lg-12 form-actions">
                                                     <div class="text-end">
                                                         <button type="submit" class="btn btn-success">Change
                                                             Password</button>

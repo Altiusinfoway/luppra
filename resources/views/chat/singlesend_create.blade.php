@@ -1,33 +1,75 @@
 @extends('layouts.app')
 
+@section('page-css')
+<style>
+    .single-message-suite {
+        background: linear-gradient(180deg, rgba(248, 250, 252, 0.72) 0%, rgba(245, 247, 251, 0) 100%);
+    }
+
+    .single-message-suite .hero-shell,
+    .single-message-suite .shell-card {
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06);
+    }
+
+    .single-message-suite .hero-shell {
+        background:
+            radial-gradient(circle at top right, rgba(14, 165, 233, 0.14), transparent 30%),
+            radial-gradient(circle at left center, rgba(99, 102, 241, 0.14), transparent 30%),
+            linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    }
+
+    .single-message-suite .hero-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        padding: 7px 12px;
+        border-radius: 999px;
+        border: 1px solid #dbeafe;
+        background: rgba(255, 255, 255, 0.86);
+        color: #1d4ed8;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+    }
+</style>
+@endsection
+
 @section('content')
 
-<div class="page-content">
+<div class="page-content single-message-suite">
     <div class="container-fluid">
-
-        <!-- start page title -->
         <div class="row">
             <div class="col-12">
-                <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-galaxy-transparent">
-                    <h4 class="mb-sm-0">Department Section</h4>
-                    <div class="page-title-right">
-                        <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="{{ route('departments.index') }}">Department </a></li>
-                            <li class="breadcrumb-item active">Create</li>
-                        </ol>
+                <div class="card hero-shell mb-4">
+                    <div class="card-body p-4 p-lg-5">
+                        <div class="row align-items-center g-4">
+                            <div class="col-lg-7">
+                                <span class="hero-eyebrow">Direct Messaging</span>
+                                <h2 class="mt-3 mb-2">Single Send</h2>
+                                <p class="text-muted mb-0">Compose plain-text and media-rich Whatsapp messages from a cleaner communication workspace without changing the sending flows.</p>
+                            </div>
+                            <div class="col-lg-5">
+                                <div class="d-flex justify-content-lg-end">
+                                    <ol class="breadcrumb m-0">
+                                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+                                        <li class="breadcrumb-item active">Single Send</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-
                 </div>
             </div>
         </div>
-        <!-- end page title -->
         <div class="row">
-            <!-- Varying Modal Content -->
             <div class="col-lg-6">
-                <div class="card">
+                <div class="card shell-card">
                     <div class="card-header">
                         <div class="d-flex justify-content-between">
-                            <h5 class="card-title  mb-0">Department Add</h5>
+                            <h5 class="card-title mb-0">Send Message</h5>
                         </div>
                     </div>
 

@@ -26,6 +26,13 @@
     .product-modal-form .form-select {
         min-height: 40px;
     }
+    .product-modal-form .marketplace-note {
+        border: 1px solid #bfdbfe;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #eff6ff 0%, #f8fbff 100%);
+        padding: 12px 14px;
+        color: #1e3a8a;
+    }
 </style>
 
 <!-- Product Modal  Start -->
@@ -48,8 +55,8 @@
                     ]) }}
                 </div>
                 <div class="col-md-6">
-                    <label for="code" class="form-label">SKU Code</label>
-                    {{ Form::text('code', null, ['class' => 'form-control', 'id' => 'code', 'placeholder' => __('Enter SKU code')]) }}
+                    <label for="code" class="form-label">Master SKU <span class="required-dot">*</span></label>
+                    {{ Form::text('code', null, ['class' => 'form-control', 'id' => 'code', 'placeholder' => __('Enter internal master SKU'), 'required' => 'required']) }}
                 </div>
                 <div class="col-md-6">
                     <label for="hsn_code" class="form-label">HSN Code</label>
@@ -121,6 +128,12 @@
                     {{ Form::file('image', ['class' => 'form-control', 'required']) }}
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <div class="marketplace-note mb-0">
+            Marketplace listings are now managed on a dedicated product page after the master product is created.
         </div>
     </div>
 

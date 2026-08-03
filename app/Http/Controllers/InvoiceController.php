@@ -9,15 +9,32 @@ use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\OrderStage;
 use App\Models\Products;
+use App\Models\MarketplaceListing;
 use App\Models\Utility;
 use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Yajra\DataTables\Facades\DataTables;
 
 class InvoiceController extends Controller
 {
+    private function resolveMarketplaceListing(?string $listingId, int $productId): ?MarketplaceListing
+    {
+        if (empty($listingId)) {
+            return null;
+        }
+
+        if (!Schema::hasTable('marketplace_listings')) {
+            return null;
+        }
+
+        return MarketplaceListing::where('id', (int) $listingId)
+            ->where('product_id', $productId)
+            ->firstOrFail();
+    }
+
     private function writeInvoiceActivity(string $action, string $eventKey, Order $invoice, string $description, array $properties = []): void
     {
         ActivityLogger::writeFor('invoices', $action, $invoice, null, [
@@ -236,7 +253,10 @@ class InvoiceController extends Controller
 
 
             $transport_list = Entity::IsTransport()->toArray();
-            $product_list = Products::get();
+            $product_list = Products::with('getGstSlabMaster')->get();
+            if (Schema::hasTable('marketplace_listings')) {
+                $product_list->load('marketplaceListings');
+            }
 
             $lead = null;
             if ($lead_id) {
@@ -350,10 +370,11 @@ class InvoiceController extends Controller
         foreach ($products['id'] as $index => $productId) {
 
             $product_id = $products['id'][$index];
+            $marketplaceListing = $this->resolveMarketplaceListing($products['listing_id'][$index] ?? null, (int) $product_id);
             $qty = (float) $products['qty'][$index];
-            $mrp = (float) $products['mrp'][$index];
+            $mrp = (float) ($products['mrp'][$index] ?? $marketplaceListing?->mrp ?? 0);
             $units = (float) $products['units'][$index];
-            $dealer_price = (float) $products['price'][$index];
+            $dealer_price = (float) ($products['price'][$index] ?? $marketplaceListing?->selling_price ?? 0);
             $discount = (float) ($products['discount'][$index] ?? 0);
             $product_total = (float) $products['product_total'][$index];
             $short_note = $products['short_notes'][$index];
@@ -373,6 +394,7 @@ class InvoiceController extends Controller
             OrderProduct::create([
                 'order_id' => $quote_id['id'],
                 'product_id' => $product_id,
+                'marketplace_listing_id' => $marketplaceListing?->id,
                 'qty' => $qty,
                 'unit_id' => $units,
                 'mrp' => $mrp,

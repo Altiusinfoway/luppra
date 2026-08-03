@@ -2,7 +2,8 @@
     @csrf
     <div class="row g-3">
         <div class="row g-3">
-            <div class="col-lg-8 border-end">
+            <div class="col-lg-8">
+                <div class="section-card h-100">
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label" for="name">name <span class="text-danger">*</span></label>
@@ -41,8 +42,10 @@
                         <span class="text-danger" id="error-specification"></span>
                     </div>
                 </div>
+                </div>
             </div>
             <div class="col-lg-4">
+                <div class="section-card h-100">
                 <label class="form-label mb-2">Contact Numbers<span class="text-danger">*</span></label>
                 <div id="contact-wrapper">
                     @php $oldContacts = old('contact', ['']); @endphp
@@ -85,6 +88,7 @@
 
                     </div>
                 </div> --}}
+                </div>
             </div>
         </div>
 
@@ -93,7 +97,8 @@
 
         <hr class="divider">
         <div class="col-lg-12">
-            <div class="d-flex justify-content-between">
+            <div class="section-card">
+            <div class="d-flex justify-content-between align-items-center">
                 <h5 class="card-title  mb-0">Address Details<span class="text-danger">*</span></h5>
                 <button type="button" class="btn btn-sm btn-primary" id="add-address-btn">+ Add Address</button>
             </div>
@@ -104,12 +109,13 @@
                     <hr class="divider">
                 </div>
             </div>
+            </div>
         </div>
     </div>
 
 
     <div class="text-center mt-3">
-        <button type="submit" class="btn btn-sm btn-success w-sm" id="transportAddBtn">Submit</button>
+        <button type="submit" class="btn btn-sm btn-primary w-sm" id="transportAddBtn">Submit</button>
     </div>
 
 </form>

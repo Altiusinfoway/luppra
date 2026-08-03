@@ -1,32 +1,130 @@
 @extends('layouts.app')
 
+@section('page-css')
+    <style>
+        .workflow-suite {
+            background: linear-gradient(180deg, rgba(248, 250, 252, 0.78) 0%, rgba(245, 247, 251, 0) 100%);
+        }
+
+        .workflow-suite .hero-shell,
+        .workflow-suite .toolbar-shell {
+            border: 1px solid rgba(255, 255, 255, 0.78);
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 14px 32px rgba(15, 23, 42, 0.05);
+        }
+
+        .workflow-suite .hero-shell {
+            border-radius: 28px;
+            background:
+                radial-gradient(circle at top right, rgba(15, 118, 110, 0.14), transparent 28%),
+                radial-gradient(circle at left center, rgba(37, 99, 235, 0.16), transparent 30%),
+                linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            box-shadow: 0 20px 48px rgba(15, 23, 42, 0.08);
+        }
+
+        .workflow-suite .toolbar-shell {
+            border-radius: 22px;
+        }
+
+        .workflow-suite .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.76);
+            border: 1px solid #dbeafe;
+            color: #1d4ed8;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .workflow-suite .hero-title {
+            font-size: clamp(2rem, 3vw, 2.7rem);
+            line-height: 1.05;
+            letter-spacing: -0.04em;
+            font-weight: 800;
+            margin: 1rem 0 .45rem;
+            color: #0f172a;
+        }
+
+        .workflow-suite .hero-subtitle,
+        .workflow-suite .toolbar-note {
+            color: #64748b;
+        }
+        .workflow-suite .toolbar-shell .card-header {
+            padding-bottom: .5rem !important;
+        }
+        .workflow-suite .toolbar-stack {
+            gap: .65rem;
+            flex-wrap: wrap;
+        }
+        .workflow-suite .table-wrap {
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #fff;
+        }
+        .workflow-suite .table-wrap table {
+            margin-bottom: 0;
+        }
+        .workflow-suite .filters-panel .offcanvas-header {
+            border-bottom: 1px solid #e2e8f0;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        }
+        .workflow-suite .filters-panel .offcanvas-title {
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+        .workflow-suite .filters-panel .offcanvas-body {
+            background: #f8fafc;
+        }
+        .workflow-suite .filters-panel .offcanvas-footer {
+            background: #ffffff;
+        }
+    </style>
+@endsection
+
 @section('content')
     @include('leads.lead_import_all_section')
-    <div class="page-content">
+    <div class="page-content workflow-suite">
         <div class="container-fluid">
-            <!-- start page title -->
             <div class="row">
                 <div class="col-12">
-                    <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-galaxy-transparent">
-                        <h4 class="mb-sm-0">Leads</h4>
-
-                        <div class="page-title-right">
-                            <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a href="{{ route('leads.list') }}">Leads</a></li>
-                                <li class="breadcrumb-item active">List</li>
-                            </ol>
+                    <div class="hero-shell mb-4">
+                        <div class="card-body p-4 p-lg-5">
+                            <div class="row align-items-center g-4">
+                                <div class="col-lg-8">
+                                    <span class="hero-eyebrow">Lead Table View</span>
+                                    <h1 class="hero-title">Leads</h1>
+                                    <p class="hero-subtitle mb-0">Work through leads in a structured table view with filters, imports, quick actions, and the same dashboard language used across the refreshed app.</p>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="d-flex justify-content-lg-end flex-wrap gap-2">
+                                        <a href="javascript:void(0);"
+                                            class="btn btn-primary"
+                                            data-size="lg" data-url="{{ route('leads.create') }}"
+                                            data-ajax-popup="true"
+                                            data-bs-original-title="{{ __('Add Lead') }}">
+                                            <i class="ri-add-circle-line me-1"></i> Add Lead
+                                        </a>
+                                        <a href="{{ route('leads.index') }}" class="btn btn-light">
+                                            <i class="bx bx-grid-alt fs-5"></i> Board View
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-
                     </div>
                 </div>
             </div>
 
-            <!-- Content -->
-
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="card">
-                        <div class="card-header">
+                    <div class="card toolbar-shell">
+                        <div class="card-header border-0">
                             <div class="row align-item-center justify-content-between">
                                 <div class="col-auto">
                                     <h5 class="card-title mb-0">Leads List</h5>
@@ -34,18 +132,10 @@
 
                                 <div class="col-auto d-flex">
                                     <div class="">
-                                        <div class="hstack gap-2">
+                                        <div class="hstack toolbar-stack">
 
                                             <button class="btn btn-soft-danger" id="remove-actions"
                                                 onClick="deleteMultiple()"><i class="ri-delete-bin-2-line"></i></button>
-
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-sm btn-success add-btn"
-                                                data-size="lg" data-url="{{ route('leads.create') }}"
-                                                data-ajax-popup="true"
-                                                data-bs-original-title="{{ __('Add Lead') }}"><i
-                                                    class="ri-add-circle-line me-1"></i> Add leads</a>
-
 
                                             <div class="dropdown d-inline-block">
                                                 <button class="btn btn-sm btn-info  dropdown" type="button"
@@ -82,7 +172,7 @@
 
                                             <button type="button" class="btn btn-sm btn-info" data-bs-toggle="offcanvas"
                                                 href="#offcanvasExample">
-                                                <i class="ri-filter-3-line align-bottom me-1"></i> Fliters
+                                                <i class="ri-filter-3-line align-bottom me-1"></i> Filters
                                             </button>
 
 
@@ -130,11 +220,6 @@
                                                             href="{{ route('setting.lead.index') }}">Sources</a></li>
                                                 </ul>
                                             </span>
-                                            <div class="">
-                                                <a href="{{ route('leads.index') }}"
-                                                    class="btn btn-sm btn-danger btn-icon waves-effect waves-light"><i
-                                                        class="bx bx-grid-alt fs-3"></i></a>
-                                            </div>
                                         </div>
 
                                     </div>
@@ -142,8 +227,9 @@
 
                             </div>
                         </div>
+                        <div class="px-3 pb-3 toolbar-note small">Use the filters and bulk actions here when you want a compact tabular workflow instead of the kanban pipeline view.</div>
                         <div class="card-body">
-                            <div class="table-responsive">
+                            <div class="table-responsive table-wrap">
                             <table id="leadList"
                                 class="table table-bordered  nowrap table-striped align-middle"
                                 style="width:100%">
@@ -176,10 +262,10 @@
             <!-- end Content -->
 
             <!-- filter model -->
-            <div class="offcanvas offcanvas-end fade" tabindex="-1" id="offcanvasExample"
+            <div class="offcanvas offcanvas-end fade filters-panel" tabindex="-1" id="offcanvasExample"
                 aria-labelledby="offcanvasExampleLabel" aria-modal="true" role="dialog">
                 <div class="offcanvas-header bg-light">
-                    <h5 class="offcanvas-title" id="offcanvasExampleLabel">Leads Fliters</h5>
+                    <h5 class="offcanvas-title" id="offcanvasExampleLabel">Lead Filters</h5>
                     <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
                         aria-label="Close"></button>
                 </div>
@@ -247,7 +333,7 @@
 
                 <div class="offcanvas-footer border-top p-3 text-center hstack gap-2">
                     <button class="btn btn-light w-100">Clear Filter</button>
-                    <button type="submit" class="btn btn-success w-100">Filters</button>
+                    <button type="submit" class="btn btn-success w-100">Apply Filters</button>
                 </div>
                 {{ Form::close() }}
 

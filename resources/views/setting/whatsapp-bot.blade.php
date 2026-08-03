@@ -1,18 +1,125 @@
 @extends('layouts.app')
 
+@section('page-css')
+<style>
+    .settings-suite {
+        background: linear-gradient(180deg, rgba(248, 250, 252, 0.78) 0%, rgba(245, 247, 251, 0) 100%);
+    }
+    .settings-suite .hero-shell,
+    .settings-suite .settings-shell {
+        border: 1px solid rgba(255, 255, 255, 0.78);
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 14px 32px rgba(15, 23, 42, 0.05);
+    }
+    .settings-suite .hero-shell {
+        border-radius: 28px;
+        background:
+            radial-gradient(circle at top right, rgba(15, 118, 110, 0.14), transparent 28%),
+            radial-gradient(circle at left center, rgba(37, 99, 235, 0.16), transparent 30%),
+            linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        box-shadow: 0 20px 48px rgba(15, 23, 42, 0.08);
+        margin-bottom: 1rem;
+    }
+    .settings-suite .settings-shell {
+        border-radius: 22px;
+    }
+    .settings-suite .hero-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 12px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.76);
+        border: 1px solid #dbeafe;
+        color: #1d4ed8;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+    }
+    .settings-suite .hero-title {
+        font-size: clamp(2rem, 3vw, 2.7rem);
+        line-height: 1.05;
+        letter-spacing: -0.04em;
+        font-weight: 800;
+        margin: 1rem 0 .45rem;
+        color: #0f172a;
+    }
+    .settings-suite .hero-subtitle {
+        color: #64748b;
+    }
+    .settings-suite .summary-card {
+        border: 1px solid rgba(255, 255, 255, 0.78);
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.84);
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.05);
+    }
+    .settings-suite .summary-card .label {
+        display: block;
+        margin-bottom: 8px;
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+    }
+    .settings-suite .summary-card h3 {
+        margin: 0;
+        font-size: 1.7rem;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        color: #0f172a;
+    }
+    .settings-suite .section-intro {
+        border: 1px solid #e2e8f0;
+        border-radius: 18px;
+        background: #f8fafc;
+        padding: 16px 18px;
+        margin-bottom: 22px;
+    }
+    .settings-suite .table-wrap {
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        overflow: hidden;
+        background: #fff;
+    }
+    .settings-suite .status-banner {
+        border: 1px solid #dce4ee;
+        border-radius: 18px;
+        padding: 1rem 1.15rem;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+    }
+    .settings-suite .status-banner.status-warning {
+        background: linear-gradient(135deg, #fffbeb 0%, #fff7d6 100%);
+        border-color: #fde68a;
+        color: #92400e;
+    }
+</style>
+@endsection
+
 @section('content')
-<div class="page-content">
+<div class="page-content settings-suite">
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
-                <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-galaxy-transparent">
-                    <h4 class="mb-sm-0">WhatsApp AI Bot</h4>
-                    <div class="page-title-right">
-                        <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('setting.invoice.view') }}">Settings</a></li>
-                            <li class="breadcrumb-item active">WhatsApp AI Bot</li>
-                        </ol>
+                <div class="hero-shell">
+                    <div class="card-body p-4 p-lg-5">
+                        <div class="row align-items-center g-4">
+                            <div class="col-lg-8">
+                                <span class="hero-eyebrow">Automation</span>
+                                <h1 class="hero-title">WhatsApp AI Bot</h1>
+                                <p class="hero-subtitle mb-0">Configure AI replies, stage rules, and knowledge-base responses inside the same modern admin shell as the refreshed CRM.</p>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="d-flex justify-content-lg-end">
+                                    <ol class="breadcrumb m-0">
+                                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+                                        <li class="breadcrumb-item"><a href="{{ route('setting.invoice.view') }}">Settings</a></li>
+                                        <li class="breadcrumb-item active">WhatsApp AI Bot</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -21,20 +128,43 @@
         <div class="row g-3">
             @if(isset($tablesReady) && !$tablesReady)
                 <div class="col-12">
-                    <div class="alert alert-warning mb-0">
+                    <div class="status-banner status-warning mb-0">
                         WhatsApp bot tables are not created yet. Run <code>php artisan migrate</code> and refresh this page.
                     </div>
                 </div>
             @endif
 
+            <div class="col-md-6 col-xl-3">
+                <div class="card summary-card h-100">
+                    <div class="card-body">
+                        <span class="label">Automation</span>
+                        <h3>AI Bot</h3>
+                        <p class="text-muted mb-0 mt-2">Control WhatsApp reply behavior and customer-response tone from one settings workspace.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="card summary-card h-100">
+                    <div class="card-body">
+                        <span class="label">Rules</span>
+                        <h3>{{ isset($stages) ? count($stages) : 0 }}</h3>
+                        <p class="text-muted mb-0 mt-2">Lead stage rules and fallback prompts stay grouped with the broader bot configuration.</p>
+                    </div>
+                </div>
+            </div>
+
             <div class="col-12">
-                <div class="card">
+                <div class="card settings-shell">
                     <div class="card-header">
                         <h5 class="card-title mb-0">Bot Configuration & Rules</h5>
                     </div>
                     <div class="card-body">
                         <form method="POST" action="{{ route('setting.whatsapp-bot.save') }}">
                             @csrf
+                            <div class="section-intro">
+                                <h6 class="mb-1">Bot configuration</h6>
+                                <p class="text-muted mb-0">Set the AI model, timing, business context, and message style before adjusting stage-specific reply behavior.</p>
+                            </div>
                             <div class="row g-3">
                                 <div class="col-md-3">
                                     <label class="form-label">Enable AI Bot</label>
@@ -87,7 +217,7 @@
 
                             <hr>
                             <h6 class="mb-3">Lead Stage Rules</h6>
-                            <div class="table-responsive">
+                            <div class="table-responsive table-wrap">
                                 <table class="table table-bordered align-middle">
                                     <thead>
                                         <tr>
@@ -139,7 +269,7 @@
             </div>
 
             <div class="col-12">
-                <div class="card">
+                <div class="card settings-shell">
                     <div class="card-header">
                         <h5 class="card-title mb-0">FAQ Knowledge Base</h5>
                     </div>
@@ -173,7 +303,7 @@
                             </div>
                         </form>
 
-                        <div class="table-responsive">
+                        <div class="table-responsive table-wrap">
                             <table class="table table-bordered align-middle">
                                 <thead>
                                     <tr>

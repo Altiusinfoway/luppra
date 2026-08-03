@@ -1,5 +1,138 @@
 @extends('layouts.app')
 
+@section('page-css')
+<style>
+    .dashboard-suite {
+        background: linear-gradient(180deg, rgba(248, 250, 252, 0.78) 0%, rgba(245, 247, 251, 0) 100%);
+    }
+    .dashboard-suite .hero-shell {
+        border: 1px solid rgba(255, 255, 255, 0.78);
+        border-radius: 28px;
+        background:
+            radial-gradient(circle at top right, rgba(15, 118, 110, 0.14), transparent 28%),
+            radial-gradient(circle at left center, rgba(37, 99, 235, 0.16), transparent 30%),
+            linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        box-shadow: 0 20px 48px rgba(15, 23, 42, 0.08);
+        margin-bottom: 1.25rem;
+    }
+    .dashboard-suite .hero-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 12px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.76);
+        border: 1px solid #dbeafe;
+        color: #1d4ed8;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+    }
+    .dashboard-suite .hero-title {
+        font-size: clamp(2rem, 3vw, 2.7rem);
+        line-height: 1.05;
+        letter-spacing: -0.04em;
+        font-weight: 800;
+        margin: 1rem 0 .45rem;
+        color: #0f172a;
+    }
+    .dashboard-suite .hero-subtitle {
+        color: #64748b;
+        max-width: 720px;
+        font-size: .98rem;
+    }
+    .dashboard-suite .hero-action-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: .45rem;
+        border-radius: 14px;
+        font-weight: 700;
+        padding: .7rem 1rem;
+        border: 1px solid #dbeafe;
+        background: rgba(255, 255, 255, 0.92);
+        color: #0f172a;
+        transition: all .18s ease-in-out;
+    }
+    .dashboard-suite .hero-action-btn:hover {
+        transform: translateY(-1px);
+        background: #ffffff;
+        color: #0f172a;
+    }
+    .dashboard-suite .hero-action-primary {
+        background: linear-gradient(135deg, #0f766e 0%, #2563eb 100%);
+        border-color: transparent;
+        color: #ffffff;
+    }
+    .dashboard-suite .hero-action-primary:hover {
+        color: #ffffff;
+    }
+    .dashboard-suite .admin-card {
+        background: rgba(255, 255, 255, 0.88);
+        border: 1px solid rgba(255, 255, 255, 0.78);
+        border-radius: 22px;
+        box-shadow: 0 14px 32px rgba(15, 23, 42, 0.05);
+    }
+    .dashboard-suite .kpi-box {
+        padding: 1.1rem 1.1rem 1rem;
+        height: 100%;
+    }
+    .dashboard-suite .kpi-title {
+        color: #64748b;
+        text-transform: uppercase;
+        font-size: 11px;
+        letter-spacing: .08em;
+        font-weight: 800;
+        margin-bottom: .45rem;
+    }
+    .dashboard-suite .kpi-value {
+        font-size: 1.8rem;
+        line-height: 1.1;
+        font-weight: 800;
+        color: #0f172a;
+        letter-spacing: -0.03em;
+    }
+    .dashboard-suite .kpi-sub {
+        color: #64748b;
+        font-size: .84rem;
+    }
+    .dashboard-suite .metric-chip {
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: .85rem 1rem;
+        background: #f8fafc;
+    }
+    .dashboard-suite .stage-row,
+    .dashboard-suite .source-row {
+        margin-bottom: .9rem;
+    }
+    .dashboard-suite .stage-row:last-child,
+    .dashboard-suite .source-row:last-child {
+        margin-bottom: 0;
+    }
+    .dashboard-suite .progress {
+        height: 9px;
+        background: #edf2f7;
+        border-radius: 999px;
+    }
+    .dashboard-suite .table td,
+    .dashboard-suite .table th {
+        vertical-align: middle;
+    }
+    .dashboard-suite .discussion-note {
+        max-width: 320px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    @media (max-width: 767px) {
+        .dashboard-suite .discussion-note {
+            max-width: 180px;
+        }
+    }
+</style>
+@endsection
+
 @section('content')
 @php
     $quoteConversion = $total_lead_count > 0 ? round(($quote_total_count / $total_lead_count) * 100, 2) : 0;
@@ -8,126 +141,32 @@
 
     $monthlyMomentum = $lead_cur_month > 0 ? round(($order_month_count / $lead_cur_month) * 100, 2) : 0;
 @endphp
-
-<style>
-    .admin-hero {
-        background: linear-gradient(115deg, #14532d, #198754);
-        color: #fff;
-        border-radius: 14px;
-        padding: 1.1rem 1.3rem;
-        margin-bottom: 1rem;
-    }
-    .admin-card {
-        background: #fff;
-        border: 1px solid #e9ecef;
-        border-radius: 14px;
-        box-shadow: 0 8px 24px rgba(16, 24, 40, 0.05);
-    }
-    .kpi-box {
-        padding: 1rem;
-        height: 100%;
-    }
-    .kpi-title {
-        color: #6b7280;
-        text-transform: uppercase;
-        font-size: 0.76rem;
-        letter-spacing: .04em;
-        margin-bottom: .45rem;
-    }
-    .kpi-value {
-        font-size: 1.55rem;
-        line-height: 1.2;
-        font-weight: 700;
-        color: #111827;
-    }
-    .kpi-sub {
-        color: #6b7280;
-        font-size: .82rem;
-    }
-    .metric-chip {
-        border: 1px solid #dbe2e8;
-        border-radius: 10px;
-        padding: .65rem .8rem;
-        background: #fbfcfd;
-    }
-    .stage-row,
-    .source-row {
-        margin-bottom: .9rem;
-    }
-    .stage-row:last-child,
-    .source-row:last-child {
-        margin-bottom: 0;
-    }
-    .progress {
-        height: 8px;
-        background: #edf1f5;
-    }
-    .table td,
-    .table th {
-        vertical-align: middle;
-    }
-    .discussion-note {
-        max-width: 320px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-    .hero-action-btn {
-        border-radius: 999px;
-        font-weight: 600;
-        letter-spacing: .01em;
-        padding: .4rem .85rem;
-        display: inline-flex;
-        align-items: center;
-        gap: .35rem;
-        transition: all .18s ease-in-out;
-    }
-    .hero-action-primary {
-        background: #ffffff;
-        color: #0f5132;
-        border: 1px solid #ffffff;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, .12);
-    }
-    .hero-action-primary:hover {
-        background: #f4fff8;
-        color: #0a3622;
-        transform: translateY(-1px);
-    }
-    .hero-action-outline {
-        background: transparent;
-        color: #ffffff;
-        border: 1px solid rgba(255, 255, 255, .75);
-    }
-    .hero-action-outline:hover {
-        background: rgba(255, 255, 255, .12);
-        color: #ffffff;
-    }
-    @media (max-width: 767px) {
-        .discussion-note {
-            max-width: 180px;
-        }
-    }
-</style>
-
-<div class="page-content">
-    <div class="admin-hero d-flex flex-wrap justify-content-between align-items-center gap-2">
-        <div>
-            <h4 class="mb-1 text-white">Admin Sales Dashboard</h4>
-            <div class="opacity-75">{{ now()->format('d M Y') }} | Business overview and pipeline health</div>
-        </div>
-        <div class="d-flex flex-wrap gap-2">
-            <a href="{{ route('leads.create') }}" class="hero-action-btn hero-action-primary">
-                <i class="ri-add-circle-line"></i>
-                <span>New Lead</span>
-            </a>
-            <a href="{{ route('quotes.create') }}" class="hero-action-btn hero-action-outline">
-                <i class="ri-file-list-3-line"></i>
-                <span>New Quote</span>
-            </a>
-            <a href="{{ route('orders.index') }}" class="hero-action-btn hero-action-outline">
-                <i class="ri-shopping-bag-3-line"></i>
-                <span>Orders</span>
-            </a>
+<div class="page-content dashboard-suite">
+    <div class="hero-shell">
+        <div class="card-body p-4 p-lg-5">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-8">
+                    <span class="hero-eyebrow">Operations Dashboard</span>
+                    <h1 class="hero-title">Admin Sales Dashboard</h1>
+                    <div class="hero-subtitle">{{ now()->format('d M Y') }} | Business overview, conversion health, and team sales movement in one place.</div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="d-flex justify-content-lg-end flex-wrap gap-2">
+                        <a href="{{ route('leads.create') }}" class="hero-action-btn hero-action-primary">
+                            <i class="ri-add-circle-line"></i>
+                            <span>New Lead</span>
+                        </a>
+                        <a href="{{ route('quotes.create') }}" class="hero-action-btn">
+                            <i class="ri-file-list-3-line"></i>
+                            <span>New Quote</span>
+                        </a>
+                        <a href="{{ route('orders.index') }}" class="hero-action-btn">
+                            <i class="ri-shopping-bag-3-line"></i>
+                            <span>Orders</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

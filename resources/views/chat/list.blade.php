@@ -3,12 +3,96 @@
 @section('content')
 @section('page-css')
 <style>
+.chat-suite {
+    background: linear-gradient(180deg, rgba(248, 250, 252, 0.78) 0%, rgba(245, 247, 251, 0) 100%);
+}
+
+.chat-suite .hero-shell,
+.chat-suite .chat-shell {
+    border: 1px solid rgba(255, 255, 255, 0.78);
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 14px 32px rgba(15, 23, 42, 0.05);
+}
+
+.chat-suite .hero-shell {
+    border-radius: 28px;
+    background:
+        radial-gradient(circle at top right, rgba(15, 118, 110, 0.14), transparent 28%),
+        radial-gradient(circle at left center, rgba(37, 99, 235, 0.16), transparent 30%),
+        linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    box-shadow: 0 20px 48px rgba(15, 23, 42, 0.08);
+    margin-bottom: 1rem;
+}
+
+.chat-suite .chat-shell {
+    border-radius: 22px;
+    overflow: hidden;
+}
+
+.chat-suite .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.76);
+    border: 1px solid #dbeafe;
+    color: #1d4ed8;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+}
+
+.chat-suite .hero-title {
+    font-size: clamp(2rem, 3vw, 2.7rem);
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    font-weight: 800;
+    margin: 1rem 0 .45rem;
+    color: #0f172a;
+}
+
+.chat-suite .hero-subtitle {
+    color: #64748b;
+}
+
+.chat-suite .status-banner {
+    border: 1px solid #dbe4f0;
+    border-radius: 18px;
+    padding: 0.95rem 1rem;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    box-shadow: 0 12px 26px rgba(15, 23, 42, 0.05);
+}
+
+.chat-suite .status-banner .banner-label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    opacity: .82;
+}
+
+.chat-suite .status-banner.status-danger {
+    border-color: #fecaca;
+    background: linear-gradient(180deg, #fef2f2 0%, #fffafa 100%);
+    color: #b91c1c;
+}
+
+.chat-suite .status-banner.status-info {
+    border-color: #bfdbfe;
+    background: linear-gradient(180deg, #eff6ff 0%, #f8fbff 100%);
+    color: #1d4ed8;
+}
+
 .wa-shell {
     height: calc(100vh - 180px);
     min-height: 560px;
-    background: #f0f2f5;
-    border: 1px solid #d9dbdd;
-    border-radius: 12px;
+    background: #f3f7fb;
+    border: 0;
+    border-radius: 0;
     overflow: hidden;
     display: flex;
 }
@@ -37,7 +121,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: #f0f2f5;
+    background: #f8fafc;
     border-bottom: 1px solid #d9dbdd;
 }
 
@@ -155,7 +239,7 @@
 .wa-thread-header {
     height: 64px;
     padding: 0 16px;
-    background: #f0f2f5;
+    background: #f8fafc;
     border-bottom: 1px solid #d9dbdd;
     display: flex;
     align-items: center;
@@ -240,7 +324,7 @@
 
 .wa-composer {
     padding: 10px 12px;
-    background: #f0f2f5;
+    background: #f8fafc;
     border-top: 1px solid #d9dbdd;
 }
 
@@ -374,9 +458,29 @@
 </style>
 @endsection
 
-<div class="page-content">
+<div class="page-content chat-suite">
     <div class="container-fluid">
-        <div class="card">
+        <div class="hero-shell">
+            <div class="card-body p-4 p-lg-5">
+                <div class="row align-items-center g-4">
+                    <div class="col-lg-8">
+                        <span class="hero-eyebrow">Conversation Center</span>
+                        <h1 class="hero-title">Chat Inbox</h1>
+                        <p class="hero-subtitle mb-0">Manage WhatsApp conversations inside the same cleaner admin shell while preserving the familiar chat layout for fast communication work.</p>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="d-flex justify-content-lg-end">
+                            <ol class="breadcrumb m-0">
+                                <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+                                <li class="breadcrumb-item active">Chat</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card chat-shell">
             <div class="card-body p-0">
                 @if(!empty($device))
                 <div class="wa-shell">
@@ -399,7 +503,8 @@
                             </div>
                         </div>
 
-                        <div class="alert bg-gradient-red server_disconnect none text-white m-3" role="alert">
+                        <div class="status-banner status-danger server_disconnect none m-3" role="alert">
+                            <span class="banner-label">{{ __('Connection issue') }}</span>
                             {{ __('Server disconnected') }}
                         </div>
 
@@ -455,7 +560,8 @@
                 </div>
                 @else
                 <div class="p-3">
-                    <div class="alert bg-gradient-primary text-white mb-0">
+                    <div class="status-banner status-info mb-0">
+                        <span class="banner-label">{{ __('Plan access') }}</span>
                         {{ __('Chat list access feature is not available in your subscription plan') }}
                     </div>
                 </div>

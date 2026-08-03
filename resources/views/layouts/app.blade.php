@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg" data-sidebar-image="none" data-preloader="disable" data-theme="default" data-theme-colors="default">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-layout="vertical" data-topbar="light" data-sidebar="light" data-sidebar-size="lg" data-sidebar-image="none" data-preloader="disable" data-theme="default" data-theme-colors="default">
 
     @include('layouts.inc.head')
 
-<body>
+<body class="dashboard-shell">
 
     <!-- Begin page -->
     <div id="layout-wrapper">
@@ -176,5 +176,4 @@
 
 </body>
 </html>
-
 

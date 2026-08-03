@@ -1,41 +1,371 @@
 @extends('layouts.app')
 
+@section('page-css')
+    <style>
+        .products-dashboard {
+            background: linear-gradient(180deg, rgba(248, 250, 252, 0.72) 0%, rgba(245, 247, 251, 0) 100%);
+        }
+
+        .products-dashboard .hero-panel {
+            border: 1px solid rgba(255, 255, 255, 0.78);
+            border-radius: 28px;
+            background:
+                radial-gradient(circle at top right, rgba(15, 118, 110, 0.16), transparent 28%),
+                radial-gradient(circle at left center, rgba(37, 99, 235, 0.16), transparent 30%),
+                linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            box-shadow: 0 20px 48px rgba(15, 23, 42, 0.08);
+        }
+
+        .products-dashboard .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.76);
+            border: 1px solid #dbeafe;
+            color: #1d4ed8;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .products-dashboard .summary-card {
+            border: 1px solid rgba(255, 255, 255, 0.78);
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.84);
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.05);
+        }
+
+        .products-dashboard .summary-card .label {
+            display: block;
+            margin-bottom: 8px;
+            color: #64748b;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .products-dashboard .summary-card h3 {
+            margin: 0;
+            font-size: 1.7rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+        }
+
+        .products-dashboard h1 {
+            font-size: clamp(2rem, 3vw, 2.85rem);
+            font-weight: 800;
+            letter-spacing: -0.04em;
+        }
+
+        .products-dashboard .toolbar-card {
+            border: 1px solid rgba(255, 255, 255, 0.78);
+            border-radius: 22px;
+        }
+
+        .products-dashboard #productStaticTable tbody,
+        .products-dashboard #productList tbody {
+            cursor: pointer;
+        }
+
+        .products-dashboard #productStaticTable tbody tr.product-list-row,
+        .products-dashboard #productList tbody tr.product-list-row {
+            cursor: pointer !important;
+            position: relative;
+            box-shadow: inset 0 0 0 1px transparent;
+            transition: transform .18s ease, box-shadow .18s ease, filter .18s ease, outline-color .18s ease;
+            outline: 2px solid transparent;
+            outline-offset: -2px;
+        }
+
+        .products-dashboard #productStaticTable tbody tr.product-list-row > td,
+        .products-dashboard #productList tbody tr.product-list-row > td {
+            position: relative;
+            cursor: pointer !important;
+            background: #ffffff !important;
+            border-top-color: #e2e8f0 !important;
+            border-bottom-color: #e2e8f0 !important;
+            transition: background-color .18s ease, color .18s ease, border-color .18s ease, box-shadow .18s ease, padding .18s ease, transform .18s ease;
+        }
+
+        .products-dashboard #productStaticTable.table-striped > tbody > tr.product-list-row:nth-of-type(odd) > *,
+        .products-dashboard #productList.table-striped > tbody > tr.product-list-row:nth-of-type(odd) > * {
+            background: #f8fbff !important;
+        }
+
+        .products-dashboard #productStaticTable tbody tr.product-list-row > td:nth-child(3),
+        .products-dashboard #productList tbody tr.product-list-row > td:nth-child(3) {
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .products-dashboard #productStaticTable tbody tr.product-list-row > td:first-child,
+        .products-dashboard #productList tbody tr.product-list-row > td:first-child {
+            border-left: 5px solid #93c5fd !important;
+            padding-left: 1.15rem !important;
+        }
+
+        .products-dashboard #productStaticTable tbody tr.product-list-row > td:last-child,
+        .products-dashboard #productList tbody tr.product-list-row > td:last-child {
+            border-right: 1px solid #cbd5e1 !important;
+            padding-right: 5.6rem;
+        }
+
+        .products-dashboard #productStaticTable tbody tr.product-list-row:hover,
+        .products-dashboard #productStaticTable tbody tr.product-list-row:focus-within,
+        .products-dashboard #productStaticTable tbody tr.product-list-row.row-hovered,
+        .products-dashboard #productList tbody tr.product-list-row:hover,
+        .products-dashboard #productList tbody tr.product-list-row:focus-within,
+        .products-dashboard #productList tbody tr.product-list-row.row-hovered {
+            transform: translateX(12px) scale(1.012);
+            filter: saturate(1.18);
+            box-shadow: 0 24px 44px rgba(37, 99, 235, 0.24);
+            outline-color: rgba(37, 99, 235, 0.4);
+        }
+
+        .products-dashboard #productStaticTable tbody tr.product-list-row:hover > td,
+        .products-dashboard #productStaticTable tbody tr.product-list-row:focus-within > td,
+        .products-dashboard #productStaticTable tbody tr.product-list-row.row-hovered > td,
+        .products-dashboard #productList tbody tr.product-list-row:hover > td,
+        .products-dashboard #productList tbody tr.product-list-row:focus-within > td,
+        .products-dashboard #productList tbody tr.product-list-row.row-hovered > td {
+            background: #bfdbfe !important;
+            color: #0f172a !important;
+            border-top-color: #2563eb !important;
+            border-bottom-color: #2563eb !important;
+            box-shadow:
+                inset 0 0 0 999px rgba(191, 219, 254, 0.98),
+                inset 0 1px 0 #3b82f6,
+                inset 0 -1px 0 #3b82f6,
+                inset 0 0 0 2px rgba(37, 99, 235, 0.14);
+        }
+
+        .products-dashboard #productStaticTable tbody tr.product-list-row:hover > td:first-child,
+        .products-dashboard #productStaticTable tbody tr.product-list-row:focus-within > td:first-child,
+        .products-dashboard #productStaticTable tbody tr.product-list-row.row-hovered > td:first-child,
+        .products-dashboard #productList tbody tr.product-list-row:hover > td:first-child,
+        .products-dashboard #productList tbody tr.product-list-row:focus-within > td:first-child,
+        .products-dashboard #productList tbody tr.product-list-row.row-hovered > td:first-child {
+            border-left-color: #1d4ed8 !important;
+            padding-left: 1.9rem !important;
+        }
+
+        .products-dashboard #productStaticTable tbody tr.product-list-row:hover > td:last-child,
+        .products-dashboard #productStaticTable tbody tr.product-list-row:focus-within > td:last-child,
+        .products-dashboard #productStaticTable tbody tr.product-list-row.row-hovered > td:last-child,
+        .products-dashboard #productList tbody tr.product-list-row:hover > td:last-child,
+        .products-dashboard #productList tbody tr.product-list-row:focus-within > td:last-child,
+        .products-dashboard #productList tbody tr.product-list-row.row-hovered > td:last-child {
+            border-right-color: #2563eb !important;
+        }
+
+        .products-dashboard #productStaticTable tbody tr.product-list-row:hover .badge,
+        .products-dashboard #productStaticTable tbody tr.product-list-row:focus-within .badge,
+        .products-dashboard #productStaticTable tbody tr.product-list-row.row-hovered .badge,
+        .products-dashboard #productList tbody tr.product-list-row:hover .badge,
+        .products-dashboard #productList tbody tr.product-list-row:focus-within .badge,
+        .products-dashboard #productList tbody tr.product-list-row.row-hovered .badge {
+            transform: translateX(3px);
+            box-shadow: 0 8px 16px rgba(37, 99, 235, 0.18);
+        }
+
+        .products-dashboard #productStaticTable tbody tr.product-list-row:hover > td:nth-child(3),
+        .products-dashboard #productStaticTable tbody tr.product-list-row:focus-within > td:nth-child(3),
+        .products-dashboard #productStaticTable tbody tr.product-list-row.row-hovered > td:nth-child(3),
+        .products-dashboard #productStaticTable tbody tr.product-list-row:hover > td:nth-child(4),
+        .products-dashboard #productStaticTable tbody tr.product-list-row:focus-within > td:nth-child(4),
+        .products-dashboard #productStaticTable tbody tr.product-list-row.row-hovered > td:nth-child(4),
+        .products-dashboard #productList tbody tr.product-list-row:hover > td:nth-child(3),
+        .products-dashboard #productList tbody tr.product-list-row:focus-within > td:nth-child(3),
+        .products-dashboard #productList tbody tr.product-list-row.row-hovered > td:nth-child(3),
+        .products-dashboard #productList tbody tr.product-list-row:hover > td:nth-child(4),
+        .products-dashboard #productList tbody tr.product-list-row:focus-within > td:nth-child(4),
+        .products-dashboard #productList tbody tr.product-list-row.row-hovered > td:nth-child(4) {
+            color: #1d4ed8 !important;
+            transform: translateX(3px);
+        }
+
+        .products-dashboard #productStaticTable tbody tr.product-list-row > td:first-child::before,
+        .products-dashboard #productList tbody tr.product-list-row > td:first-child::before {
+            content: 'View';
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 64px;
+            margin-right: 10px;
+            padding: 6px 11px;
+            border-radius: 999px;
+            background: #dbeafe;
+            color: #1d4ed8;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            opacity: 1;
+            transition: background-color .18s ease, color .18s ease, transform .18s ease, opacity .18s ease, box-shadow .18s ease;
+        }
+
+        .products-dashboard #productStaticTable tbody tr.product-list-row > td:last-child::after,
+        .products-dashboard #productList tbody tr.product-list-row > td:last-child::after {
+            content: 'Open ->';
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #1d4ed8;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            opacity: .82;
+            transition: transform .18s ease, opacity .18s ease, color .18s ease;
+            pointer-events: none;
+        }
+
+        .products-dashboard #productStaticTable tbody tr.product-list-row:hover > td:first-child::before,
+        .products-dashboard #productStaticTable tbody tr.product-list-row:focus-within > td:first-child::before,
+        .products-dashboard #productStaticTable tbody tr.product-list-row.row-hovered > td:first-child::before,
+        .products-dashboard #productList tbody tr.product-list-row:hover > td:first-child::before,
+        .products-dashboard #productList tbody tr.product-list-row:focus-within > td:first-child::before,
+        .products-dashboard #productList tbody tr.product-list-row.row-hovered > td:first-child::before {
+            background: #2563eb;
+            color: #ffffff;
+            opacity: 1;
+            transform: translateX(6px) scale(1.03);
+            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.26);
+        }
+
+        .products-dashboard #productStaticTable tbody tr.product-list-row:hover > td:last-child::after,
+        .products-dashboard #productStaticTable tbody tr.product-list-row:focus-within > td:last-child::after,
+        .products-dashboard #productStaticTable tbody tr.product-list-row.row-hovered > td:last-child::after,
+        .products-dashboard #productList tbody tr.product-list-row:hover > td:last-child::after,
+        .products-dashboard #productList tbody tr.product-list-row:focus-within > td:last-child::after,
+        .products-dashboard #productList tbody tr.product-list-row.row-hovered > td:last-child::after {
+            opacity: 1;
+            color: #1d4ed8;
+            transform: translateY(-50%) translateX(12px);
+        }
+
+        .products-dashboard #productStaticTable tbody tr.product-list-row:hover .stock-input,
+        .products-dashboard #productStaticTable tbody tr.product-list-row:focus-within .stock-input,
+        .products-dashboard #productStaticTable tbody tr.product-list-row.row-hovered .stock-input,
+        .products-dashboard #productList tbody tr.product-list-row:hover .stock-input,
+        .products-dashboard #productList tbody tr.product-list-row:focus-within .stock-input,
+        .products-dashboard #productList tbody tr.product-list-row.row-hovered .stock-input {
+            box-shadow: 0 0 0 3px rgba(191, 219, 254, 0.8);
+        }
+
+        .products-dashboard #productStaticTable tbody tr.product-list-row .flex-shrink-0,
+        .products-dashboard #productList tbody tr.product-list-row .flex-shrink-0 {
+            transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+            border: 1px solid transparent;
+        }
+
+        .products-dashboard #productStaticTable tbody tr.product-list-row:hover .flex-shrink-0,
+        .products-dashboard #productStaticTable tbody tr.product-list-row:focus-within .flex-shrink-0,
+        .products-dashboard #productStaticTable tbody tr.product-list-row.row-hovered .flex-shrink-0,
+        .products-dashboard #productList tbody tr.product-list-row:hover .flex-shrink-0,
+        .products-dashboard #productList tbody tr.product-list-row:focus-within .flex-shrink-0,
+        .products-dashboard #productList tbody tr.product-list-row.row-hovered .flex-shrink-0 {
+            transform: scale(1.06);
+            border-color: #60a5fa;
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.16);
+        }
+
+        .product-list-row .stock-input {
+            position: relative;
+            z-index: 2;
+        }
+    </style>
+@endsection
+
 @section('content')
-    <div class="page-content">
+    <div class="page-content products-dashboard">
         <div class="container-fluid">
-            <!-- start page title -->
             <div class="row">
                 <div class="col-12">
-                    <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-galaxy-transparent">
-                        <h4 class="mb-sm-0">Products</h4>
-                        <div class="page-title-right">
-                            <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a href="javascript: void(0);">Products</a></li>
-                                <li class="breadcrumb-item active">List</li>
-                            </ol>
+                    <div class="card hero-panel mb-4">
+                        <div class="card-body p-4 p-lg-5">
+                            <div class="row align-items-center g-4">
+                                <div class="col-lg-7">
+                                    <span class="eyebrow">Catalog Dashboard</span>
+                                    <h1 class="mt-3 mb-2">Products</h1>
+                                    <p class="text-muted mb-0 fs-15">
+                                        Manage your master SKUs, inspect marketplace listing coverage, and jump into each product's marketplace workspace from one clean catalog view.
+                                    </p>
+                                </div>
+                                <div class="col-lg-5">
+                                    <div class="d-flex justify-content-lg-end">
+                                        <ol class="breadcrumb m-0">
+                                            <li class="breadcrumb-item"><a href="javascript:void(0);">Dashboard</a></li>
+                                            <li class="breadcrumb-item active">Products</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+                    </div>
+                </div>
+            </div>
 
+            <div class="row g-3 mb-4">
+                <div class="col-md-6 col-xl-3">
+                    <div class="card summary-card h-100">
+                        <div class="card-body">
+                            <span class="label">Master Products</span>
+                            <h3>{{ number_format($productSummary['total_products'] ?? 0) }}</h3>
+                            <p class="text-muted mb-0 mt-2">Internal products available across your catalog.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-3">
+                    <div class="card summary-card h-100">
+                        <div class="card-body">
+                            <span class="label">Marketplace Listings</span>
+                            <h3>{{ number_format($productSummary['total_listings'] ?? 0) }}</h3>
+                            <p class="text-muted mb-0 mt-2">Amazon and Flipkart child listings linked to master SKUs.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-3">
+                    <div class="card summary-card h-100">
+                        <div class="card-body">
+                            <span class="label">Total Stock</span>
+                            <h3>{{ number_format((float) ($productSummary['total_stock'] ?? 0)) }}</h3>
+                            <p class="text-muted mb-0 mt-2">Master-stock inventory still remains the source of truth.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-3">
+                    <div class="card summary-card h-100">
+                        <div class="card-body">
+                            <span class="label">Average Price</span>
+                            <h3>Rs. {{ number_format((float) ($productSummary['average_price'] ?? 0), 2) }}</h3>
+                            <p class="text-muted mb-0 mt-2">Quick pricing pulse across the current catalog.</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <div class="row">
-                <!-- Varying Modal Content -->
                 <div class="col-lg-12">
-                    <div class="card">
-
+                    <div class="card toolbar-card">
                         <div class="card-header">
-                            <div class="d-flex justify-content-between">
-                                <h5 class="card-title  mb-0">Product List</h5>
-
-
-                                <div class="d-flex justify-content-end gap-3">
+                            <div class="d-flex justify-content-between flex-wrap gap-3 align-items-start">
+                                <div>
+                                    <h5 class="card-title mb-1">Product List</h5>
+                                    <p class="text-muted mb-0">Click any row to open the master product's marketplace view.</p>
+                                </div>
+                                <div class="d-flex justify-content-end gap-3 flex-wrap">
                                     @can('create product & service')
                                         <div>
-                                            <a href="javascript:void(0);" class="btn btn-sm btn-success open-product-modal" data-size="lg"
+                                            <a href="javascript:void(0);" class="btn btn-sm btn-primary open-product-modal" data-size="lg"
                                                 data-url="{{ route('products.create') }}" data-ajax-popup="true"
                                                 data-bs-original-title="{{ __('Add Product') }}"><i
-                                                    class="ri-add-line align-bottom me-1"></i> Add Product</a>
+                                                class="ri-add-line align-bottom me-1"></i> Add Product</a>
                                         </div>
                                     @endcan
                                     <div class="dropdown d-inline-block">
@@ -58,9 +388,7 @@
                         </div>
 
                         <div class="card-body">
-
-
-                            <table id="productList"
+                            <table id="productStaticTable"
                                 class="table table-bordered dt-responsive nowrap table-striped align-middle"
                                 style="width:100%">
                                 <thead>
@@ -70,15 +398,50 @@
                                         <th data-ordering="false" style="width: 80px">image</th>
                                         <th data-ordering="false">Name</th>
                                         <th data-ordering="false">SKU Code</th>
+                                        <th data-ordering="false">Marketplace Listings</th>
                                         <th>MRP</th>
                                         <th>GST</th>
                                         <th>Stock Qty</th>
-                                        <th>Status</th>
-
                                     </tr>
 
                                 </thead>
-                                <tbody></tbody>
+                                <tbody>
+                                    @foreach($products as $index => $product)
+                                        <tr class="main-row product-list-row" data-href="{{ route('products.marketplace', $product->id) }}">
+                                            <td>{{ $index + 1 }}</td>
+                                            <td>
+                                                <div class="flex-shrink-0 bg-light rounded p-1" style="width: 50px; height: 50px;">
+                                                    <img src="{{ $product->image }}" alt="Products" style="width: 100%; height: 100%; object-fit: cover">
+                                                </div>
+                                            </td>
+                                            <td>{{ $product->name }}</td>
+                                            <td>{{ $product->sku_code }}</td>
+                                            <td>
+                                                @if(empty($marketplaceEnabled))
+                                                    <span class="badge bg-light text-muted">Disabled</span>
+                                                @elseif(($product->marketplace_listings_count ?? 0) === 0)
+                                                    <a href="{{ route('products.marketplace', $product->id) }}" class="badge bg-light text-muted text-decoration-none">No listings</a>
+                                                @else
+                                                    <a href="{{ route('products.marketplace', $product->id) }}" class="badge bg-primary-subtle text-primary text-decoration-none">
+                                                        {{ (int) $product->marketplace_listings_count }} listings
+                                                    </a>
+                                                @endif
+                                            </td>
+                                            <td>{{ number_format((float) $product->price, 2) }}</td>
+                                            <td>{{ $product?->getGstSlabMaster?->rate ?? 0 }}</td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    class="form-control stock-input"
+                                                    data-product-id="{{ $product->id }}"
+                                                    value="{{ $product->stock_qty ?? 0 }}"
+                                                    min="0"
+                                                    style="width:120px;"
+                                                >
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
                             </table>
 
                         </div>
@@ -111,7 +474,7 @@
             <strong id="productCount">0</strong>
         </p>
 
-        <div id="productList" style="
+        <div id="pendingProductList" style="
             max-height:200px;
             overflow-y:auto;
          ">
@@ -174,88 +537,55 @@
     </div>
 @endsection
 
-@section('scripts')
-    <!--datatable js-->
-    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
-    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
-@endsection
-
 @section('page-script')
     <script>
-        $(document).ready(function() {
-
-            var table = $('#productList').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: {
-                    url: "{{ route('products.index') }}",
-                    data: function(d) {
-                        d.name = $('#search-task-options').val();
-                        d.state_filter = $('#state_filter').val();
-                        d.city_filter = $('#city_filter').val();
-                    }
-                },
-                columns: [{
-                        data: 'DT_RowIndex',
-                        name: 'DT_RowIndex',
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
-                        data: 'image',
-                        name: 'image'
-                    },
-                    {
-                        data: 'name',
-                        name: 'name'
-                    },
-                    {
-                        data: 'sku_code',
-                        name: 'sku_code',
-                        searchable: true
-                    },
-                    {
-                        data: 'price',
-                        name: 'price',
-                        searchable: true
-                    },
-                     {
-                        data: 'gst_val',
-                        name: 'gst_val'
-                    },
-                    {
-                        data: 'qty_val',
-                        name: 'qty_val'
-                    },
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false
-                    }
-                ],
-                columnDefs: [
-                    { targets: [2], className: 'text-wrap text-break' }
-                ]
-            });
-
-            $('#search-task-options').on('keyup', function() {
-                table.draw();
-            });
-
-            $('#state_filter').on('change', function() {
-                table.draw();
-            });
-
-            $('#city_filter').on('change', function() {
-                table.draw();
-            });
-        });
-    </script>
-    <script>
         let pendingStockUpdates = {};
+
+        function neutralizeLegacyProductDataTable() {
+            if (!window.jQuery || !$.fn || !$.fn.DataTable) {
+                return;
+            }
+
+            $.fn.dataTable.ext.errMode = 'none';
+
+            const $productTable = $('#productStaticTable');
+
+            $productTable.off('error.dt.legacyGuard').on('error.dt.legacyGuard', function (e, settings, techNote, message) {
+                console.warn('Legacy product DataTable prevented:', message);
+                e.preventDefault();
+                return false;
+            });
+
+            if ($.fn.DataTable.isDataTable($productTable)) {
+                $productTable.DataTable().destroy();
+            }
+        }
+
+        $(function () {
+            neutralizeLegacyProductDataTable();
+            setTimeout(neutralizeLegacyProductDataTable, 250);
+            setTimeout(neutralizeLegacyProductDataTable, 1000);
+        });
+
+        $(document).on('click', '.product-list-row', function (event) {
+            if ($(event.target).closest('a, button, input, select, textarea, label').length) {
+                return;
+            }
+
+            const url = $(this).data('href');
+
+            if (url) {
+                window.location.href = url;
+            }
+        });
+
+        $(document).on('mouseenter focusin', '.product-list-row', function () {
+            $(this).addClass('row-hovered');
+        });
+
+        $(document).on('mouseleave focusout', '.product-list-row', function () {
+            $(this).removeClass('row-hovered');
+        });
 
         $(document).on('change', '.stock-input', function() {
 
@@ -299,7 +629,6 @@
                 });
                 */
 
-            table.ajax.reload(null, false);
         }
 
         $('#saveStockBtn').click(function() {
@@ -333,8 +662,6 @@
                     $('#stockUpdatePanel').hide();
 
                     show_toastr('success', 'Stock Updated Successfully.');
-                    table.ajax.reload(null, false);
-
                 }
 
             });

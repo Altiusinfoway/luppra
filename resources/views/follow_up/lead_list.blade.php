@@ -1,28 +1,51 @@
 @extends('layouts.app')
 
+@section('page-css')
+    <style>
+        .workflow-suite {
+            background: linear-gradient(180deg, rgba(248, 250, 252, 0.78) 0%, rgba(245, 247, 251, 0) 100%);
+        }
+
+        .workflow-suite .hero-shell,
+        .workflow-suite .toolbar-shell,
+        .workflow-suite .table-shell {
+            border: 1px solid rgba(255, 255, 255, 0.78);
+            border-radius: 26px;
+            background:
+                radial-gradient(circle at top right, rgba(15, 118, 110, 0.12), transparent 28%),
+                radial-gradient(circle at left center, rgba(37, 99, 235, 0.12), transparent 30%),
+                #ffffff;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.07);
+        }
+
+        .workflow-suite .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.76);
+            border: 1px solid #dbeafe;
+            color: #1d4ed8;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+    </style>
+@endsection
+
 @section('content')
-    <div class="page-content">
+    <div class="page-content workflow-suite">
         <div class="container-fluid">
-            <!-- start page title -->
             <div class="row">
                 <div class="col-12">
-                    <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-galaxy-transparent">
-                        <h4 class="mb-sm-0">
-                            @if ($dynamic_slug == 'upcomming')
-                                Up-Coming Follow-Up
-                            @elseif($dynamic_slug == 'expired')
-                                Expired Follow-Up
-                            @elseif($dynamic_slug == 'notinterested')
-                                Not Interested Follow-Up
-                            @else
-                                Follow-Up
-                            @endif
-                        </h4>
-
-                        <div class="page-title-right">
-                            <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item">
-                                    <a href="{{ route('follow-ups.follow_up_lead', $dynamic_slug) }}">
+                    <div class="hero-shell mb-4">
+                        <div class="card-body p-4 p-lg-5">
+                            <div class="row align-items-center g-4">
+                                <div class="col-lg-8">
+                                    <span class="hero-eyebrow">Follow-Up Workspace</span>
+                                    <h1 class="mb-3">
                                         @if ($dynamic_slug == 'upcomming')
                                             Up-Coming Follow-Up
                                         @elseif($dynamic_slug == 'expired')
@@ -30,21 +53,38 @@
                                         @elseif($dynamic_slug == 'notinterested')
                                             Not Interested Follow-Up
                                         @else
-                                            Follow-Up List
+                                            Follow-Up
                                         @endif
-
-                                    </a>
-                                </li>
-                                <li class="breadcrumb-item active">List </li>
-                            </ol>
+                                    </h1>
+                                    <p class="text-muted mb-0">Filter and review the focused follow-up queue from the same updated workflow shell used across the CRM module.</p>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="d-flex justify-content-lg-end">
+                                        <ol class="breadcrumb m-0">
+                                            <li class="breadcrumb-item">
+                                                <a href="{{ route('follow-ups.follow_up_lead', $dynamic_slug) }}">
+                                                    @if ($dynamic_slug == 'upcomming')
+                                                        Up-Coming Follow-Up
+                                                    @elseif($dynamic_slug == 'expired')
+                                                        Expired Follow-Up
+                                                    @elseif($dynamic_slug == 'notinterested')
+                                                        Not Interested Follow-Up
+                                                    @else
+                                                        Follow-Up List
+                                                    @endif
+                                                </a>
+                                            </li>
+                                            <li class="breadcrumb-item active">List</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-
                     </div>
                 </div>
             </div>
-            <!-- end page title -->
 
-            <div class="card">
+            <div class="card toolbar-shell mb-4">
                 <div class="card-body">
 
                     <form id="lead-filter-form" class="d-flex flex-wrap align-items-center gap-2">
@@ -100,12 +140,9 @@
             </div>
             <!--end card-->
 
-
-            <!-- Content -->
-
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="card">
+                    <div class="card table-shell">
 
                         <div class="card-body">
                             <table id="followUpcomList"

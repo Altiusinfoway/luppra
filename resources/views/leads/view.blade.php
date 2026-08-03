@@ -5,6 +5,96 @@
     <link href="{{ asset('public/build/assets/libs/quill/quill.core.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('public/build/assets/libs/quill/quill.bubble.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('public/build/assets/libs/quill/quill.snow.css') }}" rel="stylesheet" type="text/css" />
+    <style>
+        .detail-suite {
+            background: linear-gradient(180deg, rgba(248, 250, 252, 0.78) 0%, rgba(245, 247, 251, 0) 100%);
+        }
+
+        .detail-suite .hero-shell,
+        .detail-suite .surface-card,
+        .detail-suite .metric-card {
+            border: 1px solid rgba(255, 255, 255, 0.78);
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 14px 32px rgba(15, 23, 42, 0.05);
+        }
+
+        .detail-suite .hero-shell {
+            border-radius: 28px;
+            background:
+                radial-gradient(circle at top right, rgba(15, 118, 110, 0.14), transparent 28%),
+                radial-gradient(circle at left center, rgba(37, 99, 235, 0.16), transparent 30%),
+                linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            box-shadow: 0 20px 48px rgba(15, 23, 42, 0.08);
+            padding: 1.4rem;
+        }
+
+        .detail-suite .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.76);
+            border: 1px solid #dbeafe;
+            color: #1d4ed8;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .detail-suite .hero-title {
+            font-size: clamp(1.9rem, 3vw, 2.5rem);
+            line-height: 1.05;
+            letter-spacing: -0.04em;
+            font-weight: 800;
+            margin: 1rem 0 .45rem;
+            color: #0f172a;
+        }
+
+        .detail-suite .hero-subtitle,
+        .detail-suite .meta-label {
+            color: #64748b;
+        }
+
+        .detail-suite .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1rem;
+        }
+
+        .detail-suite .info-line {
+            margin-bottom: .55rem;
+        }
+
+        .detail-suite .metric-card,
+        .detail-suite .surface-card {
+            border-radius: 22px;
+        }
+
+        .detail-suite .metric-card .metric-title {
+            color: #64748b;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: .08em;
+            font-weight: 800;
+            margin-bottom: .4rem;
+        }
+
+        .detail-suite .metric-card .metric-value {
+            font-size: 1.55rem;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+        }
+
+        @media (max-width: 991.98px) {
+            .detail-suite .meta-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -49,15 +139,10 @@
     @endphp
 
 
-    <div class="page-content">
+    <div class="page-content detail-suite">
         <div class="container-fluid">
-            <div class="profile-foreground position-relative mx-n4 mt-n4">
-
-                <div class="profile-wid-bg">
-                </div>
-            </div>
             <div class="pt-4 mb-3 profile-wrapper">
-                <div class="row g-4">
+                <div class="row g-4 hero-shell">
                     <div class="col-auto">
                         <div
                             class="avatar-lg bg-light rounded-circle d-flex justify-content-center align-items-center border border-dark">
@@ -67,23 +152,25 @@
                     <!--end col-->
                     <div class="col">
                         <div class="p-2">
-                            <h3 class="mb-1">{{ $lead->name ?? '' }}</h3>
-                            <div class="row">
+                            <span class="hero-eyebrow">Lead Profile</span>
+                            <h3 class="mb-1 hero-title">{{ $lead->name ?? '' }}</h3>
+                            <p class="hero-subtitle mb-3">Track customer context, stage progress, products, discussions, and attachments from one cleaner lead workspace.</p>
+                            <div class="meta-grid">
                                 <div class="col-4">
-                                    <p class="m-0"><i
-                                            class="ri-user-fill me-1 text-opacity-75 fs-16 align-middle"></i>name:- <span
+                                    <p class="m-0 info-line"><i
+                                            class="ri-user-fill me-1 text-opacity-75 fs-16 align-middle"></i><span class="meta-label">Customer:</span> <span
                                             class="text-muted">{{ $customerName ?? '' }}</span></p>
                                 </div>
 
                                 <div class="col-4">
-                                    <p class="m-0"><i
-                                            class=" ri-building-3-fill me-1 text-opacity-75 fs-16 align-middle"></i>Company:-
+                                    <p class="m-0 info-line"><i
+                                            class=" ri-building-3-fill me-1 text-opacity-75 fs-16 align-middle"></i><span class="meta-label">Company:</span>
                                         <span class="text-muted">{{ $companyName ?? '' }}</span>
                                     </p>
                                 </div>
                                 <div class="col-4">
-                                    <p class="mb-3 "><i
-                                            class="ri-file-user-fill me-1 text-opacity-75 fs-16 align-middle"></i>Lead By:-
+                                    <p class="mb-3 info-line"><i
+                                            class="ri-file-user-fill me-1 text-opacity-75 fs-16 align-middle"></i><span class="meta-label">Lead By:</span>
                                         <span class="text-muted"> {{ $lead_created ?? '' }}</span>
                                     </p>
                                 </div>
@@ -218,7 +305,7 @@
                 <!--end row-->
                 <div class="row">
                     <div class="col-xl-12">
-                        <div class="card crm-widget mt-3">
+                        <div class="card metric-card mt-3">
                             <div class="card-body p-0">
                                 <div class="row row-cols-md-3 row-cols-1">
                                     <div class="col col-lg border-end">
@@ -297,7 +384,7 @@
 
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="card">
+                    <div class="card surface-card">
                         <div class="card-body">
                             <div class="row gx-lg-5">
                                 <div class="col-lg-7 col-xl-8">

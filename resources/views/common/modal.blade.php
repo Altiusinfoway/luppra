@@ -1,8 +1,32 @@
+<style>
+    .shared-modal-shell {
+        border: 1px solid rgba(255, 255, 255, 0.82);
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 20px 48px rgba(15, 23, 42, 0.12);
+    }
+
+    .shared-modal-shell .modal-header {
+        background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
+        border-bottom: 1px solid #e2e8f0;
+        padding: 16px 18px;
+    }
+
+    .shared-modal-shell .modal-body,
+    .shared-modal-shell .common-modal-body {
+        background: #ffffff;
+    }
+
+    .shared-modal-shell .modal-footer {
+        background: #f8fafc;
+        border-top: 1px solid #e2e8f0;
+    }
+</style>
 <!-- Modal  Start -->
 <div class="modal fade" id="commonModal" tabindex="-1" aria-labelledby="commonModal"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0">
+        <div class="modal-content border-0 shared-modal-shell">
             <div class="modal-header p-3 bg-info-subtle">
                 <h5 class="modal-title" ></h5>
                 <button type="button" class="btn-close" id="commonModalBtn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -15,7 +39,7 @@
 <!-- Modal -->
 <div class="modal fade zoomIn" id="deleteRecordModal" tabindex="-1" aria-labelledby="deleteRecordLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
+        <div class="modal-content shared-modal-shell">
             <div class="modal-header">
                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                     aria-label="Close" id="btn-close"></button>
@@ -49,7 +73,7 @@
 <!-- Modal -->
 <div class="modal fade zoomIn" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
+        <div class="modal-content shared-modal-shell">
             <div class="modal-header">
                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                     aria-label="Close" id="btn-close"></button>
@@ -86,4 +110,3 @@
     </div>
 </div>
 <!--end modal -->
-

@@ -30,22 +30,21 @@
     <link href="{{ asset('public/build/assets/css/custom.min.css') }}" rel="stylesheet" type="text/css" />
     <style>
         :root {
-            --brand-ink: #171515;
-            --brand-muted: #6b6570;
-            --brand-primary: #fb641b;
-            --brand-primary-dark: #e85a16;
-            --brand-purple: #842f89;
-            --brand-purple-dark: #5a246f;
-            --brand-soft: #fff4ee;
-            --brand-line: #eaded8;
+            --brand-ink: #0f172a;
+            --brand-muted: #64748b;
+            --brand-primary: #2563eb;
+            --brand-primary-dark: #0f766e;
+            --brand-soft: #eff6ff;
+            --brand-soft-alt: #ecfeff;
+            --brand-line: #dbe4f0;
         }
 
         body {
             min-height: 100vh;
             background:
-                radial-gradient(800px 400px at -10% 10%, rgba(251, 100, 27, 0.16), transparent 60%),
-                radial-gradient(700px 360px at 110% 90%, rgba(132, 47, 137, 0.12), transparent 60%),
-                linear-gradient(180deg, #fffaf8 0%, #fbf6f4 100%);
+                radial-gradient(820px 420px at -8% 8%, rgba(37, 99, 235, 0.14), transparent 60%),
+                radial-gradient(760px 360px at 108% 92%, rgba(15, 118, 110, 0.12), transparent 60%),
+                linear-gradient(180deg, #f8fbff 0%, #f2f7fb 100%);
         }
 
         .auth-wrap {
@@ -61,14 +60,17 @@
             margin: 0 auto;
             border-radius: 26px;
             overflow: hidden;
-            box-shadow: 0 24px 60px rgba(34, 27, 32, 0.14);
-            background: #fff;
+            box-shadow: 0 28px 70px rgba(15, 23, 42, 0.12);
+            background: rgba(255, 255, 255, 0.95);
             border: 1px solid rgba(234, 222, 216, 0.9);
         }
 
         .auth-left {
-            background: linear-gradient(145deg, #221b20 0%, #5a246f 50%, #fb641b 100%);
-            color: #fff7f3;
+            background:
+                radial-gradient(circle at top right, rgba(255, 255, 255, 0.14), transparent 28%),
+                radial-gradient(circle at bottom left, rgba(255, 255, 255, 0.1), transparent 24%),
+                linear-gradient(155deg, #0f172a 0%, #0f766e 46%, #2563eb 100%);
+            color: #eff6ff;
             padding: 42px 36px;
             height: 100%;
             position: relative;
@@ -135,9 +137,9 @@
             gap: 8px;
             padding: 8px 12px;
             border-radius: 999px;
-            background: linear-gradient(135deg, #fff2ea, #f9eff9);
-            border: 1px solid #f1dde5;
-            color: var(--brand-primary-dark);
+            background: linear-gradient(135deg, #eff6ff, #ecfeff);
+            border: 1px solid #dbeafe;
+            color: #1d4ed8;
             font-size: 0.86rem;
             font-weight: 700;
             margin-bottom: 16px;
@@ -181,8 +183,8 @@
         }
 
         .form-control:focus {
-            border-color: rgba(251, 100, 27, 0.46);
-            box-shadow: 0 0 0 0.25rem rgba(251, 100, 27, 0.14);
+            border-color: rgba(37, 99, 235, 0.42);
+            box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.12);
         }
 
         .form-label {
@@ -197,15 +199,15 @@
             font-size: 1.02rem;
             padding-top: 0.82rem;
             padding-bottom: 0.82rem;
-            background: linear-gradient(90deg, var(--brand-primary-dark), var(--brand-primary));
+            background: linear-gradient(135deg, var(--brand-primary-dark), var(--brand-primary));
             border: 0;
-            box-shadow: 0 12px 26px rgba(251, 100, 27, 0.28);
+            box-shadow: 0 14px 28px rgba(37, 99, 235, 0.22);
         }
 
         .btn-login:hover,
         .btn-login:focus {
-            background: linear-gradient(90deg, #db5414, #ff742f);
-            box-shadow: 0 16px 30px rgba(251, 100, 27, 0.30);
+            background: linear-gradient(135deg, #0d9488, #1d4ed8);
+            box-shadow: 0 18px 34px rgba(37, 99, 235, 0.24);
         }
 
         .hint-card {
@@ -253,18 +255,49 @@
             border: 1px solid var(--brand-line);
             border-radius: 20px;
             padding: 20px;
-            background: linear-gradient(180deg, #fffefd, #fff8f4);
+            background: linear-gradient(180deg, #ffffff, #f8fbff);
             margin-bottom: 24px;
         }
 
+        .status-banner {
+            border: 1px solid var(--brand-line);
+            border-radius: 18px;
+            padding: 0.95rem 1rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(180deg, #ffffff, #f8fbff);
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.05);
+        }
+
+        .status-banner .banner-label {
+            display: block;
+            font-size: 0.76rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 0.3rem;
+            opacity: 0.82;
+        }
+
+        .status-banner.status-warning {
+            border-color: #fed7aa;
+            background: linear-gradient(180deg, #fff7ed, #fffdf8);
+            color: #9a3412;
+        }
+
+        .status-banner.status-danger {
+            border-color: #fecaca;
+            background: linear-gradient(180deg, #fef2f2, #fffafa);
+            color: #b91c1c;
+        }
+
         .support-link {
-            color: var(--brand-primary-dark);
+            color: #1d4ed8;
             font-weight: 600;
             text-decoration: none;
         }
 
         .support-link:hover {
-            color: var(--brand-purple);
+            color: #0f766e;
         }
 
         .auth-footer-links {
@@ -340,10 +373,6 @@
                 <div class="col-lg-7">
                     <div class="auth-right">
                         <div class="auth-topbar">
-                            <a href="{{ url('/') }}" class="auth-back-link">
-                                <i class="ri-arrow-left-line"></i>
-                                <span>Back to Home</span>
-                            </a>
                             <div class="small text-muted">Business login portal</div>
                         </div>
                         <div class="eyebrow">
@@ -354,10 +383,16 @@
                         <p class="auth-subtitle">Welcome back. Enter your account details to continue.</p>
 
                         @if (session('status'))
-                            <div class="alert alert-warning py-2">{{ session('status') }}</div>
+                            <div class="status-banner status-warning">
+                                <span class="banner-label">Account notice</span>
+                                {{ session('status') }}
+                            </div>
                         @endif
                         @if (session('error'))
-                            <div class="alert alert-danger py-2">{{ session('error') }}</div>
+                            <div class="status-banner status-danger">
+                                <span class="banner-label">Sign in error</span>
+                                {{ session('error') }}
+                            </div>
                         @endif
 
                         <div class="auth-card">
@@ -430,9 +465,7 @@
                         </form>
 
                         <div class="auth-footer-links">
-                            <div class="small text-muted">
-                                Need to review plans first? <a href="{{ url('/') }}" class="support-link">Go to home page</a>
-                            </div>
+                            <div class="small text-muted">Use your assigned workspace credentials to continue.</div>
                             <div class="text-muted small">
                                 &copy; {{ date('Y') }} {{ $website_nm ?? '' }}. All rights reserved.
                             </div>

@@ -1,8 +1,50 @@
 @extends('layouts.app')
 
-@section('content')
-
+@section('page-css')
 <style>
+    .form-suite {
+        background: linear-gradient(180deg, rgba(248, 250, 252, 0.78) 0%, rgba(245, 247, 251, 0) 100%);
+    }
+
+    .form-suite .hero-shell {
+        border: 1px solid rgba(255, 255, 255, 0.78);
+        border-radius: 28px;
+        background:
+            radial-gradient(circle at top right, rgba(15, 118, 110, 0.14), transparent 28%),
+            radial-gradient(circle at left center, rgba(37, 99, 235, 0.16), transparent 30%),
+            linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        box-shadow: 0 20px 48px rgba(15, 23, 42, 0.08);
+        margin-bottom: 1rem;
+    }
+
+    .form-suite .hero-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 12px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.76);
+        border: 1px solid #dbeafe;
+        color: #1d4ed8;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+    }
+
+    .form-suite .hero-title {
+        font-size: clamp(2rem, 3vw, 2.7rem);
+        line-height: 1.05;
+        letter-spacing: -0.04em;
+        font-weight: 800;
+        margin: 1rem 0 .45rem;
+        color: #0f172a;
+    }
+
+    .form-suite .hero-subtitle {
+        color: #64748b;
+    }
+
     .flatpickr-months .flatpickr-month
     {
         background: white;
@@ -11,52 +53,156 @@
     {
         display: none !important;
     }
+
+    .form-suite .invoice-create-card {
+        border: 1px solid rgba(255, 255, 255, 0.78);
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 14px 32px rgba(15, 23, 42, 0.05);
+    }
+
+    .form-suite .invoice-topbar {
+        border: 1px solid rgba(255, 255, 255, 0.78);
+        background:
+            radial-gradient(circle at top right, rgba(15, 118, 110, 0.14), transparent 28%),
+            radial-gradient(circle at left center, rgba(37, 99, 235, 0.16), transparent 30%),
+            linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        color: #0f172a;
+        border-radius: 22px;
+        padding: 16px 18px;
+        margin-bottom: 14px;
+        box-shadow: 0 14px 32px rgba(15, 23, 42, 0.05);
+    }
+
+    .form-suite .invoice-step-badge {
+        background: #eff6ff;
+        border: 1px solid #dbeafe;
+        color: #1d4ed8;
+        border-radius: 999px;
+        padding: 6px 11px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .form-suite .invoice-form-section {
+        border: 1px solid #e2e8f0;
+        border-radius: 18px;
+        padding: 16px;
+        margin-bottom: 14px;
+        background: #f8fafc;
+    }
+
+    .form-suite .invoice-form-section .section-title {
+        font-size: 0.96rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin-bottom: 12px;
+        letter-spacing: -0.02em;
+    }
+
+    .form-suite .invoice-actions {
+        position: sticky;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.96);
+        border-top: 1px solid #e2e8f0;
+        padding-top: 12px;
+        z-index: 5;
+    }
+
+    .form-suite .invoice-form-wrap {
+        max-width: 100%;
+    }
+
+    .form-suite .status-banner {
+        border: 1px solid #dce4ee;
+        border-radius: 18px;
+        padding: 1rem 1.15rem;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+    }
+
+    .form-suite .status-banner.status-danger {
+        background: linear-gradient(135deg, #fef2f2 0%, #fff1f2 100%);
+        border-color: #fecdd3;
+        color: #be123c;
+    }
 </style>
+@endsection
+
+@section('content')
     <!-- Product Modal  Start -->
 @php
     $default_img  =\App\Models\Utility::defaultImage();
     $check_discount_allow = \App\Models\Utility::isDiscountAllowed();
 @endphp
 
-    <div class="page-content">
+    <div class="page-content form-suite">
         <div class="container-fluid">
 
-            <!-- start page title -->
             <div class="row">
                 <div class="col-12">
-                    <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-galaxy-transparent">
-                        <h4 class="mb-sm-0">Invoices</h4>
-                        <div class="page-title-right">
-                            <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a href="{{ route('invoices.index') }}">Invoices</a></li>
-                                <li class="breadcrumb-item active">Create</li>
-                            </ol>
+                    <div class="hero-shell">
+                        <div class="card-body p-4 p-lg-5">
+                            <div class="row align-items-center g-4">
+                                <div class="col-lg-8">
+                                    <span class="hero-eyebrow">Create Workflow</span>
+                                    <h1 class="hero-title">Create Invoice</h1>
+                                    <p class="hero-subtitle mb-0">Build invoices with customer, transport, address, product, and payment data inside the same refined form experience as the updated sales flow.</p>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="d-flex justify-content-lg-end">
+                                        <ol class="breadcrumb m-0">
+                                            <li class="breadcrumb-item"><a href="{{ route('invoices.index') }}">Invoices</a></li>
+                                            <li class="breadcrumb-item active">Create</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-
                     </div>
                 </div>
             </div>
 
 
             <div class="row">
+                <div class="col-12">
+                    <div class="invoice-topbar d-flex flex-wrap justify-content-between align-items-center gap-2">
+                        <div>
+                            <h5 class="mb-1">Create Invoice</h5>
+                            <small class="text-muted">Fill customer details, add products, verify totals, then save the invoice.</small>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="invoice-step-badge">1. Customer</span>
+                            <span class="invoice-step-badge">2. Products</span>
+                            <span class="invoice-step-badge">3. Payment</span>
+                        </div>
+                    </div>
+                </div>
                 <!-- Varying Modal Content -->
                 <div class="col-lg-12">
-                    <div class="card">
+                    <div class="card invoice-create-card">
                         <div class="card-header">
-                            <div class="d-flex justify-content-between">
-                                <h5 class="card-title  mb-0">Invoice Create</h5>
-                            </div>
-                            <div class="row justify-content-end">
-                                <div class="col-md-4 d-flex flex-column align-items-end">
-                                    <button class="btn btn-primary" data-bs-toggle="offcanvas" href="#offcanvasExample">Add
+                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                <h5 class="card-title mb-0">Invoice Builder</h5>
+                                <div class="d-flex flex-column align-items-end">
+                                    <button class="btn btn-primary btn-sm" data-bs-toggle="offcanvas" href="#offcanvasExample">Add
                                         Customer</button>
                                 </div>
                             </div>
 
                         </div>
-                        <div class="card-body">
+                        <div class="card-body invoice-form-wrap">
                             {{ Form::open(['route' => 'invoices.store', 'method' => 'post', 'enctype' => 'multipart/form-data', 'id' => 'quotesForm', 'autocomplete' => 'off']) }}
+                            @if ($errors->any())
+                                <div class="status-banner status-danger mb-3">
+                                    {{ $errors->first() }}
+                                </div>
+                            @endif
                             <div class="row">
+
+                                <div class="col-12">
+                                    <div class="invoice-form-section">
+                                    <div class="section-title">Customer & Invoice Details</div>
+                                    <div class="row g-3">
 
                                 <div class="col-md-6">
 
@@ -119,8 +265,14 @@
                                     <span class="text-danger error-msg" id="error-transport_id"></span>
 
                                 </div>
+                                </div>
+                                </div>
+                                </div>
 
 
+                                <div class="col-12">
+                                <div class="invoice-form-section">
+                                <div class="section-title">Company & Compliance Details</div>
                                 <div class="row mt-2">
 
                                      <div class="col-md-3">
@@ -164,7 +316,12 @@
 
 
                                 </div>
+                                </div>
+                                </div>
 
+                                <div class="col-12">
+                                <div class="invoice-form-section">
+                                <div class="section-title">Billing & Shipping</div>
                                 <div class="address-section">
 
                                     @php
@@ -173,9 +330,13 @@
 
                                     @include('address.address_selection',['company' => null,'billing_address_id'=>null,'shipping_address_id'=>null])
                                 </div>
+                                </div>
+                                </div>
 
 
-
+                                <div class="col-12">
+                                <div class="invoice-form-section">
+                                <div class="section-title">Products & Pricing</div>
                                 <div class="row mt-2">
 
                                     <div class="col-md-6">
@@ -185,19 +346,29 @@
                                             <select class="form-select" id="raw_id" data-choices data-choices-removeItem>
                                                 <option value="">Select Product</option>
                                                 @foreach ($product_list as $product)
-                                                    <option value="{{ $product->id }}" data-name="{{ $product->name }}"
+                                                    <option value="{{ $product->id }}" data-product-id="{{ $product->id }}" data-marketplace-listing-id="" data-name="{{ $product->name }}"
                                                         data-image="{{ $product->image ?? $default_img }}"
                                                         data-price="{{ $product->price }}"
                                                         data-units='@json(\App\Models\Utility::getUnits($product->unit_type))'
                                                         data-default-unit="{{ $product->unit_type }}"
                                                         data-default-gst="{{ $product?->getGstSlabMaster?->rate ?? 0 }}"
                                                         >
-                                                        {{ $product->sku_code }} - {{ $product->name }}
+                                                        Master: {{ $product->sku_code }} - {{ $product->name }}
                                                     </option>
+                                                    @foreach (($product->relationLoaded('marketplaceListings') ? $product->marketplaceListings : collect()) as $listing)
+                                                        <option value="{{ $product->id }}::{{ $listing->id }}" data-product-id="{{ $product->id }}" data-marketplace-listing-id="{{ $listing->id }}" data-name="{{ $listing->listing_title }}" data-image="{{ $product->image ?? $default_img }}" data-price="{{ $listing->selling_price ?: $product->price }}" data-units='@json(\App\Models\Utility::getUnits($product->unit_type))' data-default-unit="{{ $product->unit }}" data-default-gst="{{ $product?->getGstSlabMaster?->rate ?? 0 }}" data-platform="{{ $listing->platform }}" data-platform-sku="{{ $listing->platform_sku }}">
+                                                            {{ ucfirst($listing->platform) }}: {{ $listing->platform_sku }} - {{ $listing->listing_title }}
+                                                        </option>
+                                                    @endforeach
                                                 @endforeach
                                             </select>
                                         </div>
                                     </div>
+                                </div>
+                                <div class="row">
+                                    <span class="text-danger error-msg d-block mt-2" id="error-products"></span>
+                                </div>
+                                </div>
                                 </div>
 
                                 {{-- <div class="product-list"></div> --}}
@@ -208,22 +379,28 @@
                                     <div class="main-product-list">
                                         @include('products.customer-product-list-table')
                                     </div>
-
                                 </div>
 
-                                <div class="col-md-6 offset-md-6" id="advance_payment" style="display: none;">
-                                    <label>Advance Payment</label> <x-required></x-required>
-                                    <input type="number" name="advance_payment" class="form-control">
+                                <div class="col-12">
+                                    <div class="invoice-form-section">
+                                        <div class="section-title">Payment Terms</div>
+                                        <div class="row g-3 justify-content-end">
+                                            <div class="col-md-6" id="advance_payment" style="display: none;">
+                                                <label>Advance Payment</label> <x-required></x-required>
+                                                <input type="number" name="advance_payment" class="form-control">
+                                            </div>
+
+                                            <div class="col-md-6" id="payment_after_days"> {{--  style="display: none;" --}}
+                                                <label>Payment After Days</label> <x-required></x-required>
+                                                <input type="number" name="payment_after_days" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div class="col-md-6 offset-md-6" id="payment_after_days"> {{--  style="display: none;" --}}
-                                    <label>Payment After Days</label> <x-required></x-required>
-                                    <input type="number" name="payment_after_days" class="form-control">
-                                </div>
 
-
-                                <div class="mt-4">
-                                    <div class="hstack gap-2 justify-content-end">
+                                <div class="col-12 mt-2">
+                                    <div class="invoice-actions hstack gap-2 justify-content-end">
                                         <a href="{{ route('invoices.index') }}"  class="btn btn-light" >Close</a>
                                         <button type="submit" class="btn btn-success" name="save"
                                             value="only_save" id="saveBtn">Save</button>
@@ -945,7 +1122,9 @@ document.getElementById('raw_id').addEventListener('change', function () {
     const selectedOption = this.options[this.selectedIndex];
     if (!selectedOption || !selectedOption.value) return;
 
-    const productId = selectedOption.value;
+    const productId = selectedOption.dataset.productId || selectedOption.value;
+    const marketplaceListingId = selectedOption.dataset.marketplaceListingId || '';
+    const rowKey = marketplaceListingId ? `${productId}:${marketplaceListingId}` : `${productId}:master`;
 
 
     if (!lead_id) {
@@ -956,12 +1135,13 @@ document.getElementById('raw_id').addEventListener('change', function () {
     }
 
     const productName = selectedOption.dataset.name;
+    const listingBadge = marketplaceListingId ? `<div class="small text-muted">${(selectedOption.dataset.platform || '').toUpperCase()} SKU: ${selectedOption.dataset.platformSku || ''}</div>` : '';
     const productImg = selectedOption.dataset.image || "{{ \App\Models\Utility::defaultImage() }}";
     const unitList = JSON.parse(selectedOption.dataset.units || '{}');
     const defaultUnit = selectedOption.dataset.defaultUnit;
 
-    const existingIds = Array.from(document.querySelectorAll('input[name="products[id][]"]')).map(i => i.value);
-    if (existingIds.includes(productId)) {
+    const existingIds = Array.from(document.querySelectorAll('input[name="products[row_key][]"]')).map(i => i.value);
+    if (existingIds.includes(rowKey)) {
         show_toastr('error', 'This product is already added.');
         this.value = '';
         return;
@@ -1006,6 +1186,9 @@ document.getElementById('raw_id').addEventListener('change', function () {
                 <td>
                     ${productName}
                     <input type="hidden" name="products[id][]" value="${productId}">
+                    <input type="hidden" name="products[listing_id][]" value="${marketplaceListingId}">
+                    <input type="hidden" name="products[row_key][]" value="${rowKey}">
+                    ${listingBadge}
                 </td>
 
                 <td>

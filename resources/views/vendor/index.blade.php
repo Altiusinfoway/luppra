@@ -1,42 +1,197 @@
 @extends('layouts.app')
 
-@section('content')
-    <div class="page-content">
-        <div class="container-fluid">
+@section('page-css')
+    <style>
+        .vendors-suite {
+            background: linear-gradient(180deg, rgba(248, 250, 252, 0.78) 0%, rgba(245, 247, 251, 0) 100%);
+        }
 
-            <!-- start page title -->
+        .vendors-suite .hero-shell,
+        .vendors-suite .table-shell {
+            border: 1px solid rgba(255, 255, 255, 0.78);
+            border-radius: 26px;
+            background:
+                radial-gradient(circle at top right, rgba(15, 118, 110, 0.12), transparent 28%),
+                radial-gradient(circle at left center, rgba(37, 99, 235, 0.12), transparent 30%),
+                #ffffff;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.07);
+        }
+
+        .vendors-suite .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.76);
+            border: 1px solid #dbeafe;
+            color: #1d4ed8;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .vendors-suite .summary-card {
+            border: 1px solid rgba(255, 255, 255, 0.78);
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.84);
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.05);
+        }
+
+        .vendors-suite .summary-card .label {
+            display: block;
+            margin-bottom: 8px;
+            color: #64748b;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .vendors-suite .summary-card h3 {
+            margin: 0;
+            font-size: 1.7rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: #0f172a;
+        }
+
+        .vendors-suite .filter-shell {
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            background: linear-gradient(180deg, rgba(248, 250, 252, 0.92), rgba(255, 255, 255, 0.98));
+            padding: 1rem;
+        }
+
+        .vendors-suite .filter-label {
+            display: block;
+            margin-bottom: 0.45rem;
+            color: #475569;
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .vendors-suite .toolbar-shell {
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            background: #f8fafc;
+            padding: 14px;
+        }
+
+        .vendors-suite .toolbar-note {
+            color: #64748b;
+        }
+
+        .vendors-suite .search-shell {
+            position: relative;
+        }
+
+        .vendors-suite .search-shell .search-icon {
+            position: absolute;
+            top: 50%;
+            right: 14px;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            pointer-events: none;
+        }
+
+        .vendors-suite .table-wrap {
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        .vendors-suite .table-wrap table {
+            margin-bottom: 0;
+        }
+    </style>
+@endsection
+
+@section('content')
+    <div class="page-content vendors-suite">
+        <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-galaxy-transparent">
-                        <h4 class="mb-sm-0">Vendor Operation Section</h4>
-                        <div class="page-title-right">
-                            <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a href="{{ route('vendors.index') }}">Vendor Operation</a></li>
-                                <li class="breadcrumb-item active">List</li>
-                            </ol>
+                    <div class="hero-shell mb-4">
+                        <div class="card-body p-4 p-lg-5">
+                            <div class="row align-items-center g-4">
+                                <div class="col-lg-8">
+                                    <span class="hero-eyebrow">Procurement Directory</span>
+                                    <h1 class="mb-3">Vendors</h1>
+                                    <p class="text-muted mb-0">Manage supplier records, filters, and product relationships in a cleaner procurement workspace.</p>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="d-flex justify-content-lg-end">
+                                        <ol class="breadcrumb m-0">
+                                            <li class="breadcrumb-item"><a href="{{ route('vendors.index') }}">Vendors</a></li>
+                                            <li class="breadcrumb-item active">List</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-
                     </div>
                 </div>
             </div>
-            <!-- end page title -->
             <div class="row">
-
-                <!-- Varying Modal Content -->
+                <div class="col-md-6 col-xl-3 mb-4">
+                    <div class="card summary-card h-100">
+                        <div class="card-body">
+                            <span class="label">Suppliers</span>
+                            <h3>{{ number_format($vendors->count() ?? 0) }}</h3>
+                            <p class="text-muted mb-0 mt-2">Vendor records available for procurement and replenishment workflows.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-3 mb-4">
+                    <div class="card summary-card h-100">
+                        <div class="card-body">
+                            <span class="label">Filters</span>
+                            <h3>4</h3>
+                            <p class="text-muted mb-0 mt-2">Country, state, city, and product filters keep sourcing views focused.</p>
+                        </div>
+                    </div>
+                </div>
                 <div class="col-lg-12">
-                    <div class="card">
+                    <div class="card table-shell">
                         <div class="card-header">
-                            <h5 class="card-title  mb-0">Vendor Operation List</h5>
+                            <div class="toolbar-shell mb-3">
+                                <div class="d-flex flex-wrap align-items-start justify-content-between gap-3">
+                                    <div>
+                                        <h5 class="card-title mb-1">Vendor Operation List</h5>
+                                        <p class="toolbar-note mb-0">Use vendor, location, and product filters to keep procurement and sourcing workflows focused.</p>
+                                    </div>
+
+                                    @can('create vender')
+                                    <div>
+                                        <a href="{{ route('vendors.create') }}" class="btn btn-primary">
+                                            <i class="ri-add-line align-bottom me-1"></i> Add Vendor
+                                        </a>
+                                    </div>
+                                    @endcan
+                                </div>
+                            </div>
+
                             <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mt-3">
 
-                                <div class="row g-2 align-items-center mt-2 w-75">
+                                <div class="filter-shell mt-2 flex-grow-1">
+                                <div class="row g-3 align-items-end">
 
                                     <div class="col-md-3">
-                                        <input type="search" id="search-task-options" class="form-control"
-                                            placeholder="Search...">
+                                        <label class="filter-label">Search</label>
+                                        <div class="search-shell">
+                                            <input type="search" id="search-task-options" class="form-control"
+                                                placeholder="Search vendors...">
+                                            <i class="ri-search-line search-icon"></i>
+                                        </div>
                                     </div>
 
                                     <div class="col-md-2">
+                                        <label class="filter-label">Country</label>
                                         <select name="country_filter" id="country_filter" class="form-control">
                                             <option value="">All Country</option>
                                             @foreach ($country_list as $id => $name)
@@ -46,18 +201,21 @@
                                     </div>
 
                                     <div class="col-md-2">
+                                        <label class="filter-label">State</label>
                                         <select name="state_filter" id="state_filter" class="form-control">
                                             <option value="">All States</option>
                                         </select>
                                     </div>
 
                                     <div class="col-md-2">
+                                        <label class="filter-label">City</label>
                                         <select name="city_filter" id="city_filter" class="form-control">
                                             <option value="">All Cities</option>
                                         </select>
                                     </div>
 
                                     <div class="col-md-2">
+                                        <label class="filter-label">Product</label>
                                         <select name="product_filter" id="product_filter" class="form-control">
                                             <option value="">All Product</option>
                                             @foreach ($product_list as $product)
@@ -69,14 +227,7 @@
                                     </div>
 
                                 </div>
-
-                                @can('create vender')
-                                <div>
-                                    <a href="{{ route('vendors.create') }}" class="btn btn-success">
-                                        <i class="ri-add-line align-bottom me-1"></i> Add Vendor
-                                    </a>
                                 </div>
-                                @endcan
                             </div>
                         </div>
                         <div class="card-body">
@@ -138,8 +289,9 @@
                             </tbody>
                         </table> --}}
 
+                            <div class="table-responsive table-wrap">
                             <table id="vendorList"
-                                class="table table-bordered dt-responsive nowrap table-striped align-middle"
+                                class="table table-bordered dt-responsive nowrap table-striped align-middle mb-0"
                                 style="width:100%">
                                 <thead>
 
@@ -156,6 +308,7 @@
                                 </thead>
                                 <tbody></tbody>
                             </table>
+                            </div>
 
                         </div>
                     </div>

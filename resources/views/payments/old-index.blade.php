@@ -1,28 +1,72 @@
 @extends('layouts.app')
 
+@section('page-css')
+<style>
+.payments-suite {
+    background: linear-gradient(180deg, rgba(248, 250, 252, 0.72) 0%, rgba(245, 247, 251, 0) 100%);
+}
+
+.payments-suite .hero-shell,
+.payments-suite .shell-card {
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06);
+}
+
+.payments-suite .hero-shell {
+    background:
+        radial-gradient(circle at top right, rgba(14, 165, 233, 0.14), transparent 30%),
+        radial-gradient(circle at left center, rgba(16, 185, 129, 0.14), transparent 30%),
+        linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.payments-suite .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 12px;
+    border-radius: 999px;
+    border: 1px solid #dbeafe;
+    background: rgba(255, 255, 255, 0.86);
+    color: #1d4ed8;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+</style>
+@endsection
+
 @section('content')
-<div class="page-content">
+<div class="page-content payments-suite">
     <div class="container-fluid">
-        <!-- start page title -->
         <div class="row">
             <div class="col-12">
-                <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-galaxy-transparent">
-                    <h4 class="mb-sm-0">Payments</h4>
-                    <div class="page-title-right">
-                        <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="{{ route('quotes.index') }}">Payments</a></li>
-                            <li class="breadcrumb-item active">List</li>
-                        </ol>
+                <div class="card hero-shell mb-4">
+                    <div class="card-body p-4 p-lg-5">
+                        <div class="row align-items-center g-4">
+                            <div class="col-lg-7">
+                                <span class="hero-eyebrow">Payment Records</span>
+                                <h2 class="mt-3 mb-2">Payments</h2>
+                                <p class="text-muted mb-0">Review payment history and launch new payment entry actions from a cleaner finance listing screen.</p>
+                            </div>
+                            <div class="col-lg-5">
+                                <div class="d-flex justify-content-lg-end">
+                                    <ol class="breadcrumb m-0">
+                                        <li class="breadcrumb-item"><a href="{{ route('quotes.index') }}">Payments</a></li>
+                                        <li class="breadcrumb-item active">List</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-
                 </div>
             </div>
         </div>
 
         <div class="row">
-            <!-- Varying Modal Content -->
             <div class="col-lg-12">
-                <div class="card">
+                <div class="card shell-card">
 
                     @if(request()->has('message_success'))
                         <div class="alert bg-primary text-white alert-dismissible fade show col-md-6 m-3" role="alert" id="success_msg">

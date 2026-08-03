@@ -7,16 +7,19 @@
 
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            font-size: 14px;
+            font-family: DejaVu Sans, Arial, sans-serif;
+            margin: 18px;
+            font-size: 13px;
+            color: #0f172a;
+            background: #f8fafc;
         }
 
-        .container {
+        .payslip-shell {
             width: 100%;
-            border: 2px solid #d8d8d8;
-            padding: 20px;
-            border-radius: 10px;
+            border: 1px solid #cbd5e1;
+            padding: 24px;
+            border-radius: 18px;
+            background: #ffffff;
         }
 
         h2,
@@ -26,18 +29,65 @@
             padding: 0;
         }
 
+        .eyebrow {
+            text-align: center;
+            font-size: 10px;
+            font-weight: bold;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #2563eb;
+            margin-bottom: 10px;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #0f172a;
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            font-size: 12px;
+            margin-bottom: 18px;
+        }
+
         .company-info {
             text-align: center;
             margin-bottom: 20px;
+            line-height: 1.6;
+            color: #475569;
         }
 
-        .info-table {
+        .meta-table {
             width: 100%;
-            margin-bottom: 15px;
+            margin-bottom: 18px;
+            border-collapse: separate;
+            border-spacing: 12px 0;
         }
 
-        .info-table td {
-            padding: 3px 0;
+        .meta-card {
+            width: 50%;
+            vertical-align: top;
+            border: 1px solid #dbeafe;
+            background: #f8fbff;
+            border-radius: 12px;
+            padding: 12px 14px;
+        }
+
+        .meta-title {
+            font-size: 10px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        .meta-line {
+            padding: 2px 0;
         }
 
         .earnings-table,
@@ -49,21 +99,22 @@
 
         .earnings-table th,
         .deductions-table th {
-            background: #e6e6e6;
-            padding: 8px;
-            border: 1px solid #000;
+            background: #eff6ff;
+            color: #1e3a8a;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
             text-align: center;
         }
 
         .earnings-table td,
         .deductions-table td {
-            padding: 6px;
-            border: 1px solid #000;
+            padding: 9px;
+            border: 1px solid #cbd5e1;
         }
 
         .total-row {
             font-weight: bold;
-            background: #f2f2f2;
+            background: #f8fafc;
         }
 
         .sign-section {
@@ -79,7 +130,7 @@
 
         .line {
             margin-top: 40px;
-            border-top: 1px solid #000;
+            border-top: 1px solid #94a3b8;
             width: 80%;
             margin-left: auto;
             margin-right: auto;
@@ -89,6 +140,7 @@
             text-align: center;
             margin-top: 20px;
             font-size: 12px;
+            color: #64748b;
         }
     </style>
 
@@ -96,9 +148,11 @@
 
 <body>
 
-    <div class="container">
+    <div class="payslip-shell">
 
-        <h2>Payslip</h2>
+        <div class="eyebrow">Payroll Document</div>
+        <div class="title">Payslip</div>
+        <div class="subtitle">Salary payment summary generated from the payroll workspace.</div>
 
         @php
             $website_name = \App\Models\Utility::getSetting('website_name');
@@ -120,26 +174,22 @@
             </div>
         </div>
 
-    </div>
-
-    <!-- Employee Details -->
-    <table class="info-table">
-
-        <tr>
-            <td>Current Date : <strong>{{ $current_date ?? '' }} </strong></td>
-            <td></td>
-        </tr>
-
-        <tr>
-            <td>Date of Joining : <strong>{{ $employee_rcd->dob ?? '' }} </strong></td>
-            <td>Employee Name : <strong>{{ $employee_rcd->name ?? '' }}</strong></td>
-        </tr>
-        <tr>
-            <td>Department : <strong>{{ $employee_rcd->departments->name ?? '' }}</strong></td>
-            <td>Designation : <strong>{{ $employee_rcd->getDesignation->name ?? '' }}</strong></td>
-        </tr>
-
-    </table>
+        <!-- Employee Details -->
+        <table class="meta-table">
+            <tr>
+                <td class="meta-card">
+                    <div class="meta-title">Payslip Info</div>
+                    <div class="meta-line">Current Date: <strong>{{ $current_date ?? '' }}</strong></div>
+                    <div class="meta-line">Date of Joining: <strong>{{ $employee_rcd->dob ?? '' }}</strong></div>
+                </td>
+                <td class="meta-card">
+                    <div class="meta-title">Employee Info</div>
+                    <div class="meta-line">Employee Name: <strong>{{ $employee_rcd->name ?? '' }}</strong></div>
+                    <div class="meta-line">Department: <strong>{{ $employee_rcd->departments->name ?? '' }}</strong></div>
+                    <div class="meta-line">Designation: <strong>{{ $employee_rcd->getDesignation->name ?? '' }}</strong></div>
+                </td>
+            </tr>
+        </table>
 
     <!-- Earnings & Deductions Table -->
     <table class="earnings-table">
@@ -167,24 +217,24 @@
     </table>
 
 
-    <!-- Signatures -->
-    <div class="sign-section">
+        <!-- Signatures -->
+        <div class="sign-section">
 
-        <div class="sign-box">
-            Employer Signature <br><br>
-            <div class="line"></div>
+            <div class="sign-box">
+                Employer Signature <br><br>
+                <div class="line"></div>
+            </div>
+
+            <div class="sign-box">
+                Employee Signature <br><br>
+                <div class="line"></div>
+            </div>
+
         </div>
 
-        <div class="sign-box">
-            Employee Signature <br><br>
-            <div class="line"></div>
+        <div class="footer-text">
+            This is a system generated payslip
         </div>
-
-    </div>
-
-    <div class="footer-text">
-        This is a system generated payslip
-    </div>
 
     </div>
 

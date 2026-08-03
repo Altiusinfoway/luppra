@@ -30,6 +30,7 @@ use App\Models\Attendance;
 use App\Models\Category;
 use App\Models\CustomerPriceHistory;
 use App\Models\GstSlabMaster;
+use App\Models\MarketplaceListing;
 
 class MasterController extends Controller
 {
@@ -172,9 +173,10 @@ class MasterController extends Controller
                     $q->select('id','name');
                 },
                 'getCategory',
-                'getGstSlabMaster'
+                'getGstSlabMaster',
+                'marketplaceListings'
             ])
-                ->select('id','name','image','sku_code','price','unit','unit_type','hsn_code','category_id','gst_slab_master_id')
+                ->select('id','name','image','sku_code','price','unit','unit_type','hsn_code','category_id','gst_slab_master_id', 'stock_qty')
                 ->where('created_by', $user->creatorId())
                 ->where(function ($query) {
                     $query->whereNull('delete_status')
@@ -203,6 +205,29 @@ class MasterController extends Controller
                         $product_itm['discount'] ="0.00";
                     }
 
+                    $product_itm['marketplace_listings'] = $product_itm->marketplaceListings->map(function (MarketplaceListing $listing) {
+                        return [
+                            'id' => $listing->id,
+                            'platform' => $listing->platform,
+                            'platform_sku' => $listing->platform_sku,
+                            'marketplace_item_id' => $listing->marketplace_item_id,
+                            'listing_title' => $listing->listing_title,
+                            'pack_size' => $listing->pack_size,
+                            'selling_price' => number_format((float) $listing->selling_price, 2, '.', ''),
+                            'mrp' => number_format((float) $listing->mrp, 2, '.', ''),
+                            'base_price' => !is_null($listing->base_price) ? number_format((float) $listing->base_price, 2, '.', '') : null,
+                            'listing_status' => $listing->listing_status,
+                            'fulfillment_type' => $listing->fulfillment_type,
+                            'allocated_stock' => $listing->allocated_stock,
+                            'reserved_stock' => $listing->reserved_stock,
+                            'available_stock' => $listing->available_stock,
+                            'external_orders_count' => (int) ($listing->external_orders_count ?? 0),
+                            'external_sold_qty' => number_format((float) ($listing->external_sold_qty ?? 0), 2, '.', ''),
+                            'external_revenue' => number_format((float) ($listing->external_revenue ?? 0), 2, '.', ''),
+                            'external_last_synced_at' => optional($listing->external_last_synced_at)->toIso8601String(),
+                            'external_sync_note' => $listing->external_sync_note,
+                        ];
+                    })->values();
 
                 }
             }

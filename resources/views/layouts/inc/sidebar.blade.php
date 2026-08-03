@@ -575,6 +575,7 @@
     $isCategoryRoute = request()->routeIs('category.*');
 
     $website_nm = \App\Models\Utility::getWebsiteName();
+    $website_short_nm = \App\Models\Utility::getWebsiteShortName();
 
     // Regions
     $isRegionsRoute = request()->routeIs('regions.*');
@@ -625,99 +626,199 @@
 
 <style>
     .sidebar-modern {
-        --sb-bg: linear-gradient(180deg, #edf4fb 0%, #e1ebf6 52%, #d8e5f2 100%);
-        --sb-panel: rgba(219, 233, 246, 0.88);
-        --sb-text: #18324c;
-        --sb-muted: #4d6480;
-        --sb-subtext: #5d728a;
-        --sb-border: rgba(15, 23, 42, 0.14);
-        --sb-active-bg: linear-gradient(90deg, rgba(12, 74, 110, 0.16), rgba(16, 185, 129, 0.12));
-        --sb-active-text: #0f2f4a;
+        --sb-shell-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.985) 0%, rgba(249, 250, 252, 0.98) 100%);
+        --sb-shell-shadow: 0 18px 34px rgba(15, 23, 42, 0.06);
+        --sb-bg: transparent;
+        --sb-panel: transparent;
+        --sb-text: #1f2937;
+        --sb-muted: #8a94a7;
+        --sb-subtext: #566173;
+        --sb-border: rgba(226, 232, 240, 0.9);
+        --sb-active-bg: #f1f3f8;
+        --sb-active-text: #111827;
     }
 
     .sidebar-modern.navbar-menu {
-        background: var(--sb-bg) !important;
-        border-right: 1px solid var(--sb-border);
-        box-shadow: 8px 0 28px rgba(15, 23, 42, 0.08);
-        backdrop-filter: blur(4px);
+        background: transparent !important;
+        border-right: 0;
+        box-shadow: none;
+        backdrop-filter: none;
         position: fixed;
         top: 0;
         bottom: 0;
         z-index: 1002;
+        width: var(--modern-sidebar-width);
+        padding: 12px 10px 14px 14px;
+        overflow: hidden;
+    }
+
+    .sidebar-modern.navbar-menu::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 20px;
+        background: var(--sb-shell-bg);
+        border: 1px solid rgba(229, 231, 235, 0.95);
+        box-shadow: var(--sb-shell-shadow);
+        backdrop-filter: blur(14px);
+    }
+
+    .sidebar-modern > * {
+        position: relative;
+        z-index: 1;
     }
 
     .sidebar-modern .navbar-brand-box {
         background: transparent;
-        border-bottom: 1px solid var(--sb-border);
-        height: 74px;
-        padding: 0.65rem 0.9rem;
+        border-bottom: 0;
+        height: auto;
+        padding: 0.9rem 0.85rem 0.45rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        position: relative;
+        overflow: hidden;
     }
 
     .sidebar-modern #scrollbar .container-fluid {
-        padding: 0.85rem 0.62rem 1.2rem;
+        padding: 0.35rem 0.55rem 1rem;
+    }
+
+    .sidebar-modern .sidebar-brand-card {
+        display: flex !important;
+        align-items: center;
+        gap: 0.7rem;
+        width: 100%;
+        min-width: 0;
+        margin-right: 0;
+        padding: 0.35rem 2.25rem 0.35rem 0.25rem !important;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    .sidebar-modern .sidebar-brand-card .logo-sm,
+    .sidebar-modern .sidebar-brand-card .logo-lg {
+        display: contents;
+    }
+
+    .sidebar-modern .brand-logo-wrap {
+        width: 30px;
+        height: 30px;
+        flex: 0 0 30px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        background: #111827;
+        border: 0;
+    }
+
+    .sidebar-modern .brand-logo-wrap img {
+        width: 18px;
+        height: 18px;
+        object-fit: contain;
+    }
+
+    .sidebar-modern .brand-copy {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.06rem;
+        flex: 1 1 auto;
+    }
+
+    .sidebar-modern .brand-eyebrow {
+        display: none;
+    }
+
+    .sidebar-modern .brand-title {
+        color: var(--sb-text);
+        font-family: 'Manrope', sans-serif;
+        font-size: 0.95rem;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        line-height: 1.2;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .sidebar-modern .brand-chevron {
+        width: 22px;
+        height: 22px;
+        flex: 0 0 22px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        color: #6b7280;
+        background: transparent;
+        border: 0;
+        font-size: 0.95rem;
     }
 
     .sidebar-modern .navbar-nav .menu-title {
-        margin: 1rem 0.1rem 0.4rem;
-        padding: 0.38rem 0.7rem;
-        background: var(--sb-panel);
-        border: 1px solid rgba(148, 163, 184, 0.22);
-        border-radius: 10px;
+        margin: 0.95rem 0.15rem 0.35rem;
+        padding: 0.15rem 0.5rem;
+        background: transparent;
+        border: 0;
+        border-radius: 0;
         color: var(--sb-muted);
-        letter-spacing: 0.65px;
-        text-transform: uppercase;
-        font-size: 10.5px;
-        font-weight: 700;
+        letter-spacing: 0;
+        text-transform: none;
+        font-size: 0.78rem;
+        font-weight: 500;
     }
 
     .sidebar-modern .navbar-nav .nav-item {
-        margin-bottom: 0.14rem;
+        margin-bottom: 0.08rem;
     }
 
     .sidebar-modern .navbar-nav .nav-link {
         display: flex;
         align-items: center;
-        gap: 0.72rem;
-        min-height: 45px;
+        gap: 0.58rem;
+        min-height: 38px;
         position: relative;
         border-radius: 10px;
         color: var(--sb-text) !important;
-        padding: 0.6rem 0.9rem 0.6rem 0.78rem;
+        padding: 0.48rem 0.7rem 0.48rem 0.65rem;
         transition: all 0.18s ease-in-out;
         font-weight: 500;
-        font-size: 14px;
+        font-size: 0.96rem;
         line-height: 1.4;
-        border: 1px solid transparent;
+        border: 0;
         white-space: normal;
         text-align: left;
     }
 
     .sidebar-modern .navbar-nav .nav-link:hover,
     .sidebar-modern .navbar-nav .nav-link:focus-visible {
-        background: rgba(12, 74, 110, 0.12) !important;
-        border-color: rgba(12, 74, 110, 0.2) !important;
+        background: #f7f8fb !important;
         color: var(--sb-active-text) !important;
+        transform: none;
     }
 
     .sidebar-modern .navbar-nav .nav-link:hover i,
     .sidebar-modern .navbar-nav .nav-link:focus-visible i {
-        background: rgba(12, 74, 110, 0.14);
-        border-color: rgba(12, 74, 110, 0.24);
-        color: #0f4264;
+        color: #4b5563;
     }
 
     .sidebar-modern .navbar-nav .menu-link > i {
-        width: 28px;
-        height: 28px;
-        flex: 0 0 28px;
+        width: 18px;
+        height: 18px;
+        flex: 0 0 18px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        background: rgba(148, 163, 184, 0.2);
-        border: 1px solid rgba(148, 163, 184, 0.28);
-        border-radius: 8px;
+        background: transparent;
+        border: 0;
+        border-radius: 0;
         margin-right: 0;
-        font-size: 15px;
+        font-size: 1rem;
+        color: #6b7280;
         transition: all 0.18s ease-in-out;
     }
 
@@ -731,28 +832,25 @@
     .sidebar-modern .navbar-nav .menu-link.active {
         background: var(--sb-active-bg);
         color: var(--sb-active-text) !important;
-        border-color: rgba(12, 74, 110, 0.26);
-        box-shadow: inset 0 0 0 1px rgba(12, 74, 110, 0.12);
+        box-shadow: none;
         font-weight: 600;
     }
 
     .sidebar-modern .navbar-nav .nav-link.active i,
     .sidebar-modern .navbar-nav .menu-link.active i {
-        background: rgba(12, 74, 110, 0.14);
-        border-color: rgba(12, 74, 110, 0.24);
-        color: #0f4264;
+        color: #4b5563;
     }
 
     .sidebar-modern .navbar-nav .menu-link[data-bs-toggle="collapse"]::after {
-        color: #94a3b8;
-        right: 14px;
+        color: #9ca3af;
+        right: 10px;
         top: 50%;
         transform: translateY(-50%);
-        font-size: 0.95rem;
+        font-size: 0.88rem;
     }
 
     .sidebar-modern .navbar-nav .menu-link[data-bs-toggle="collapse"] {
-        padding-right: 2.2rem;
+        padding-right: 1.8rem;
     }
 
     .sidebar-modern .navbar-nav .menu-link[data-bs-toggle="collapse"][aria-expanded="true"]::after {
@@ -765,25 +863,25 @@
     }
 
     .sidebar-modern .menu-dropdown {
-        margin: 0.12rem 0 0.34rem;
-        padding: 0.12rem 0 0.08rem 0.78rem;
-        border-left: 1px solid rgba(100, 116, 139, 0.22);
-        margin-left: 1.95rem;
+        margin: 0.12rem 0 0.45rem;
+        padding: 0.1rem 0 0.05rem 0.45rem;
+        border-left: 1px solid #e5e7eb;
+        margin-left: 0.95rem;
         background: transparent;
         border-radius: 0;
     }
 
     .sidebar-modern .menu-dropdown > .nav.nav-sm {
-        padding-left: 0.35rem;
+        padding-left: 0.2rem;
     }
 
     .sidebar-modern .menu-dropdown .nav-link {
-        min-height: 35px;
-        padding: 0.42rem 0.72rem;
-        border-radius: 7px;
+        min-height: 31px;
+        padding: 0.34rem 0.58rem;
+        border-radius: 8px;
         border: 0;
-        font-size: 13px;
-        font-weight: 500;
+        font-size: 0.92rem;
+        font-weight: 400;
         line-height: 1.35;
         color: var(--sb-subtext) !important;
         gap: 0;
@@ -792,12 +890,12 @@
 
     .sidebar-modern .menu-dropdown .nav-link.active {
         color: var(--sb-active-text) !important;
-        background: rgba(12, 74, 110, 0.08);
+        background: #f1f3f8;
         font-weight: 600;
     }
 
     .sidebar-modern .menu-dropdown .nav-link:hover {
-        background: rgba(12, 74, 110, 0.05);
+        background: #f7f8fb;
         color: var(--sb-active-text) !important;
     }
 
@@ -829,13 +927,32 @@
     }
 
     .sidebar-modern .btn-vertical-sm-hover {
-        color: #334155 !important;
+        color: #6b7280 !important;
+        width: 24px;
+        height: 24px;
+        border-radius: 999px !important;
+        border: 0 !important;
+        background: transparent !important;
+        position: absolute;
+        top: 0.95rem;
+        right: 0.75rem;
+        z-index: 2;
+        padding: 0 !important;
+        min-height: 0;
     }
 
     @media (max-width: 767.98px) {
+        .sidebar-modern.navbar-menu {
+            padding: 8px;
+            width: min(86vw, var(--modern-sidebar-width));
+        }
+
+        .sidebar-modern.navbar-menu::before {
+            border-radius: 16px;
+        }
+
         .sidebar-modern .navbar-brand-box {
-            height: 66px;
-            padding: 0.5rem 0.75rem;
+            padding: 0.8rem 0.75rem 0.45rem;
         }
 
         .sidebar-modern .navbar-nav .nav-link {
@@ -849,22 +966,20 @@
 <div class="app-menu navbar-menu sidebar-modern">
     <!-- LOGO -->
     <div class="navbar-brand-box">
-        <!-- Dark Logo-->
-        <a href="{{ route('dashboard') }}" class="logo logo-dark">
+        <a href="{{ route('dashboard') }}" class="logo sidebar-brand-card">
             <span class="logo-sm">
-                <img src="{{ $brandLogo }}" alt="Engage Net" height="38">
+                <span class="brand-logo-wrap">
+                    <img src="{{ $brandLogo }}" alt="{{ $website_nm ?? 'Workspace' }}">
+                </span>
             </span>
             <span class="logo-lg">
-                <img src="{{ $brandLogo }}" alt="Engage Net" height="42">
-            </span>
-        </a>
-        <!-- Light Logo-->
-        <a href="{{ route('dashboard') }}" class="logo logo-light">
-            <span class="logo-sm">
-                <img src="{{ $brandLogo }}" alt="Engage Net" height="38">
-            </span>
-            <span class="logo-lg">
-                <img src="{{ $brandLogo }}" alt="Engage Net" height="42">
+                <span class="brand-copy">
+                    <span class="brand-eyebrow">{{ $website_short_nm ?: 'Workspace' }}</span>
+                    <span class="brand-title">{{ $website_nm ?? 'Operations Workspace' }}</span>
+                </span>
+                <span class="brand-chevron">
+                    <i class="ri-arrow-down-s-line"></i>
+                </span>
             </span>
         </a>
         <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover"

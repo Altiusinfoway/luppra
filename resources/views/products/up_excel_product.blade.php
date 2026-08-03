@@ -1,34 +1,85 @@
 @extends('layouts.app')
 
-@section('content')
-
 @section('page-css')
     <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        .import-suite {
+            background: linear-gradient(180deg, rgba(248, 250, 252, 0.78) 0%, rgba(245, 247, 251, 0) 100%);
         }
 
-        .container {
-            max-width: 1200px;
-        }
-        .card {
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            border: none;
-            margin-bottom: 20px;
-        }
-
-        .card-header {
-            background-color: #f8f9fa;
-            border-bottom: 1px solid #e3e6f0;
-            font-weight: 600;
-            padding: 15px 20px;
-            border-radius: 10px 10px 0 0 !important;
+        .import-suite .hero-shell,
+        .import-suite .import-shell {
+            border: 1px solid rgba(255, 255, 255, 0.78);
+            border-radius: 26px;
+            background:
+                radial-gradient(circle at top right, rgba(15, 118, 110, 0.12), transparent 28%),
+                radial-gradient(circle at left center, rgba(37, 99, 235, 0.12), transparent 30%),
+                #ffffff;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.07);
         }
 
-        .table-responsive {
-            border-radius: 0 0 10px 10px;
+        .import-suite .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.76);
+            border: 1px solid #dbeafe;
+            color: #1d4ed8;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .import-suite .summary-card {
+            border: 1px solid rgba(255, 255, 255, 0.78);
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.84);
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.05);
+        }
+
+        .import-suite .summary-card .label {
+            display: block;
+            margin-bottom: 8px;
+            color: #64748b;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .import-suite .summary-card h3 {
+            margin: 0;
+            font-size: 1.7rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: #0f172a;
+        }
+
+        .import-suite .step-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 22px;
+            overflow: hidden;
+            box-shadow: 0 12px 26px rgba(15, 23, 42, 0.04);
+        }
+
+        .import-suite .step-card .card-header {
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .import-suite .table-wrap {
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        .import-suite .table-responsive {
+            border-radius: 0 0 18px 18px;
         }
 
         .table th {
@@ -51,9 +102,9 @@
         }
 
         .preview-box {
-            background-color: #f8f9fa;
+            background-color: #f8fafc;
             border: 2px dashed #dee2e6;
-            border-radius: 8px;
+            border-radius: 18px;
             padding: 20px;
             text-align: center;
             margin-bottom: 20px;
@@ -93,33 +144,58 @@
         }
     </style>
 @endsection
-<div class="page-content">
+
+@section('content')
+<div class="page-content import-suite">
 
     <div class="container-fluid">
-        <!-- start page title -->
         <div class="row">
             <div class="col-12">
-                <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-galaxy-transparent">
-                    <h4 class="mb-sm-0">Import Section</h4>
-                    <div class="page-title-right">
-                        <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="javascript: void(0);">User Operation</a></li>
-                            <li class="breadcrumb-item active">List</li>
-                        </ol>
+                <div class="hero-shell mb-4">
+                    <div class="card-body p-4 p-lg-5">
+                        <div class="row align-items-center g-4">
+                            <div class="col-lg-8">
+                                <span class="hero-eyebrow">Catalog Import</span>
+                                <h1 class="mb-3">Import Master Products</h1>
+                                <p class="text-muted mb-0">Upload your product sheet, map master product fields, and preview the import in the same refined dashboard language as the rest of the catalog module.</p>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="d-flex justify-content-lg-end">
+                                    <ol class="breadcrumb m-0">
+                                        <li class="breadcrumb-item"><a href="{{ route('products.index') }}">Products</a></li>
+                                        <li class="breadcrumb-item active">Import</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-
                 </div>
             </div>
         </div>
 
         <div class="row">
-            <!-- Varying Modal Content -->
+            <div class="col-md-6 col-xl-3 mb-4">
+                <div class="card summary-card h-100">
+                    <div class="card-body">
+                        <span class="label">Import Flow</span>
+                        <h3>3 Steps</h3>
+                        <p class="text-muted mb-0 mt-2">Upload, map, and preview product data in a clearer guided sequence.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3 mb-4">
+                <div class="card summary-card h-100">
+                    <div class="card-body">
+                        <span class="label">Catalog Scope</span>
+                        <h3>Master SKU</h3>
+                        <p class="text-muted mb-0 mt-2">Keep imports aligned with the internal master-product model before marketplace listing setup.</p>
+                    </div>
+                </div>
+            </div>
             <div class="col-lg-12">
-                <div class="card">
+                <div class="import-shell p-4 p-lg-5">
 
-                    <div class="container py-5">
-
-                        <div class="card">
+                        <div class="card step-card">
                             <div class="card-header">
                                 <span class="step-number">1</span>Upload Excel File
                             </div>
@@ -151,7 +227,7 @@
                             </div>
                         </div>
 
-                        <div class="card" id="mappingSection" style="display: none;">
+                        <div class="card step-card" id="mappingSection" style="display: none;">
                             <div class="card-header">
                                 <span class="step-number">2</span>Map Columns
                             </div>
@@ -159,7 +235,7 @@
                                 <p class="text-muted">Match your Excel columns to the given fields. Required fields
                                     are marked with *.</p>
 
-                                <div class="table-responsive">
+                                <div class="table-responsive table-wrap">
                                     <table class="table table-bordered">
                                         <thead class="table-light">
                                             <tr>
@@ -243,13 +319,13 @@
                             </div>
                         </div>
 
-                        <div class="card" id="previewSection" style="display: none;">
+                        <div class="card step-card" id="previewSection" style="display: none;">
                             <div class="card-header">
                                 <span class="step-number">3</span>Data Preview
                             </div>
                             <div class="card-body">
 
-                                <div class="table-responsive">
+                                <div class="table-responsive table-wrap">
                                     <table class="table table-bordered table-hover">
                                         <thead class="table-light">
                                             <tr>
@@ -257,7 +333,7 @@
                                                 <th>SKU Code</th>
                                                 <th>Price</th>
                                                 <th>Unit Type</th>
-                                                <th>Unit</th>
+                                        <th>Unit</th>
                                                 <th>Message</th>
                                             </tr>
                                         </thead>

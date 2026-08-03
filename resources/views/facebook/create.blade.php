@@ -1,32 +1,100 @@
 @extends('layouts.app')
 
+@section('page-css')
+<style>
+.facebook-suite{background:linear-gradient(180deg,rgba(248,250,252,.72) 0%,rgba(245,247,251,0) 100%)}
+.facebook-suite .hero-shell,.facebook-suite .shell-card{border:1px solid rgba(255,255,255,.8);border-radius:24px;background:rgba(255,255,255,.9);box-shadow:0 18px 40px rgba(15,23,42,.06)}
+.facebook-suite .hero-shell{background:radial-gradient(circle at top right, rgba(59,130,246,.16), transparent 30%),radial-gradient(circle at left center, rgba(14,165,233,.12), transparent 30%),linear-gradient(135deg,#ffffff 0%,#f8fafc 100%)}
+.facebook-suite .hero-eyebrow{display:inline-flex;align-items:center;padding:7px 12px;border-radius:999px;border:1px solid #bfdbfe;background:rgba(255,255,255,.86);color:#1d4ed8;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.facebook-suite .summary-card{border:1px solid rgba(255,255,255,.8);border-radius:20px;background:rgba(255,255,255,.86);box-shadow:0 12px 28px rgba(15,23,42,.05)}
+.facebook-suite .summary-card .label{display:block;margin-bottom:8px;color:#64748b;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.facebook-suite .summary-card h3{margin:0;font-size:1.7rem;font-weight:800;letter-spacing:-.03em;color:#0f172a}
+.facebook-suite .section-card{border:1px solid #e2e8f0;border-radius:20px;background:#fff;box-shadow:0 10px 24px rgba(15,23,42,.04)}
+.facebook-suite .section-intro{border:1px solid #dbeafe;border-radius:18px;background:#f8fbff;padding:16px 18px;margin-bottom:20px}
+.facebook-suite .guide-card{border:1px dashed #bfdbfe;border-radius:20px;background:linear-gradient(135deg,rgba(239,246,255,.95),rgba(248,250,252,.95));box-shadow:none}
+</style>
+@endsection
+
 @section('content')
-<div class="page-content">
+<div class="page-content facebook-suite">
     <div class="container-fluid">
 
-        <!-- PAGE TITLE -->
         <div class="row">
             <div class="col-12">
-                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <h4>Facebook Settings</h4>
-                    <ol class="breadcrumb m-0">
-                        <li class="breadcrumb-item"><a href="#">Facebook</a></li>
-                        <li class="breadcrumb-item active">Connect</li>
-                    </ol>
+                <div class="card hero-shell mb-4">
+                    <div class="card-body p-4 p-lg-5">
+                        <div class="row align-items-center g-4">
+                            <div class="col-lg-7">
+                                <span class="hero-eyebrow">Social Integration</span>
+                                <h2 class="mt-3 mb-2">Facebook Settings</h2>
+                                <p class="text-muted mb-0">Connect a Facebook account, select publishing pages, and manage posting defaults from a cleaner integration screen.</p>
+                            </div>
+                            <div class="col-lg-5">
+                                <div class="d-flex justify-content-lg-end">
+                                    <ol class="breadcrumb m-0">
+                                        <li class="breadcrumb-item"><a href="#">Facebook</a></li>
+                                        <li class="breadcrumb-item active">Connect</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="card">
+        <div class="row g-3 mb-4">
+            <div class="col-md-6 col-xl-3">
+                <div class="card summary-card h-100">
+                    <div class="card-body">
+                        <span class="label">Channel</span>
+                        <h3>Facebook</h3>
+                        <p class="text-muted mb-0 mt-2">Manage connection status and page-level publishing controls from one dashboard-style workspace.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="card summary-card h-100">
+                    <div class="card-body">
+                        <span class="label">Status</span>
+                        <h3>{{ isset($connected) && $connected ? 'Live' : 'Pending' }}</h3>
+                        <p class="text-muted mb-0 mt-2">See whether the account is already authorized before configuring destination pages.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="card summary-card h-100">
+                    <div class="card-body">
+                        <span class="label">Pages</span>
+                        <h3>{{ isset($pages) ? count($pages) : 0 }}</h3>
+                        <p class="text-muted mb-0 mt-2">Available pages can be selected once the Facebook connection handshake is complete.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="card summary-card h-100">
+                    <div class="card-body">
+                        <span class="label">Workflow</span>
+                        <h3>Connect + Save</h3>
+                        <p class="text-muted mb-0 mt-2">Authorize first, choose the target page second, then store the posting defaults.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shell-card">
             <div class="card-body">
                 <form action="#" method="POST" id="facebookForm">
                     @csrf
 
-                    <!-- ================= FACEBOOK CONNECTION & PAGE ================= -->
+                    <div class="section-intro">
+                        <h6 class="mb-1">Integration overview</h6>
+                        <p class="text-muted mb-0">This setup keeps account authorization and page publishing settings together so social posting can be configured without leaving the main workflow.</p>
+                    </div>
+
                     <div class="row">
-                        <!-- Left Column: Connection Status & Button -->
                         <div class="col-lg-5">
-                            <div class="card border shadow-none mb-3">
+                            <div class="card section-card mb-3">
                                 <div class="card-header bg-transparent">
                                     <h5 class="mb-0"><i class="ri-facebook-circle-fill text-primary me-2"></i>Facebook Connection</h5>
                                 </div>
@@ -67,13 +135,16 @@
                             </div>
                         </div>
 
-                        <!-- Right Column: Page Selection & Settings -->
                         <div class="col-lg-7">
-                            <div class="card border shadow-none">
+                            <div class="card section-card">
                                 <div class="card-header bg-transparent">
                                     <h5 class="mb-0"><i class="ri-page-line me-2"></i>Facebook Page Settings</h5>
                                 </div>
                                 <div class="card-body">
+                                    <div class="section-intro">
+                                        <h6 class="mb-1">Publishing destination</h6>
+                                        <p class="text-muted mb-0">Choose the page that should receive posts and lock in the default publishing behavior for your team.</p>
+                                    </div>
                                     @if(isset($connected) && $connected)
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">Select Facebook Page <span class="text-danger">*</span></label>
@@ -135,16 +206,15 @@
             </div>
         </div>
 
-        <!-- Help Card -->
         <div class="row mt-2">
             <div class="col-12">
-                <div class="card bg-light border-0">
+                <div class="card guide-card border-0">
                     <div class="card-body py-3">
                         <h6 class="mb-1"><i class="ri-question-line me-1"></i> How it works:</h6>
                         <ol class="small text-muted mb-0 ps-3">
                             <li>Click <strong>"Connect with Facebook"</strong> and authorize the app.</li>
                             <li>After connection, select your desired Facebook Page from the dropdown.</li>
-                            <li>Save settings – you can now post to that page.</li>
+                            <li>Save settings and you can now post to that page.</li>
                         </ol>
                     </div>
                 </div>

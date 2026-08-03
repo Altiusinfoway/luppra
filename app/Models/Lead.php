@@ -80,7 +80,7 @@ class Lead extends Model
      // Return product name, price, qty entered on lead.
     public function product()
     {
-        return $this->belongsToMany('App\Models\Products', 'lead_products', 'lead_id', 'product_id')->withPivot(['id','price', 'qty', 'unit_id']);
+        return $this->belongsToMany('App\Models\Products', 'lead_products', 'lead_id', 'product_id')->withPivot(['id','price', 'qty', 'unit_id', 'marketplace_listing_id']);
     }
 
     public function users()

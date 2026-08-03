@@ -13,6 +13,7 @@ class LeadProducts extends Model
     protected $fillable = [
         'lead_id',
         'product_id',
+        'marketplace_listing_id',
         'price',
         'qty',
         'created_by',
@@ -34,9 +35,14 @@ class LeadProducts extends Model
         return [];
     }
 
-     public function getProduct()
+    public function getProduct()
     {
         return $this->belongsTo(Products::class, 'product_id','id');
+    }
+
+    public function marketplaceListing()
+    {
+        return $this->belongsTo(MarketplaceListing::class, 'marketplace_listing_id');
     }
 
      public function getLead()

@@ -1,5 +1,128 @@
 @extends('layouts.app')
 
+@section('page-css')
+<style>
+    .dashboard-suite {
+        background: linear-gradient(180deg, rgba(248, 250, 252, 0.78) 0%, rgba(245, 247, 251, 0) 100%);
+    }
+    .dashboard-suite .hero-shell {
+        border: 1px solid rgba(255, 255, 255, 0.78);
+        border-radius: 28px;
+        background:
+            radial-gradient(circle at top right, rgba(15, 118, 110, 0.14), transparent 28%),
+            radial-gradient(circle at left center, rgba(37, 99, 235, 0.16), transparent 30%),
+            linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        box-shadow: 0 20px 48px rgba(15, 23, 42, 0.08);
+        margin-bottom: 1.25rem;
+    }
+    .dashboard-suite .hero-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 12px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.76);
+        border: 1px solid #dbeafe;
+        color: #1d4ed8;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+    }
+    .dashboard-suite .hero-title {
+        font-size: clamp(2rem, 3vw, 2.7rem);
+        line-height: 1.05;
+        letter-spacing: -0.04em;
+        font-weight: 800;
+        margin: 1rem 0 .45rem;
+        color: #0f172a;
+    }
+    .dashboard-suite .hero-subtitle {
+        color: #64748b;
+        max-width: 720px;
+        font-size: .98rem;
+    }
+    .dashboard-suite .hero-action-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: .45rem;
+        border-radius: 14px;
+        font-weight: 700;
+        padding: .7rem 1rem;
+        border: 1px solid #dbeafe;
+        background: rgba(255, 255, 255, 0.92);
+        color: #0f172a;
+        transition: all .18s ease-in-out;
+    }
+    .dashboard-suite .hero-action-btn:hover {
+        transform: translateY(-1px);
+        background: #ffffff;
+        color: #0f172a;
+    }
+    .dashboard-suite .hero-action-primary {
+        background: linear-gradient(135deg, #0f766e 0%, #2563eb 100%);
+        border-color: transparent;
+        color: #ffffff;
+    }
+    .dashboard-suite .hero-action-primary:hover {
+        color: #ffffff;
+    }
+    .dashboard-suite .sales-card {
+        border: 1px solid rgba(255, 255, 255, 0.78);
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.88);
+        box-shadow: 0 14px 32px rgba(15, 23, 42, .05);
+        height: 100%;
+    }
+    .dashboard-suite .section-title {
+        font-size: 1rem;
+        font-weight: 800;
+        margin-bottom: .75rem;
+        color: #0f172a;
+    }
+    .dashboard-suite .kpi-title {
+        font-size: 11px;
+        text-transform: uppercase;
+        color: #64748b;
+        letter-spacing: .08em;
+        font-weight: 800;
+        margin-bottom: .35rem;
+    }
+    .dashboard-suite .kpi-value {
+        font-size: 1.7rem;
+        font-weight: 800;
+        color: #0f172a;
+        line-height: 1.1;
+        letter-spacing: -0.03em;
+    }
+    .dashboard-suite .kpi-sub {
+        color: #64748b;
+        font-size: .82rem;
+    }
+    .dashboard-suite .mini-stat {
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: .85rem;
+        background: #f8fafc;
+    }
+    .dashboard-suite .progress {
+        height: 9px;
+        background: #edf2f7;
+        border-radius: 999px;
+    }
+    .dashboard-suite .table td,
+    .dashboard-suite .table th {
+        vertical-align: middle;
+    }
+    .dashboard-suite .discussion-note {
+        max-width: 260px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+</style>
+@endsection
+
 @section('content')
 @php
     $todayKpis = $today_kpis ?? [];
@@ -18,117 +141,34 @@
     $collectionPct = (float) ($collection['collection_target_pct'] ?? 0);
     $collectionBarClass = $collectionPct >= 80 ? 'bg-success' : ($collectionPct >= 50 ? 'bg-warning' : 'bg-danger');
 @endphp
-
-<style>
-    .sales-hero {
-        background: linear-gradient(120deg, #0f5132, #198754);
-        color: #fff;
-        border-radius: 14px;
-        padding: 1.1rem 1.2rem;
-        margin-bottom: 1rem;
-    }
-    .sales-card {
-        border: 1px solid #e6ebf1;
-        border-radius: 14px;
-        background: #fff;
-        box-shadow: 0 8px 20px rgba(15, 23, 42, .05);
-        height: 100%;
-    }
-    .section-title {
-        font-size: 1rem;
-        font-weight: 600;
-        margin-bottom: .75rem;
-    }
-    .kpi-title {
-        font-size: .78rem;
-        text-transform: uppercase;
-        color: #6b7280;
-        letter-spacing: .04em;
-        margin-bottom: .35rem;
-    }
-    .kpi-value {
-        font-size: 1.45rem;
-        font-weight: 700;
-        color: #111827;
-        line-height: 1.2;
-    }
-    .kpi-sub {
-        color: #6b7280;
-        font-size: .82rem;
-    }
-    .mini-stat {
-        border: 1px solid #e6ebf1;
-        border-radius: 10px;
-        padding: .75rem;
-        background: #fbfcfd;
-    }
-    .progress {
-        height: 9px;
-        background: #edf1f5;
-    }
-    .table td,
-    .table th {
-        vertical-align: middle;
-    }
-    .discussion-note {
-        max-width: 260px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-    .hero-action-btn {
-        border-radius: 999px;
-        font-weight: 600;
-        letter-spacing: .01em;
-        padding: .4rem .85rem;
-        display: inline-flex;
-        align-items: center;
-        gap: .35rem;
-        transition: all .18s ease-in-out;
-    }
-    .hero-action-primary {
-        background: #ffffff;
-        color: #0f5132;
-        border: 1px solid #ffffff;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, .12);
-    }
-    .hero-action-primary:hover {
-        background: #f4fff8;
-        color: #0a3622;
-        transform: translateY(-1px);
-    }
-    .hero-action-outline {
-        background: transparent;
-        color: #ffffff;
-        border: 1px solid rgba(255, 255, 255, .75);
-    }
-    .hero-action-outline:hover {
-        background: rgba(255, 255, 255, .12);
-        color: #ffffff;
-    }
-</style>
-
-<div class="page-content">
-    <div class="sales-hero d-flex flex-wrap justify-content-between align-items-center gap-2">
-        <div>
-            <h4 class="mb-1 text-white">Sales Person Dashboard</h4>
-            <div class="opacity-75">{{ now()->format('d M Y') }} | Assigned pipeline and performance snapshot</div>
-        </div>
-        <div class="d-flex flex-wrap gap-2">
-            <a href="javascript:void(0);" class="hero-action-btn hero-action-primary add-btn"
-               data-size="lg" data-url="{{ route('leads.create') }}"
-               data-ajax-popup="true" data-bs-original-title="{{ __('Add Lead') }}">
-                <i class="ri-add-circle-line"></i>
-                <span>New Lead</span>
-            </a>
-            <a href="{{ route('quotes.create') }}" class="hero-action-btn hero-action-outline">
-                <i class="ri-file-list-3-line"></i>
-                <span>New Quote</span>
-            </a>
-            <a href="{{ route('leads.list') }}" class="hero-action-btn hero-action-outline">
-                <i class="ri-user-search-line"></i>
-                <span>My Leads</span>
-            </a>
+<div class="page-content dashboard-suite">
+    <div class="hero-shell">
+        <div class="card-body p-4 p-lg-5">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-8">
+                    <span class="hero-eyebrow">Personal Dashboard</span>
+                    <h1 class="hero-title">Sales Person Dashboard</h1>
+                    <div class="hero-subtitle">{{ now()->format('d M Y') }} | Assigned pipeline, collection progress, and daily selling momentum at a glance.</div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="d-flex justify-content-lg-end flex-wrap gap-2">
+                        <a href="javascript:void(0);" class="hero-action-btn hero-action-primary add-btn"
+                           data-size="lg" data-url="{{ route('leads.create') }}"
+                           data-ajax-popup="true" data-bs-original-title="{{ __('Add Lead') }}">
+                            <i class="ri-add-circle-line"></i>
+                            <span>New Lead</span>
+                        </a>
+                        <a href="{{ route('quotes.create') }}" class="hero-action-btn">
+                            <i class="ri-file-list-3-line"></i>
+                            <span>New Quote</span>
+                        </a>
+                        <a href="{{ route('leads.list') }}" class="hero-action-btn">
+                            <i class="ri-user-search-line"></i>
+                            <span>My Leads</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

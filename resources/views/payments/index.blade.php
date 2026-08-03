@@ -1,44 +1,255 @@
 @extends('layouts.app')
 
+@section('page-css')
+    <style>
+        .payments-suite {
+            background: linear-gradient(180deg, rgba(248, 250, 252, 0.78) 0%, rgba(245, 247, 251, 0) 100%);
+        }
+
+        .payments-suite .hero-shell,
+        .payments-suite .toolbar-shell,
+        .payments-suite .table-shell {
+            border: 1px solid rgba(255, 255, 255, 0.78);
+            border-radius: 26px;
+            background:
+                radial-gradient(circle at top right, rgba(15, 118, 110, 0.12), transparent 28%),
+                radial-gradient(circle at left center, rgba(37, 99, 235, 0.12), transparent 30%),
+                #ffffff;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.07);
+        }
+
+        .payments-suite .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.76);
+            border: 1px solid #dbeafe;
+            color: #1d4ed8;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .payments-suite .hero-title {
+            font-size: clamp(2rem, 3vw, 2.75rem);
+            line-height: 1.04;
+            letter-spacing: -0.04em;
+            font-weight: 800;
+            margin: 1rem 0 .45rem;
+            color: #0f172a;
+        }
+
+        .payments-suite .summary-card {
+            border: 1px solid rgba(255, 255, 255, 0.78);
+            border-radius: 22px;
+            background: rgba(255, 255, 255, 0.88);
+            box-shadow: 0 14px 32px rgba(15, 23, 42, 0.05);
+            height: 100%;
+        }
+
+        .payments-suite .summary-card .label {
+            display: block;
+            margin-bottom: 8px;
+            color: #64748b;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .payments-suite .summary-card h3 {
+            margin: 0;
+            font-size: 1.7rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: #0f172a;
+        }
+
+        .payments-suite .filter-shell {
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            background: #f8fafc;
+            padding: 1rem;
+        }
+
+        .payments-suite .filter-label {
+            display: block;
+            margin-bottom: 0.35rem;
+            color: #64748b;
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        .payments-suite .search-shell {
+            position: relative;
+        }
+
+        .payments-suite .search-shell .search-icon {
+            position: absolute;
+            top: 50%;
+            right: 14px;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            pointer-events: none;
+        }
+
+        .payments-suite .segment-tabs {
+            display: inline-flex;
+            gap: 8px;
+            padding: 6px;
+            border: 1px solid #e2e8f0;
+            border-radius: 999px;
+            background: #f8fafc;
+        }
+
+        .payments-suite .segment-tabs .nav-link {
+            border: none;
+            border-radius: 999px;
+            padding: .55rem 1rem;
+            color: #475569;
+            font-weight: 700;
+        }
+
+        .payments-suite .segment-tabs .nav-link.active {
+            background: linear-gradient(135deg, #0f766e 0%, #2563eb 100%);
+            color: #fff;
+            box-shadow: 0 10px 24px rgba(37, 99, 235, 0.18);
+        }
+
+        .payments-suite .table-wrap {
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        .payments-suite .table-wrap table {
+            margin-bottom: 0;
+        }
+
+        .payments-suite .toolbar-shell .card-body,
+        .payments-suite .table-shell .card-body {
+            padding: 1.4rem;
+        }
+    </style>
+@endsection
+
 @section('content')
-    <div class="page-content">
+    <div class="page-content payments-suite">
         <div class="container-fluid">
-            <!-- start page title -->
             <div class="row">
                 <div class="col-12">
-                    <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-galaxy-transparent">
-                        <h4 class="mb-sm-0">Payments</h4>
-                        <div class="page-title-right">
-                            <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a href="{{ route('payments.index') }}">Payments</a></li>
-                                <li class="breadcrumb-item active">List</li>
-                            </ol>
+                    <div class="hero-shell mb-4">
+                        <div class="card-body p-4 p-lg-5">
+                            <div class="row align-items-center g-4">
+                                <div class="col-lg-8">
+                                    <span class="hero-eyebrow">Finance Workspace</span>
+                                    <h1 class="hero-title">Payments</h1>
+                                    <p class="text-muted mb-0">Track all credit and debit activity with the same clean table and filter shell used across the refreshed admin experience.</p>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="d-flex justify-content-lg-end align-items-center gap-2 flex-wrap">
+                                        @can('create payment')
+                                            <a href="javascript:void(0);" class="btn btn-primary" data-size="lg"
+                                                data-url="{{ route('payments.create') }}" data-ajax-popup="true"
+                                                data-bs-original-title="{{ __('Add Payment') }}"><i
+                                                    class="ri-add-line align-bottom me-1"></i> Add Payment</a>
+                                        @endcan
+                                        <ol class="breadcrumb m-0">
+                                            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+                                            <li class="breadcrumb-item active">List</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+                    </div>
+                </div>
+            </div>
 
+            <div class="row g-3 mb-4">
+                <div class="col-md-6 col-xl-3">
+                    <div class="summary-card">
+                        <div class="card-body">
+                            <span class="label">Views</span>
+                            <h3>3</h3>
+                            <p class="text-muted mb-0 mt-2">All, credit, and debit payment streams in one workspace.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-3">
+                    <div class="summary-card">
+                        <div class="card-body">
+                            <span class="label">Search Ready</span>
+                            <h3>Live</h3>
+                            <p class="text-muted mb-0 mt-2">Filter by payment id, date, and payment method without reloading.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-3">
+                    <div class="summary-card">
+                        <div class="card-body">
+                            <span class="label">Entry Mode</span>
+                            <h3>Quick</h3>
+                            <p class="text-muted mb-0 mt-2">Launch payment capture directly from the finance list view.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-3">
+                    <div class="summary-card">
+                        <div class="card-body">
+                            <span class="label">Workspace</span>
+                            <h3>Finance</h3>
+                            <p class="text-muted mb-0 mt-2">Consistent reporting shell shared with the rest of the admin UI.</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
 
-            <div class="card">
+            <div class="card toolbar-shell mb-4">
                 <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+                        <div>
+                            <h5 class="card-title mb-1">Payment History</h5>
+                            <p class="text-muted mb-0">Search, segment, and add payment records from one cleaner finance shell.</p>
+                        </div>
+                        <div class="hstack gap-2">
+                            @can('create payment')
+                                <div>
+                                    <a href="javascript:void(0);" class="btn btn-success" data-size="lg"
+                                        data-url="{{ route('payments.create') }}" data-ajax-popup="true"
+                                        data-bs-original-title="{{ __('Add Payment') }}"><i
+                                            class="ri-add-line align-bottom me-1"></i> Add Payment</a>
+                                </div>
+                            @endcan
+                        </div>
+                    </div>
 
-                    <div class="row">
-
-                        <div class="col-md-6 d-flex gap-2">
-
-                            <div class="col-md-4 search-box ">
-                                <input type="text" class="form-control search" id="flt_search-bar-options"
-                                    name="flt_search" placeholder="Search for payment ID, order ID...">
-                                <i class="ri-search-line search-icon"></i>
+                    <div class="filter-shell">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-4">
+                                <label class="filter-label" for="flt_search-bar-options">Search</label>
+                                <div class="search-shell">
+                                    <i class="ri-search-line search-icon"></i>
+                                    <input type="text" class="form-control search" id="flt_search-bar-options"
+                                        name="flt_search" placeholder="Search payment id, order id, description">
+                                </div>
                             </div>
 
                             <div class="col-md-4">
+                                <label class="filter-label" for="flt_dateRange">Payment Dates</label>
                                 <input type="text" class="form-control datepicker-range" id="flt_dateRange"
                                     name="flt_dateRange" data-provider="flatpickr" data-date-format="d M, Y"
                                     data-range-date="true" placeholder="Payment Dates">
                             </div>
                             <div class="col-md-4">
+                                <label class="filter-label" for="flt_paymentMethod">Payment Method</label>
                                 <select name="flt_paymentMethod" class="form-control" id="flt_paymentMethod" data-choices
                                     data-choices-removeItem>
                                     <option value="">Payment Method</option>
@@ -50,25 +261,6 @@
                                 </select>
                             </div>
                         </div>
-
-                        <div class="col-md-6 d-flex justify-content-end">
-                            <div class="">
-                                <div class="hstack gap-2">
-
-                                    @can('create payment')
-                                        <div>
-                                            <a href="javascript:void(0);" class="btn btn-success" data-size="lg"
-                                                data-url="{{ route('payments.create') }}" data-ajax-popup="true"
-                                                data-bs-original-title="{{ __('Add Payment') }}"><i
-                                                    class="ri-add-line align-bottom me-1"></i> Add Payment</a>
-                                        </div>
-                                    @endcan
-
-                                </div>
-
-                            </div>
-                        </div>
-
                     </div>
                     <!--end row-->
                 </div>
@@ -77,9 +269,8 @@
             <!--end card-->
 
             <div class="row">
-                <!-- Varying Modal Content -->
                 <div class="col-lg-12">
-                    <div class="card">
+                    <div class="card table-shell">
 
                         <div class="card-header">
                             <h5 class="card-title  mb-0">Payments List</h5>
@@ -87,7 +278,7 @@
 
                         <div class="card-body">
 
-                            <ul class="nav nav-tabs mb-3" role="tablist">
+                            <ul class="nav nav-tabs segment-tabs mb-3" role="tablist">
                                 <li class="nav-item">
                                     <a class="nav-link active" data-bs-toggle="tab" href="#tb_all_payment" role="tab"
                                         aria-selected="true">
@@ -112,6 +303,7 @@
                             <div class="tab-content  text-muted">
 
                                 <div class="tab-pane active" id="tb_all_payment" role="tabpanel">
+                                    <div class="table-wrap">
                                     <table id="tbl_all"
                                         class="table table-bordered dt-responsive nowrap table-striped align-middle"
                                         style="width:100%">
@@ -136,11 +328,13 @@
                                             </tr>
                                         </tfoot>
                                     </table>
+                                    </div>
                                 </div>
                                 <!-- end table -->
 
                                 <!-- credit payment -->
                                 <div class="tab-pane " id="tb_credit_payment" role="tabpanel">
+                                    <div class="table-wrap">
                                     <table id="tbl_credit"
                                         class="table table-bordered dt-responsive nowrap table-striped align-middle"
                                         style="width:100%">
@@ -163,11 +357,13 @@
                                             </tr>
                                         </tfoot>
                                     </table>
+                                    </div>
                                 </div>
                                 <!-- end table -->
 
                                 <!-- debit payment -->
                                 <div class="tab-pane " id="tb_debit_payment" role="tabpanel">
+                                    <div class="table-wrap">
                                     <table id="tbl_debit"
                                         class="table table-bordered dt-responsive nowrap table-striped align-middle"
                                         style="width:100%">
@@ -190,6 +386,7 @@
                                             </tr>
                                         </tfoot>
                                     </table>
+                                    </div>
                                 </div>
                                 <!-- end table -->
 

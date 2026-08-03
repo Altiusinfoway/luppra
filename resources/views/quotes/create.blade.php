@@ -1,10 +1,52 @@
 @extends('layouts.app')
 
-@section('content')
-
+@section('page-css')
 <style>
     html, body {
         overflow-x: hidden;
+    }
+
+    .form-suite {
+        background: linear-gradient(180deg, rgba(248, 250, 252, 0.78) 0%, rgba(245, 247, 251, 0) 100%);
+    }
+
+    .form-suite .hero-shell {
+        border: 1px solid rgba(255, 255, 255, 0.78);
+        border-radius: 28px;
+        background:
+            radial-gradient(circle at top right, rgba(15, 118, 110, 0.14), transparent 28%),
+            radial-gradient(circle at left center, rgba(37, 99, 235, 0.16), transparent 30%),
+            linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        box-shadow: 0 20px 48px rgba(15, 23, 42, 0.08);
+        margin-bottom: 1rem;
+    }
+
+    .form-suite .hero-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 12px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.76);
+        border: 1px solid #dbeafe;
+        color: #1d4ed8;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+    }
+
+    .form-suite .hero-title {
+        font-size: clamp(2rem, 3vw, 2.7rem);
+        line-height: 1.05;
+        letter-spacing: -0.04em;
+        font-weight: 800;
+        margin: 1rem 0 .45rem;
+        color: #0f172a;
+    }
+
+    .form-suite .hero-subtitle {
+        color: #64748b;
     }
 
     .flatpickr-months .flatpickr-month
@@ -17,48 +59,56 @@
     }
 
     .quote-create-card {
-        border: 1px solid #e7ecf1;
-        border-radius: 14px;
-        box-shadow: 0 8px 20px rgba(16, 24, 40, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.78);
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 14px 32px rgba(15, 23, 42, 0.05);
     }
 
     .quote-topbar {
-        background: linear-gradient(120deg, #0f5132, #198754);
-        color: #fff;
-        border-radius: 12px;
-        padding: 12px 14px;
-        margin-bottom: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.78);
+        background:
+            radial-gradient(circle at top right, rgba(15, 118, 110, 0.14), transparent 28%),
+            radial-gradient(circle at left center, rgba(37, 99, 235, 0.16), transparent 30%),
+            linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        color: #0f172a;
+        border-radius: 22px;
+        padding: 16px 18px;
+        margin-bottom: 14px;
+        box-shadow: 0 14px 32px rgba(15, 23, 42, 0.05);
     }
 
     .quote-step-badge {
-        background: rgba(255, 255, 255, 0.16);
-        border: 1px solid rgba(255, 255, 255, 0.28);
-        color: #fff;
+        background: #eff6ff;
+        border: 1px solid #dbeafe;
+        color: #1d4ed8;
         border-radius: 999px;
-        padding: 4px 10px;
+        padding: 6px 11px;
         font-size: 12px;
+        font-weight: 700;
     }
 
     .quote-form-section {
-        border: 1px solid #edf1f5;
-        border-radius: 12px;
-        padding: 14px;
+        border: 1px solid #e2e8f0;
+        border-radius: 18px;
+        padding: 16px;
         margin-bottom: 14px;
-        background: #fff;
+        background: #f8fafc;
     }
 
     .quote-form-section .section-title {
-        font-size: 0.92rem;
-        font-weight: 600;
-        color: #374151;
-        margin-bottom: 10px;
+        font-size: 0.96rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin-bottom: 12px;
+        letter-spacing: -0.02em;
     }
 
     .quote-actions {
         position: sticky;
         bottom: 0;
-        background: #fff;
-        border-top: 1px solid #edf1f5;
+        background: rgba(255, 255, 255, 0.96);
+        border-top: 1px solid #e2e8f0;
         padding-top: 12px;
         z-index: 5;
     }
@@ -88,28 +138,52 @@
     .address-section .address-cards-container {
         grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
     }
+
+    .form-suite .status-banner {
+        border: 1px solid #dce4ee;
+        border-radius: 18px;
+        padding: 1rem 1.15rem;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+    }
+
+    .form-suite .status-banner.status-danger {
+        background: linear-gradient(135deg, #fef2f2 0%, #fff1f2 100%);
+        border-color: #fecdd3;
+        color: #be123c;
+    }
 </style>
+@endsection
+
+@section('content')
     <!-- Product Modal  Start -->
 @php
     $default_img  =\App\Models\Utility::defaultImage();
     $check_discount_allow = \App\Models\Utility::isDiscountAllowed();
 @endphp
 
-    <div class="page-content">
+    <div class="page-content form-suite">
         <div class="container-fluid">
 
-            <!-- start page title -->
             <div class="row">
                 <div class="col-12">
-                    <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-galaxy-transparent">
-                        <h4 class="mb-sm-0">Quotes </h4>
-                        <div class="page-title-right">
-                            <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a href="{{ route('quotes.index') }}">Quotes</a></li>
-                                <li class="breadcrumb-item active">Create</li>
-                            </ol>
+                    <div class="hero-shell">
+                        <div class="card-body p-4 p-lg-5">
+                            <div class="row align-items-center g-4">
+                                <div class="col-lg-8">
+                                    <span class="hero-eyebrow">Create Workflow</span>
+                                    <h1 class="hero-title">Create Quote</h1>
+                                    <p class="hero-subtitle mb-0">Capture customer details, build the product mix, and confirm pricing in the same cleaner workspace as the rest of the refreshed app.</p>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="d-flex justify-content-lg-end">
+                                        <ol class="breadcrumb m-0">
+                                            <li class="breadcrumb-item"><a href="{{ route('quotes.index') }}">Quotes</a></li>
+                                            <li class="breadcrumb-item active">Create</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -119,8 +193,8 @@
                 <div class="col-12">
                     <div class="quote-topbar d-flex flex-wrap justify-content-between align-items-center gap-2">
                         <div>
-                            <h5 class="mb-1 text-white">Create Quotation</h5>
-                            <small class="opacity-75">Fill customer details, add products, verify totals, then save.</small>
+                            <h5 class="mb-1">Create Quotation</h5>
+                            <small class="text-muted">Fill customer details, add products, verify totals, then save.</small>
                         </div>
                         <div class="d-flex flex-wrap gap-2">
                             <span class="quote-step-badge">1. Customer</span>
@@ -134,7 +208,7 @@
                     <div class="card quote-create-card">
                         <div class="card-header">
                             <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-                                <h5 class="card-title  mb-0">Quotes Create</h5>
+                                <h5 class="card-title  mb-0">Quote Builder</h5>
                                 <button class="btn btn-primary btn-sm" data-bs-toggle="offcanvas" href="#offcanvasExample">
                                     Add Customer
                                 </button>
@@ -144,7 +218,7 @@
                         <div class="card-body quote-form-wrap">
                             {{ Form::open(['route' => 'quotes.store', 'method' => 'post', 'enctype' => 'multipart/form-data', 'id' => 'quotesForm', 'autocomplete' => 'off']) }}
                             @if ($errors->any())
-                                <div class="alert alert-danger">
+                                <div class="status-banner status-danger mb-3">
                                     {{ $errors->first() }}
                                 </div>
                             @endif
@@ -292,15 +366,20 @@
                                                     <select class="form-select" id="raw_id" data-choices data-choices-removeItem>
                                                         <option value="">Select Product</option>
                                                         @foreach ($product_list as $product)
-                                                            <option value="{{ $product->id }}" data-name="{{ $product->name }}"
+                                                            <option value="{{ $product->id }}" data-product-id="{{ $product->id }}" data-marketplace-listing-id="" data-name="{{ $product->name }}"
                                                                 data-image="{{ $product->image ?? $default_img }}"
                                                                 data-price="{{ $product->price }}"
                                                                 data-units='@json(\App\Models\Utility::getUnits($product->unit_type))'
                                                                 data-default-unit="{{ $product->unit_type }}"
                                                                 data-default-gst="{{ $product?->getGstSlabMaster?->rate ?? 0 }}"
                                                                 >
-                                                                {{ $product->sku_code }} - {{ $product->name }}
+                                                                Master: {{ $product->sku_code }} - {{ $product->name }}
                                                             </option>
+                                                            @foreach (($product->relationLoaded('marketplaceListings') ? $product->marketplaceListings : collect()) as $listing)
+                                                                <option value="{{ $product->id }}::{{ $listing->id }}" data-product-id="{{ $product->id }}" data-marketplace-listing-id="{{ $listing->id }}" data-name="{{ $listing->listing_title }}" data-image="{{ $product->image ?? $default_img }}" data-price="{{ $listing->selling_price ?: $product->price }}" data-units='@json(\App\Models\Utility::getUnits($product->unit_type))' data-default-unit="{{ $product->unit }}" data-default-gst="{{ $product?->getGstSlabMaster?->rate ?? 0 }}" data-platform="{{ $listing->platform }}" data-platform-sku="{{ $listing->platform_sku }}">
+                                                                    {{ ucfirst($listing->platform) }}: {{ $listing->platform_sku }} - {{ $listing->listing_title }}
+                                                                </option>
+                                                            @endforeach
                                                         @endforeach
                                                     </select>
                                                 </div>
@@ -1174,7 +1253,9 @@ document.getElementById('raw_id').addEventListener('change', function () {
     const selectedOption = this.options[this.selectedIndex];
     if (!selectedOption || !selectedOption.value) return;
 
-    const productId = selectedOption.value;
+    const productId = selectedOption.dataset.productId || selectedOption.value;
+    const marketplaceListingId = selectedOption.dataset.marketplaceListingId || '';
+    const rowKey = marketplaceListingId ? `${productId}:${marketplaceListingId}` : `${productId}:master`;
 
 
     if (!lead_id) {
@@ -1185,12 +1266,13 @@ document.getElementById('raw_id').addEventListener('change', function () {
     }
 
     const productName = selectedOption.dataset.name;
+    const listingBadge = marketplaceListingId ? `<div class="small text-muted">${(selectedOption.dataset.platform || '').toUpperCase()} SKU: ${selectedOption.dataset.platformSku || ''}</div>` : '';
     const productImg = selectedOption.dataset.image || "{{ \App\Models\Utility::defaultImage() }}";
     const unitList = JSON.parse(selectedOption.dataset.units || '{}');
     const defaultUnit = selectedOption.dataset.defaultUnit;
 
-    const existingIds = Array.from(document.querySelectorAll('input[name="products[id][]"]')).map(i => i.value);
-    if (existingIds.includes(productId)) {
+    const existingIds = Array.from(document.querySelectorAll('input[name="products[row_key][]"]')).map(i => i.value);
+    if (existingIds.includes(rowKey)) {
         show_toastr('error', 'This product is already added.');
         this.value = '';
         return;
@@ -1235,6 +1317,9 @@ document.getElementById('raw_id').addEventListener('change', function () {
                 <td>
                     ${productName}
                     <input type="hidden" name="products[id][]" value="${productId}">
+                    <input type="hidden" name="products[listing_id][]" value="${marketplaceListingId}">
+                    <input type="hidden" name="products[row_key][]" value="${rowKey}">
+                    ${listingBadge}
                 </td>
 
                 <td>

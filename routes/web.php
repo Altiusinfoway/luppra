@@ -59,13 +59,13 @@ Auth::routes(['login' => false, 'logout' => false]);
 
 require __DIR__ . '/auth.php';
 
-// Public website + plan checkout
-Route::get('/', [PublicWebsiteController::class, 'home'])->name('website.home');
-Route::get('/website', fn () => redirect()->route('website.home'));
-Route::get('/features', [PublicWebsiteController::class, 'features'])->name('website.features');
-Route::get('/workflow', [PublicWebsiteController::class, 'workflow'])->name('website.workflow');
-Route::get('/integrations', [PublicWebsiteController::class, 'integrations'])->name('website.integrations');
-Route::get('/pricing', [PublicWebsiteController::class, 'pricing'])->name('website.pricing');
+// Public pre-login frontend removed: send guests directly to authentication.
+Route::redirect('/', '/login')->name('website.home');
+Route::redirect('/website', '/login');
+Route::redirect('/features', '/login');
+Route::redirect('/workflow', '/login');
+Route::redirect('/integrations', '/login');
+Route::redirect('/pricing', '/login');
 Route::post('/website/checkout/draft', [PublicWebsiteController::class, 'saveDraft'])->name('website.checkout.draft');
 Route::post('/website/checkout/status', [PublicWebsiteController::class, 'updateCheckoutStatus'])->name('website.checkout.status');
 Route::get('/website/checkout/status', [PublicWebsiteController::class, 'checkoutStatus'])->name('website.checkout.status.poll');
@@ -73,9 +73,9 @@ Route::post('/website/checkout/order', [PublicWebsiteController::class, 'createO
 Route::post('/website/checkout/verify', [PublicWebsiteController::class, 'verifyPayment'])->name('website.checkout.verify');
 Route::get('/website/thank-you', [PublicWebsiteController::class, 'thankYou'])->name('website.thankyou');
 
-Route::view('/privacy-policy', 'website.privacy-policy')->name('website.privacy.policy');
-Route::view('/terms-and-conditions', 'website.terms-and-conditions')->name('terms.conditions');
-Route::view('/contact-us', 'website.contact-us')->name('contact.us');
+Route::redirect('/privacy-policy', '/login')->name('website.privacy.policy');
+Route::redirect('/terms-and-conditions', '/login')->name('terms.conditions');
+Route::redirect('/contact-us', '/login')->name('contact.us');
 
 //require __DIR__ . '/auth.php';
 Route::get('/clear-cache', function () {
@@ -199,6 +199,14 @@ Route::group(['prefix' => '', 'middleware' => ['auth']], function () {
     Route::resource('category', CategoryController::class);
 
     Route::post('/bulk-stock-update',[ProductController::class,'bulkStockUpdate'])->name('products.bulk_stock_update');
+    Route::get('products/data', [ProductController::class, 'data'])->name('products.data');
+    Route::get('products/{product}/marketplace', [ProductController::class, 'marketplace'])->name('products.marketplace');
+    Route::patch('products/{product}/marketplace', [ProductController::class, 'updateMarketplace'])->name('products.marketplace.update');
+    Route::get('products/{product}/marketplace/create-listing', [ProductController::class, 'createMarketplaceListing'])->name('products.marketplace.listings.create');
+    Route::post('products/{product}/marketplace/listings', [ProductController::class, 'storeMarketplaceListing'])->name('products.marketplace.listings.store');
+    Route::get('products/{product}/marketplace/listings/{listing}/edit', [ProductController::class, 'editMarketplaceListing'])->name('products.marketplace.listings.edit');
+    Route::patch('products/{product}/marketplace/listings/{listing}', [ProductController::class, 'updateMarketplaceListing'])->name('products.marketplace.listings.update');
+    Route::delete('products/{product}/marketplace/listings/{listing}', [ProductController::class, 'destroyMarketplaceListing'])->name('products.marketplace.listings.destroy');
     Route::resource('products', ProductController::class);
 
     // Get Comman get

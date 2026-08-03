@@ -1032,6 +1032,7 @@ class QuoteController extends Controller
                     OrderProduct::create([
                         'order_id' => $order->id,
                         'product_id' => $quoteProduct->product_id,
+                        'marketplace_listing_id' => $quoteProduct->marketplace_listing_id,
                         'short_notes' => $quoteProduct->short_notes,
                         'qty' => $quoteProduct->qty,
                         'unit_id' => $quoteProduct->unit_id,

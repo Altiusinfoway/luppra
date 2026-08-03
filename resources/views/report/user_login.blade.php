@@ -1,30 +1,47 @@
 @extends('layouts.app')
 
+@section('page-css')
+<style>
+.report-suite{background:linear-gradient(180deg,rgba(248,250,252,.72) 0%,rgba(245,247,251,0) 100%)}
+.report-suite .hero-shell,.report-suite .shell-card,.report-suite .chart-card,.report-suite .kpi-card{border:1px solid rgba(255,255,255,.8);border-radius:24px;background:rgba(255,255,255,.9);box-shadow:0 18px 40px rgba(15,23,42,.06)}
+.report-suite .hero-shell{background:radial-gradient(circle at top right, rgba(59,130,246,.16), transparent 30%),radial-gradient(circle at left center, rgba(16,185,129,.12), transparent 30%),linear-gradient(135deg,#ffffff 0%,#f8fafc 100%)}
+.report-suite .hero-eyebrow{display:inline-flex;align-items:center;padding:7px 12px;border-radius:999px;border:1px solid #bfdbfe;background:rgba(255,255,255,.86);color:#1d4ed8;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.report-suite .filter-shell{border:1px solid #e2e8f0;border-radius:20px;background:linear-gradient(180deg,rgba(248,250,252,.92),rgba(255,255,255,.98));padding:1rem}
+.report-suite .filter-label{display:block;margin-bottom:.45rem;color:#475569;font-size:.78rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.report-suite .kpi-card .metric-label{color:#64748b;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.report-suite .kpi-card h5{font-size:1.55rem;font-weight:800;letter-spacing:-.03em;color:#0f172a}
+.report-suite .table-wrap{border:1px solid #e2e8f0;border-radius:20px;overflow:hidden;background:#fff}
+</style>
+@endsection
+
 @section('content')
-<div class="page-content">
+<div class="page-content report-suite">
     <div class="container-fluid">
 
-        <!-- Title -->
         <div class="row">
             <div class="col-12">
-                <div class="page-title-box d-flex align-items-center justify-content-between">
-                    <h4>User Login Report</h4>
+                <div class="card hero-shell mb-4">
+                    <div class="card-body p-4 p-lg-5">
+                        <span class="hero-eyebrow">Access Analytics</span>
+                        <h2 class="mt-3 mb-2">User Login Report</h2>
+                        <p class="text-muted mb-0">Analyze login activity across web and app sessions using the same lighter reporting shell as the rest of the dashboard.</p>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Filters -->
-        <div class="card">
+        <div class="card shell-card">
             <div class="card-header">
                 <h5>User Login Report</h5>
             </div>
 
             <div class="card-body">
-                <div class="row mb-3">
+                <div class="filter-shell mb-3">
+                <div class="row g-3 align-items-end">
 
                     <!-- User Filter -->
                     <div class="col-md-3">
-                        <label>User</label>
+                        <label class="filter-label">User</label>
                         <select id="user_id" class="form-control">
                             <option value="">-- All Users --</option>
                             @foreach($users as $u)
@@ -35,31 +52,34 @@
 
                     <!-- Start Date -->
                     <div class="col-md-3">
-                        <label>Start Date</label>
+                        <label class="filter-label">Start Date</label>
                         <input type="date" id="start_date" class="form-control">
                     </div>
 
                     <!-- End Date -->
                     <div class="col-md-3">
-                        <label>End Date</label>
+                        <label class="filter-label">End Date</label>
                         <input type="date" id="end_date" class="form-control">
                     </div>
 
                     <!-- Buttons -->
                     <div class="col-md-3">
-                        <label>&nbsp;</label><br>
+                        <label class="filter-label">&nbsp;</label>
+                        <div class="d-flex gap-2 flex-wrap">
                         <button class="btn btn-primary" id="filterBtn">
                             <i class="ri-search-line"></i> Filter
                         </button>
-                        <button class="btn btn-secondary" id="resetBtn">
+                        <button class="btn btn-light" id="resetBtn">
                             <i class="ri-refresh-line"></i> Reset
                         </button>
+                        </div>
                     </div>
 
                 </div>
+                </div>
 
                 <div class="row g-3 mb-3" id="kpi-row"></div>
-                <div class="card border mb-3">
+                <div class="card chart-card border-0 mb-3">
                     <div class="card-header py-2"><strong id="chart-title">Web vs App Login</strong></div>
                     <div class="card-body">
                         <canvas id="report-chart" height="90"></canvas>
@@ -67,7 +87,8 @@
                 </div>
 
                 <!-- Datatable -->
-                <table id="user_login_table" class="table table-bordered table-striped align-middle w-100">
+                <div class="table-responsive table-wrap">
+                <table id="user_login_table" class="table table-bordered table-striped align-middle w-100 mb-0">
                     <thead>
                         <tr>
                             <th>Sr No</th>
@@ -79,6 +100,7 @@
                     </thead>
                     <tbody></tbody>
                 </table>
+                </div>
 
             </div>
         </div>
@@ -151,7 +173,7 @@ $(document).ready(function () {
     function renderKpis(kpis) {
         let html = '';
         (kpis || []).forEach(function (kpi) {
-            html += `<div class="col-md-3"><div class="card mb-0"><div class="card-body"><p class="text-muted mb-1">${kpi.label}</p><h5 class="mb-0">${kpi.value}</h5></div></div></div>`;
+            html += `<div class="col-md-3"><div class="card kpi-card mb-0 border-0"><div class="card-body"><p class="metric-label mb-1">${kpi.label}</p><h5 class="mb-0">${kpi.value}</h5></div></div></div>`;
         });
         $('#kpi-row').html(html);
     }

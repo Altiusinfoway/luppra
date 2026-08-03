@@ -1,7 +1,53 @@
 @extends('layouts.app')
 
-@section('content')
+@section('page-css')
 <style>
+    .settings-suite {
+        background: linear-gradient(180deg, rgba(248, 250, 252, 0.78) 0%, rgba(245, 247, 251, 0) 100%);
+    }
+    .settings-suite .hero-shell,
+    .settings-suite .settings-shell {
+        border: 1px solid rgba(255, 255, 255, 0.78);
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 14px 32px rgba(15, 23, 42, 0.05);
+    }
+    .settings-suite .hero-shell {
+        border-radius: 28px;
+        background:
+            radial-gradient(circle at top right, rgba(15, 118, 110, 0.14), transparent 28%),
+            radial-gradient(circle at left center, rgba(37, 99, 235, 0.16), transparent 30%),
+            linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        box-shadow: 0 20px 48px rgba(15, 23, 42, 0.08);
+        margin-bottom: 1rem;
+    }
+    .settings-suite .settings-shell {
+        border-radius: 22px;
+    }
+    .settings-suite .hero-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 12px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.76);
+        border: 1px solid #dbeafe;
+        color: #1d4ed8;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+    }
+    .settings-suite .hero-title {
+        font-size: clamp(2rem, 3vw, 2.7rem);
+        line-height: 1.05;
+        letter-spacing: -0.04em;
+        font-weight: 800;
+        margin: 1rem 0 .45rem;
+        color: #0f172a;
+    }
+    .settings-suite .hero-subtitle {
+        color: #64748b;
+    }
     .module-chip {
         border: 1px solid #dce1ea;
         border-radius: 999px;
@@ -15,19 +61,51 @@
     .module-chip input[type="checkbox"] {
         margin-top: 0;
     }
+    .settings-suite .table-wrap {
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        overflow: hidden;
+        background: #fff;
+    }
+    .settings-suite .edit-row-shell {
+        background: #f8fafc !important;
+    }
+    .settings-suite .edit-row-shell td {
+        border-top: 1px solid #e2e8f0;
+        padding: 18px;
+    }
+    .settings-suite .edit-form-shell {
+        border: 1px solid #e2e8f0;
+        border-radius: 18px;
+        background: #ffffff;
+        padding: 14px;
+    }
 </style>
-<div class="page-content">
+@endsection
+
+@section('content')
+<div class="page-content settings-suite">
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
-                <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-galaxy-transparent">
-                    <h4 class="mb-sm-0">SaaS Plans</h4>
-                    <div class="page-title-right">
-                        <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-                            <li class="breadcrumb-item">Setting</li>
-                            <li class="breadcrumb-item active">Plans</li>
-                        </ol>
+                <div class="hero-shell">
+                    <div class="card-body p-4 p-lg-5">
+                        <div class="row align-items-center g-4">
+                            <div class="col-lg-8">
+                                <span class="hero-eyebrow">Configuration</span>
+                                <h1 class="hero-title">SaaS Plans</h1>
+                                <p class="hero-subtitle mb-0">Create and manage subscription plans, limits, and enabled modules inside the same modern admin experience as the refreshed CRM.</p>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="d-flex justify-content-lg-end">
+                                    <ol class="breadcrumb m-0">
+                                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+                                        <li class="breadcrumb-item">Setting</li>
+                                        <li class="breadcrumb-item active">Plans</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -35,7 +113,7 @@
 
         <div class="row g-3">
             <div class="col-xl-4">
-                <div class="card">
+                <div class="card settings-shell">
                     <div class="card-header">
                         <h5 class="card-title mb-0">Create Plan</h5>
                     </div>
@@ -110,11 +188,12 @@
             </div>
 
             <div class="col-xl-8">
-                <div class="card">
+                <div class="card settings-shell">
                     <div class="card-header">
                         <h5 class="card-title mb-0">Plan List</h5>
                     </div>
-                    <div class="card-body table-responsive">
+                    <div class="card-body">
+                        <div class="table-responsive table-wrap">
                         <table class="table table-bordered align-middle">
                             <thead>
                                 <tr>
@@ -173,8 +252,9 @@
                                             </form>
                                         </td>
                                     </tr>
-                                    <tr class="collapse" id="edit-plan-{{ $plan->id }}">
-                                        <td colspan="7" class="bg-light">
+                                    <tr class="collapse edit-row-shell" id="edit-plan-{{ $plan->id }}">
+                                        <td colspan="7">
+                                            <div class="edit-form-shell">
                                             <form method="POST" action="{{ route('setting.plans.update', $plan->id) }}">
                                                 @csrf
                                                 <div class="row g-2">
@@ -234,6 +314,7 @@
                                                     </div>
                                                 </div>
                                             </form>
+                                            </div>
                                         </td>
                                     </tr>
                                 @empty
@@ -243,6 +324,7 @@
                                 @endforelse
                             </tbody>
                         </table>
+                        </div>
                     </div>
                 </div>
             </div>

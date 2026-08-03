@@ -1601,6 +1601,7 @@ class LeadController extends Controller
 
             $get_lead_products_rcd = LeadProducts::with([
                 'getProduct:id,name,image,sku_code,hsn_code,category_id,unit_type,price,unit',
+                'marketplaceListing:id,product_id,platform,platform_sku,listing_title,marketplace_item_id,selling_price,mrp',
                 'getUnit:id,name',
                 'getProduct.getUnitType:id,name',
                 'getProduct.getUnit:id,name',

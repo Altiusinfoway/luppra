@@ -35,7 +35,7 @@ return [
     'enforce_usage_limits' => env('TENANCY_ENFORCE_USAGE_LIMITS', false),
     'enforce_plan_modules' => env('TENANCY_ENFORCE_PLAN_MODULES', false),
     'allow_all_when_plan_modules_empty' => env('TENANCY_ALLOW_ALL_WHEN_PLAN_MODULES_EMPTY', true),
-    'enforce_tenant_session_isolation' => env('TENANCY_ENFORCE_TENANT_SESSION_ISOLATION', true),
+    'enforce_tenant_session_isolation' => env('TENANCY_ENFORCE_TENANT_SESSION_ISOLATION', false),
 
     /*
     |--------------------------------------------------------------------------

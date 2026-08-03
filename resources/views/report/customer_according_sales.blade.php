@@ -1,28 +1,114 @@
 @extends('layouts.app')
 
+@section('page-css')
+<style>
+.report-suite {
+    background: linear-gradient(180deg, rgba(248, 250, 252, 0.72) 0%, rgba(245, 247, 251, 0) 100%);
+}
+
+.report-suite .hero-shell,
+.report-suite .shell-card,
+.report-suite .chart-card,
+.report-suite .kpi-card {
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06);
+}
+
+.report-suite .hero-shell {
+    background:
+        radial-gradient(circle at top right, rgba(59, 130, 246, 0.14), transparent 30%),
+        radial-gradient(circle at left center, rgba(14, 165, 233, 0.12), transparent 30%),
+        linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.report-suite .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 12px;
+    border-radius: 999px;
+    border: 1px solid #bfdbfe;
+    background: rgba(255, 255, 255, 0.86);
+    color: #1d4ed8;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.report-suite .filter-shell {
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    background: linear-gradient(180deg, rgba(248, 250, 252, 0.92), rgba(255, 255, 255, 0.98));
+    padding: 1rem;
+}
+
+.report-suite .filter-label {
+    display: block;
+    margin-bottom: .45rem;
+    color: #475569;
+    font-size: .78rem;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.report-suite .kpi-card .metric-label {
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.report-suite .kpi-card h5 {
+    font-size: 1.55rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: #0f172a;
+}
+
+.report-suite .table-wrap {
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #fff;
+}
+</style>
+@endsection
+
 @section('content')
-<div class="page-content">
+<div class="page-content report-suite">
     <div class="container-fluid">
 
         <!-- start page title -->
         <div class="row">
             <div class="col-12">
-                <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-galaxy-transparent">
-                    <h4 class="mb-sm-0">Customer Sales</h4>
-                    <div class="page-title-right">
-                        <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="{{ route('reports.customer_sales') }}">Customer Sales</a></li>
-                            <li class="breadcrumb-item active">List</li>
-                        </ol>
+                <div class="card hero-shell mb-4">
+                    <div class="card-body p-4 p-lg-5">
+                        <div class="row align-items-center g-4">
+                            <div class="col-lg-7">
+                                <span class="hero-eyebrow">Customer Revenue</span>
+                                <h2 class="mt-3 mb-2">Customer Sales</h2>
+                                <p class="text-muted mb-0">Identify top customers by revenue and review account contribution with the refreshed analytics layout.</p>
+                            </div>
+                            <div class="col-lg-5">
+                                <div class="d-flex justify-content-lg-end">
+                                    <ol class="breadcrumb m-0">
+                                        <li class="breadcrumb-item"><a href="{{ route('reports.customer_sales') }}">Customer Sales</a></li>
+                                        <li class="breadcrumb-item active">List</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- end page title -->
-
         <div class="row">
             <div class="col-lg-12">
-                <div class="card">
+                <div class="card shell-card">
 
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0">Customer Sales Report</h5>
@@ -30,37 +116,42 @@
 
                     <div class="card-body">
 
-                        <div class="row mb-3">
+                        <div class="filter-shell mb-3">
+                        <div class="row g-3 align-items-end">
                             <div class="col-md-3">
-                                <label>Start Date</label>
+                                <label class="filter-label">Start Date</label>
                                 <input type="date" id="start_date" class="form-control">
                             </div>
 
                             <div class="col-md-3">
-                                <label>End Date</label>
+                                <label class="filter-label">End Date</label>
                                 <input type="date" id="end_date" class="form-control">
                             </div>
 
-                            <div class="col-md-3 mt-4">
-                                <button class="btn btn-primary" id="filterBtn" style="margin-top:6px;">
+                            <div class="col-md-6">
+                                <div class="d-flex gap-2 flex-wrap justify-content-md-end">
+                                <button class="btn btn-primary" id="filterBtn">
                                     <i class="ri-search-line"></i> Filter
                                 </button>
 
-                                <button class="btn btn-secondary" id="resetBtn" style="margin-top:6px;">
+                                <button class="btn btn-light" id="resetBtn">
                                     <i class="ri-refresh-line"></i> Reset
                                 </button>
+                                </div>
                             </div>
+                        </div>
                         </div>
 
                         <div class="row g-3 mb-3" id="kpi-row"></div>
-                        <div class="card border">
+                        <div class="card chart-card border-0">
                             <div class="card-header py-2"><strong id="chart-title">Top Customers by Revenue</strong></div>
                             <div class="card-body">
                                 <canvas id="report-chart" height="90"></canvas>
                             </div>
                         </div>
 
-                        <table id="customer_sales_list" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
+                        <div class="table-responsive table-wrap mt-3">
+                        <table id="customer_sales_list" class="table table-bordered dt-responsive nowrap table-striped align-middle mb-0" style="width:100%">
                             <thead>
                                 <tr>
                                     <th>Sr No</th>
@@ -70,6 +161,7 @@
                             </thead>
                             <tbody></tbody>
                         </table>
+                        </div>
 
                     </div>
 
@@ -140,7 +232,7 @@ $(document).ready(function () {
     function renderKpis(kpis) {
         let html = '';
         (kpis || []).forEach(function (kpi) {
-            html += `<div class="col-md-4"><div class="card mb-0"><div class="card-body"><p class="text-muted mb-1">${kpi.label}</p><h5 class="mb-0">${kpi.value}</h5></div></div></div>`;
+            html += `<div class="col-md-4"><div class="card kpi-card mb-0 border-0"><div class="card-body"><p class="metric-label mb-1">${kpi.label}</p><h5 class="mb-0">${kpi.value}</h5></div></div></div>`;
         });
         $('#kpi-row').html(html);
     }

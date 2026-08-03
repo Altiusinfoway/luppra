@@ -42,6 +42,8 @@
         .detail-content-band { background:linear-gradient(180deg,#fff6ed 0%,#fffaf5 100%); border-block:1px solid #f3dfd1; }
         .pricing-band { background:linear-gradient(180deg,#f5efff 0%,#f8f4ff 100%); border-block:1px solid #e7dafa; }
         .pill { display:inline-flex; align-items:center; padding:.38rem .7rem; border-radius:999px; background:linear-gradient(135deg,#fff0e7,#f4efff); color:#842f89; font-size:.8rem; font-weight:800; border:1px solid rgba(16,24,40,.18); box-shadow:0 8px 18px rgba(251,100,27,.10); }
+        .status-banner { border-radius:8px; padding:1rem 1.1rem; border:1px solid #fed7aa; background:#fff7ed; color:#9a3412; box-shadow:0 12px 24px rgba(251,100,27,.08); }
+        .status-banner .banner-label { display:block; font-size:.76rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; margin-bottom:.3rem; opacity:.82; }
         .item-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.7rem; margin-top:1rem; }
         .item-chip { border:1px solid rgba(16,24,40,.18); border-radius:8px; padding:.75rem; font-weight:800; color:#344054; background:linear-gradient(180deg,#fff8f2,#fff); box-shadow:0 10px 22px rgba(251,100,27,.07); }
         .price-tag { font-size:2rem; line-height:1; letter-spacing:0; font-weight:800; }
@@ -181,7 +183,10 @@
                         </div>
                     @empty
                         <div class="col-12">
-                            <div class="alert alert-warning mb-0">No active plans configured yet.</div>
+                            <div class="status-banner mb-0">
+                                <span class="banner-label">Plans unavailable</span>
+                                No active plans configured yet.
+                            </div>
                         </div>
                     @endforelse
                 </div>

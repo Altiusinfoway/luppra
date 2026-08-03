@@ -5,6 +5,30 @@
     max-height: 90vh;
     height: 90vh;
 }
+.product-raw-suite .modal-shell {
+    border: 1px solid #e2e8f0;
+    border-radius: 22px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    box-shadow: 0 16px 32px rgba(15, 23, 42, 0.06);
+    padding: 20px;
+}
+.product-raw-suite .section-intro {
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    background: #f8fafc;
+    padding: 14px 16px;
+    margin-bottom: 18px;
+}
+.product-raw-suite .section-intro h6 {
+    margin-bottom: 6px;
+    font-weight: 800;
+    color: #0f172a;
+}
+.product-raw-suite .form-actions {
+    margin-top: 8px;
+    padding-top: 18px;
+    border-top: 1px solid #e2e8f0;
+}
 .modal-content {
     height: 100%;
     overflow-y: auto;
@@ -75,6 +99,12 @@
 
 {{ Form::open(['route' => ['products.store-productraw', $product_id], 'method' => 'post', 'enctype' => "multipart/form-data", 'id'=>'create-productdetail', 'class'=>'needs-validation', 'novalidate', 'autocomplete' => 'off']) }}
 
+<div class="product-raw-suite">
+<div class="modal-shell">
+    <div class="section-intro">
+        <h6>Raw material mapping</h6>
+        <p class="text-muted mb-0">Capture metal, plastic, and color composition so the product’s material profile stays structured and easy to review.</p>
+    </div>
 
 <div class="row mt-2">
     <div class="col-md-6">
@@ -130,11 +160,13 @@
 
 <div class="row">
     <div class="mt-4">
-        <div class="hstack gap-2 justify-content-end">
+        <div class="hstack gap-2 justify-content-end form-actions">
             <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
             <button type="submit" class="btn btn-success" id="addProductRaw">Save</button>
         </div>
     </div>
+</div>
+</div>
 </div>
 {{ Form::close() }}
 

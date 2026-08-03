@@ -80,9 +80,10 @@
         .step-badge { width:2rem; height:2rem; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; background:#ffe5d8; color:var(--brand2); font-weight:800; flex:0 0 auto; }
         .trust-card { padding:1rem; }
         .trust-line + .trust-line { margin-top:.75rem; }
-        .status-banner { border-radius:8px; padding:.9rem 1rem; border:1px solid #ffd9c7; background:#fff4ee; color:#9a3f18; box-shadow:0 12px 24px rgba(251,100,27,.08); }
+        .status-banner { border-radius:8px; padding:1rem 1.1rem; border:1px solid #ffd9c7; background:#fff4ee; color:#9a3f18; box-shadow:0 12px 24px rgba(251,100,27,.08); }
         .status-banner.is-warning { border-color:#fed7aa; background:#fff7ed; color:var(--warn); }
         .status-banner.is-danger { border-color:#fecaca; background:#fef2f2; color:var(--danger); }
+        .status-banner .banner-label { display:block; font-size:.76rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; margin-bottom:.3rem; opacity:.82; }
         .hero-band { border-radius:8px; background:linear-gradient(130deg,#101828 0%, #193a5e 48%, #fb641b 100%); color:#fff7f3; box-shadow:0 30px 60px rgba(16,24,40,.16); }
         .proof-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:1rem; }
         .proof-card { padding:1.1rem; transition:.18s ease; }
@@ -327,7 +328,10 @@
                     <p class="muted mb-0 mx-auto" style="max-width:760px;">The checkout panel updates instantly with plan details, payment guidance, and onboarding steps so the customer understands the full journey before paying.</p>
                     <a href="{{ route('website.pricing') }}" class="site-link d-inline-block mt-3">View pricing details</a>
                     @if (session('error'))
-                        <div class="alert alert-danger border-0 shadow-sm mt-3 mb-0 mx-auto text-start" style="max-width:760px;">{{ session('error') }}</div>
+                        <div class="status-banner is-danger mt-3 mb-0 mx-auto text-start" style="max-width:760px;">
+                            <span class="banner-label">Checkout issue</span>
+                            {{ session('error') }}
+                        </div>
                     @endif
                 </div>
                 <div class="col-12">
@@ -342,7 +346,12 @@
                 <div class="col-lg-7">
                     <div class="row g-3" id="pricing-grid">
                         @if($plans->isEmpty())
-                            <div class="col-12"><div class="alert alert-warning">No active plans configured yet.</div></div>
+                            <div class="col-12">
+                                <div class="status-banner is-warning h-100">
+                                    <span class="banner-label">Plans unavailable</span>
+                                    No active plans configured yet.
+                                </div>
+                            </div>
                         @else
                             @foreach($plans as $index => $plan)
                                 @php

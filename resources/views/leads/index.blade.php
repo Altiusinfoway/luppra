@@ -1,33 +1,354 @@
 @extends('layouts.app')
 
+@section('page-css')
+<style>
+    .workflow-suite {
+        background: linear-gradient(180deg, rgba(248, 250, 252, 0.78) 0%, rgba(245, 247, 251, 0) 100%);
+    }
+    .workflow-suite .hero-shell,
+    .workflow-suite .toolbar-shell,
+    .workflow-suite .summary-card {
+        border: 1px solid rgba(255, 255, 255, 0.78);
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 14px 32px rgba(15, 23, 42, 0.05);
+    }
+    .workflow-suite .hero-shell {
+        border-radius: 28px;
+        background:
+            radial-gradient(circle at top right, rgba(15, 118, 110, 0.14), transparent 28%),
+            radial-gradient(circle at left center, rgba(37, 99, 235, 0.16), transparent 30%),
+            linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        box-shadow: 0 20px 48px rgba(15, 23, 42, 0.08);
+    }
+    .workflow-suite .toolbar-shell,
+    .workflow-suite .summary-card {
+        border-radius: 22px;
+    }
+    .workflow-suite .hero-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 12px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.76);
+        border: 1px solid #dbeafe;
+        color: #1d4ed8;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+    }
+    .workflow-suite .hero-title {
+        font-size: clamp(2rem, 3vw, 2.7rem);
+        line-height: 1.05;
+        letter-spacing: -0.04em;
+        font-weight: 800;
+        margin: 1rem 0 .45rem;
+        color: #0f172a;
+    }
+    .workflow-suite .hero-subtitle,
+    .workflow-suite .toolbar-note {
+        color: #64748b;
+    }
+    .workflow-suite .hero-action-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: .45rem;
+        border-radius: 14px;
+        font-weight: 700;
+        padding: .7rem 1rem;
+    }
+    .workflow-suite .summary-card .label {
+        color: #64748b;
+        text-transform: uppercase;
+        font-size: 11px;
+        letter-spacing: .08em;
+        font-weight: 800;
+        margin-bottom: .45rem;
+    }
+    .workflow-suite .summary-card h3 {
+        margin: 0;
+        font-size: 1.7rem;
+        line-height: 1.1;
+        letter-spacing: -0.03em;
+        font-weight: 800;
+        color: #0f172a;
+    }
+    .workflow-suite .search-shell {
+        position: relative;
+    }
+    .workflow-suite .search-shell .search-icon {
+        position: absolute;
+        top: 50%;
+        right: 14px;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        pointer-events: none;
+    }
+    .workflow-suite .board-shell {
+        border: 1px solid rgba(255, 255, 255, 0.78);
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.72);
+        box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06);
+        padding: 1rem;
+    }
+    .workflow-suite .tasks-list {
+        background: rgba(255, 255, 255, 0.86);
+        border: 1px solid rgba(255, 255, 255, 0.78);
+        border-radius: 20px;
+        padding: 1rem;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+    }
+    .workflow-suite .tasks-board {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 1rem;
+        align-items: start;
+    }
+    .workflow-suite .tasks-list {
+        min-height: 100%;
+    }
+    .workflow-suite .stage-heading {
+        display: flex;
+        align-items: center;
+        gap: .6rem;
+        margin: 0;
+        color: #0f172a;
+        font-size: .82rem;
+        font-weight: 800;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+    }
+    .workflow-suite .stage-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 28px;
+        height: 28px;
+        padding: 0 10px;
+        border-radius: 999px;
+        background: #dcfce7;
+        color: #166534;
+        font-size: .75rem;
+        font-weight: 800;
+    }
+    .workflow-suite .tasks-wrapper {
+        max-height: 72vh;
+        padding-top: .25rem;
+    }
+    .workflow-suite .tasks-box {
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 18px !important;
+        background: #ffffff !important;
+        box-shadow: 0 12px 24px rgba(15, 23, 42, 0.05);
+        overflow: hidden;
+        transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+    .workflow-suite .tasks-box:hover {
+        transform: translateY(-2px);
+        border-color: #bfdbfe !important;
+        box-shadow: 0 18px 34px rgba(37, 99, 235, 0.12);
+    }
+    .workflow-suite .lead-toggle {
+        gap: .9rem;
+    }
+    .workflow-suite .lead-title {
+        margin-bottom: .1rem;
+        color: #0f172a;
+        font-size: 1rem;
+        font-weight: 800;
+        line-height: 1.35;
+    }
+    .workflow-suite .lead-owner-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: .35rem;
+        padding: .42rem .65rem;
+        border-radius: 999px;
+        background: #eff6ff;
+        color: #1d4ed8;
+        font-size: .76rem;
+        font-weight: 700;
+    }
+    .workflow-suite .lead-meta-grid {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 .55rem;
+    }
+    .workflow-suite .lead-meta-grid td {
+        vertical-align: top;
+    }
+    .workflow-suite .lead-meta {
+        display: inline-flex;
+        align-items: center;
+        gap: .4rem;
+        color: #64748b;
+        font-size: .8rem;
+    }
+    .workflow-suite .lead-meta i {
+        color: #2563eb;
+    }
+    .workflow-suite .lead-chat-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 999px;
+        background: #ecfdf5;
+        color: #16a34a !important;
+    }
+    .workflow-suite .lead-collapse {
+        border-top: 1px solid #e2e8f0;
+        background: linear-gradient(180deg, rgba(248, 250, 252, 0.75) 0%, rgba(255, 255, 255, 1) 100%);
+    }
+    .workflow-suite .lead-note {
+        color: #475569;
+        line-height: 1.55;
+    }
+    .workflow-suite .lead-detail-table {
+        margin-top: .5rem !important;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        overflow: hidden;
+        background: #fff;
+    }
+    .workflow-suite .lead-detail-table td {
+        background: transparent !important;
+    }
+    .workflow-suite .lead-actions {
+        padding: .85rem 1rem 1rem;
+        border-top: 1px solid #e2e8f0;
+        background: rgba(255, 255, 255, 0.95);
+    }
+    .workflow-suite .lead-action-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 12px;
+        transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .workflow-suite .lead-action-link:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 18px rgba(15, 23, 42, 0.08);
+    }
+    .workflow-suite .filters-panel .offcanvas-header {
+        border-bottom: 1px solid #e2e8f0;
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    }
+    .workflow-suite .filters-panel .offcanvas-title {
+        font-weight: 800;
+        letter-spacing: -0.02em;
+    }
+    .workflow-suite .filters-panel .offcanvas-body {
+        background: #f8fafc;
+    }
+    .workflow-suite .filters-panel .offcanvas-footer {
+        background: #ffffff;
+    }
+    @media (max-width: 991.98px) {
+        .workflow-suite .tasks-board {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+@endsection
+
 @section('content')
  @include('leads.lead_import_all_section')
-    <div class="page-content">
+    @php
+        $totalLeadCount = 0;
+        $stagesWithLeads = 0;
+        $todayLeadCount = 0;
+        foreach ($leadStagies as $leadStageItem) {
+            $stageLeadCount = $leadStageItem->leads->count();
+            $totalLeadCount += $stageLeadCount;
+            if ($stageLeadCount > 0) {
+                $stagesWithLeads++;
+            }
+            $todayLeadCount += $leadStageItem->leads->where('date', now()->toDateString())->count();
+        }
+        $filteredLeadCount = isset($lead_data) ? $lead_data->count() : $totalLeadCount;
+    @endphp
+    <div class="page-content workflow-suite">
         <div class="container-fluid">
-            <!-- start page title -->
             <div class="row">
                 <div class="col-12">
-                    <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-galaxy-transparent">
-                        <h4 class="mb-sm-0">Leads</h4>
-
-                        <div class="page-title-right">
-                            <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a href="{{ route('leads.index') }}">Leads</a></li>
-                                <li class="breadcrumb-item active">List</li>
-                            </ol>
+                    <div class="hero-shell mb-4">
+                        <div class="card-body p-4 p-lg-5">
+                            <div class="row align-items-center g-4">
+                                <div class="col-lg-8">
+                                    <span class="hero-eyebrow">Pipeline Dashboard</span>
+                                    <h1 class="hero-title">Leads</h1>
+                                    <p class="hero-subtitle mb-0">Review incoming pipeline, move opportunities across stages, and keep team follow-up work visible from one cleaner workspace.</p>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="d-flex justify-content-lg-end flex-wrap gap-2">
+                                        <a href="javascript:void(0);"
+                                            class="btn btn-primary hero-action-btn add-btn"
+                                            data-size="lg" data-url="{{ route('leads.create') }}"
+                                            data-ajax-popup="true"
+                                            data-bs-original-title="{{ __('Add Lead') }}">
+                                            <i class="ri-add-circle-line"></i> Add Lead
+                                        </a>
+                                        <a href="{{ route('leads.list') }}" class="btn btn-light hero-action-btn">
+                                            <i class="bx bx-menu fs-5"></i> Table View
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-
                     </div>
                 </div>
             </div>
-            <!-- end page title -->
 
-            <div class="card">
+            <div class="row g-3 mb-4">
+                <div class="col-md-6 col-xl-3">
+                    <div class="summary-card h-100">
+                        <div class="card-body">
+                            <div class="label">Total Leads</div>
+                            <h3>{{ number_format($totalLeadCount) }}</h3>
+                            <p class="text-muted mb-0 mt-2">All active opportunities in the current board.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-3">
+                    <div class="summary-card h-100">
+                        <div class="card-body">
+                            <div class="label">Visible Leads</div>
+                            <h3>{{ number_format($filteredLeadCount) }}</h3>
+                            <p class="text-muted mb-0 mt-2">Rows matching the current filters and board scope.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-3">
+                    <div class="summary-card h-100">
+                        <div class="card-body">
+                            <div class="label">Active Stages</div>
+                            <h3>{{ number_format($stagesWithLeads) }}</h3>
+                            <p class="text-muted mb-0 mt-2">Pipeline stages currently holding at least one lead.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-3">
+                    <div class="summary-card h-100">
+                        <div class="card-body">
+                            <div class="label">Added Today</div>
+                            <h3>{{ number_format($todayLeadCount) }}</h3>
+                            <p class="text-muted mb-0 mt-2">New leads created on {{ now()->format('d M Y') }}.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card toolbar-shell mb-4">
                 <div class="card-body p-2">
                     <div class="row align-items-center ">
 
                         <div class="col-lg-3">
-                            <div class="search-box">
+                            <div class="search-shell">
                                 <input type="text" class="form-control form-control-sm search" id="search-task-options"
                                     placeholder="Search for Customer Name,Phone">
                                 <i class="ri-search-line search-icon"></i>
@@ -36,15 +357,6 @@
 
                         <div class="col-lg-9">
                             <div class="d-flex justify-content-end gap-2">
-                                <a href="javascript:void(0);"
-                                                class="btn btn-sm btn-success add-btn"
-                                                data-size="lg" data-url="{{ route('leads.create') }}"
-                                                data-ajax-popup="true"
-                                                data-bs-original-title="{{ __('Add Lead') }}"><i
-                                                    class="ri-add-circle-line me-1"></i> Add leads</a>
-
-
-
                                 <div class="dropdown d-inline-block">
                                     <button class="btn btn-primary btn-sm dropdown" type="button" data-bs-toggle="dropdown"
                                         aria-expanded="false">
@@ -75,71 +387,26 @@
 
                                 <button type="button" class="btn btn-info btn-sm" data-bs-toggle="offcanvas"
                                     href="#offcanvasExample">
-                                    <i class="ri-filter-3-line align-bottom me-1"></i> Fliters
+                                    <i class="ri-filter-3-line align-bottom me-1"></i> Filters
                                 </button>
-                                <a href="{{ route('leads.list') }}"
-                                    class="btn btn-danger btn-icon waves-effect waves-light btn-sm">
-                                    <i class="bx bx-menu fs-3"></i>
-                                </a>
                             </div>
                         </div>
 
-                        <!-- <div class="col-auto ms-sm-auto">
-                                                                                                                                                                        <div class="avatar-group" id="newMembar">
-
-                                                                                                                                                                            <a href="javascript: void(0);" class="avatar-group-item material-shadow"
-                                                                                                                                                                                data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top"
-                                                                                                                                                                                title="Nancy">
-                                                                                                                                                                                <img src="https://kk.asiantechnocast.com/assets/images/users/avatar-5.jpg" alt=""
-                                                                                                                                                                                    class="rounded-circle avatar-xs">
-                                                                                                                                                                            </a>
-                                                                                                                                                                            <a href="javascript: void(0);" class="avatar-group-item material-shadow"
-                                                                                                                                                                                data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top"
-                                                                                                                                                                                title="Frank">
-                                                                                                                                                                                <img src="https://kk.asiantechnocast.com/assets/images/users/avatar-3.jpg" alt=""
-                                                                                                                                                                                    class="rounded-circle avatar-xs">
-                                                                                                                                                                            </a>
-                                                                                                                                                                            <a href="javascript: void(0);" class="avatar-group-item material-shadow"
-                                                                                                                                                                                data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top"
-                                                                                                                                                                                title="Tonya">
-                                                                                                                                                                                <img src="https://kk.asiantechnocast.com/assets/images/users/avatar-10.jpg" alt=""
-                                                                                                                                                                                    class="rounded-circle avatar-xs">
-                                                                                                                                                                            </a>
-                                                                                                                                                                            <a href="javascript: void(0);" class="avatar-group-item material-shadow"
-                                                                                                                                                                                data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top"
-                                                                                                                                                                                title="Thomas">
-                                                                                                                                                                                <img src="https://kk.asiantechnocast.com/assets/images/users/avatar-8.jpg" alt=""
-                                                                                                                                                                                    class="rounded-circle avatar-xs">
-                                                                                                                                                                            </a>
-                                                                                                                                                                            <a href="javascript: void(0);" class="avatar-group-item material-shadow"
-                                                                                                                                                                                data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top"
-                                                                                                                                                                                title="Herbert">
-                                                                                                                                                                                <img src="https://kk.asiantechnocast.com/assets/images/users/avatar-2.jpg" alt=""
-                                                                                                                                                                                    class="rounded-circle avatar-xs">
-                                                                                                                                                                            </a>
-                                                                                                                                                                            <a href="#addmemberModal" data-bs-toggle="modal"
-                                                                                                                                                                                class="avatar-group-item material-shadow">
-                                                                                                                                                                                <div class="avatar-xs">
-                                                                                                                                                                                    <div class="avatar-title rounded-circle">
-                                                                                                                                                                                        +
-                                                                                                                                                                                    </div>
-                                                                                                                                                                                </div>
-                                                                                                                                                                            </a>
-                                                                                                                                                                        </div>
-                                                                                                                                                                    </div> -->
                         <!--end col-->
                     </div>
                     <!--end row-->
                 </div>
                 <!--end card-body-->
+                </div>
+                <div class="px-3 pb-3 toolbar-note small">Switch filters, import lead data, or continue managing opportunities directly in the kanban board below.</div>
             </div>
-            <!--end card-->
 
 
 
 
 
             <!-- ---------------------- new --- -->
+            <div class="board-shell">
             <div class="tasks-board mb-3" id="kanbanboard">
 
 
@@ -184,8 +451,8 @@
                     <div class="tasks-list">
                         <div class="d-flex mb-3">
                             <div class="flex-grow-1">
-                                <h6 class="fs-14 text-uppercase fw-semibold mb-0">{{ $lead_stage->name }} <small
-                                        class="badge bg-success align-bottom ms-1 totaltask-badge">{{ count($leads) }}</small>
+                                <h6 class="stage-heading">{{ $lead_stage->name }} <small
+                                        class="stage-badge totaltask-badge">{{ count($leads) }}</small>
                                 </h6>
                             </div>
                             <div class="flex-shrink-0">
@@ -210,13 +477,13 @@
                                         <div class="card-body p-2 px-3">
                                             <!-- Click Header -->
 
-                                            <a class="d-flex align-items-center justify-content-between collapsed text-dark text-decoration-none"
+                                            <a class="d-flex align-items-center justify-content-between collapsed text-dark text-decoration-none lead-toggle"
                                                 data-bs-toggle="collapse" href="#leadCollapse{{ $lead->id }}"
                                                 role="button" aria-expanded="false"
                                                 aria-controls="leadCollapse{{ $lead->id }}">
 
                                                 <div class="flex-grow-1">
-                                                    <h6 class="fs-15 mb-2 text-truncate text-wrap">
+                                                    <h6 class="lead-title text-truncate text-wrap">
                                                         {{ ucwords(strtolower($lead->name)) }}</h6>
 
                                                 </div>
@@ -226,16 +493,16 @@
                                             </a>
                                             <div class="row">
                                                 <div class="col">
-                                                    <span class="badge bg-primary me-1 mb-1"> <i
+                                                    <span class="lead-owner-badge me-1 mb-1"> <i
                                                             class="ri-account-circle-fill"></i>
                                                         {{ $lead?->user?->name }}</span>
                                                 </div>
                                             </div>
 
-                                            <table class="w-100">
+                                            <table class="lead-meta-grid">
                                                 <tr>
                                                     <td>
-                                                        <p class="text-muted mb-0 small"><i class="ri-calendar-fill"></i>
+                                                        <p class="lead-meta mb-0"><i class="ri-calendar-fill"></i>
                                                             {{ App\Models\Utility::getDateFormated($lead->date) }}</p>
                                                     </td>
                                                     <td>
@@ -249,7 +516,7 @@
                                                                 ->where('is_whatsapp', 1)
                                                                 ->first();
                                                         @endphp
-                                                        <p class="text-muted mb-0 small"><i class=" ri-phone-fill"></i>
+                                                        <p class="lead-meta mb-0"><i class=" ri-phone-fill"></i>
                                                             {{ $primary?->phone }}</p>
                                                     </td>
                                                     <td class="text-end">
@@ -268,7 +535,7 @@
                                                             @endphp
                                                             @if(!empty($chatPhone))
                                                                 <a href="{{ url('device/chats/'.$device->uuid).'?phone='.$chatPhone }}"
-                                                                    class="text-success js-wa-chat-entry"
+                                                                    class="lead-chat-link js-wa-chat-entry"
                                                                     title="WhatsApp Chat"
                                                                     data-chat-url="{{ url('device/chats/'.$device->uuid).'?phone='.$chatPhone }}"
                                                                     data-qr-url="{{ route('device.scan', $device->uuid) }}"
@@ -282,7 +549,7 @@
                                                 <tr>
 
                                                     <td>
-                                                        <p class="text-muted mb-0 small"><i class="ri-map-pin-2-fill"></i>
+                                                        <p class="lead-meta mb-0"><i class="ri-map-pin-2-fill"></i>
                                                             {{ $lead?->customer?->getBillingAddress?->get_city?->name ?? '' }},
                                                             {{ $lead?->customer?->getBillingAddress?->get_state?->name ?? '' }}
                                                         </p>
@@ -293,11 +560,11 @@
                                         </div>
 
                                         <!-- Collapsible Section -->
-                                        <div class="border-top border-top-dashed collapse"
+                                        <div class="lead-collapse collapse"
                                             id="leadCollapse{{ $lead->id }}">
                                             <div class="card-body pt-2">
                                                 <div class="mb-3">
-                                                    <p class="text-muted m-0" id="note-{{ $lead->id }}">
+                                                    <p class="lead-note m-0" id="note-{{ $lead->id }}">
                                                         {{ Str::words($lead->notes, 9, '...') }}
                                                     </p>
                                                     @if (Str::wordCount($lead->notes) > 9)
@@ -307,7 +574,7 @@
                                                         </a>
                                                     @endif
                                                 </div>
-                                                <table class="w-100 mt-3 table table-bordered text-center">
+                                                <table class="w-100 mt-3 table table-bordered text-center lead-detail-table">
 
                                                     {{-- Reminding Date --}}
                                                     @if (!empty($lead['next_contact_date']))
@@ -387,13 +654,13 @@
                                             </div>
 
                                             <!-- Footer Buttons -->
-                                            <div class="card-footer border-top-dashed hstack gap-2 justify-content-center">
+                                            <div class="card-footer hstack gap-2 justify-content-center lead-actions">
                                                 <ul class="list-inline mb-0">
                                                     @if ($whatsapp)
                                                         <li class="list-inline-item avatar-xs">
                                                             <a href="https://api.whatsapp.com/send/?phone={{ $whatsapp?->phone }}"
                                                                 target="_blank"
-                                                                class="avatar-title bg-success-subtle text-success fs-15 rounded">
+                                                                class="avatar-title bg-success-subtle text-success fs-15 rounded lead-action-link">
                                                                 <i class="ri-whatsapp-fill"></i>
                                                             </a>
                                                         </li>
@@ -402,7 +669,7 @@
                                                     @if ($primary)
                                                         <li class="list-inline-item avatar-xs">
                                                             <a href="tel:{{ $primary?->phone }}"
-                                                                class="avatar-title bg-success-subtle text-success fs-15 rounded">
+                                                                class="avatar-title bg-success-subtle text-success fs-15 rounded lead-action-link">
                                                                 <i class="ri-phone-fill"></i>
                                                             </a>
                                                         </li>
@@ -415,14 +682,14 @@
                                                             data-url="{{ URL::to('leads/' . $lead->id . '/edit') }}"
                                                             data-ajax-popup="true"
                                                             data-bs-original-title="{{ __('Edit Lead') }}"
-                                                            class="avatar-title bg-danger-subtle text-danger fs-15 rounded">
+                                                            class="avatar-title bg-danger-subtle text-danger fs-15 rounded lead-action-link">
                                                             <i class="ri-edit-2-fill"></i>
                                                         </a>
 
                                                     </li>
                                                     <li class="list-inline-item avatar-xs">
                                                         <a href="{{ route('leads.view', [$lead->id]) }}"
-                                                            class="avatar-title bg-warning-subtle text-warning fs-15 rounded">
+                                                            class="avatar-title bg-warning-subtle text-warning fs-15 rounded lead-action-link">
                                                             <i class="ri-eye-fill"></i>
                                                         </a>
                                                     </li>
@@ -443,6 +710,7 @@
 
             </div>
             <!--end task-board-->
+            </div>
         </div>
     </div>
 
@@ -451,10 +719,10 @@
 
 
     <!-- filter model -->
-    <div class="offcanvas offcanvas-end fade" tabindex="-1" id="offcanvasExample"
+    <div class="offcanvas offcanvas-end fade filters-panel" tabindex="-1" id="offcanvasExample"
         aria-labelledby="offcanvasExampleLabel" aria-modal="true" role="dialog">
         <div class="offcanvas-header bg-light">
-            <h5 class="offcanvas-title" id="offcanvasExampleLabel">Leads Fliters</h5>
+            <h5 class="offcanvas-title" id="offcanvasExampleLabel">Lead Filters</h5>
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
 
@@ -499,7 +767,7 @@
 
         <div class="offcanvas-footer border-top p-3 text-center hstack gap-2">
             <a href="{{ route('leads.index') }}" class="btn btn-light w-100">Clear Filter</a>
-            <button type="submit" class="btn btn-success w-100">Filters</button>
+            <button type="submit" class="btn btn-success w-100">Apply Filters</button>
         </div>
         {{ Form::close() }}
     </div>
@@ -593,7 +861,7 @@
                     reader.readAsDataURL(profileField.files[0]), reader.onload = function() {
                         var e = reader.result;
                         localStorage.setItem("kanbanboard-member", '<img src="' + e +
-                            '" alt="profile" class="rounded-circle avatar-xs">')
+                            '" alt="profile" class="rounded-3" style="width:32px;height:32px;object-fit:cover;">')
                     }
                 })));
     </script>

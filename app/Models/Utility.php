@@ -48,11 +48,30 @@ class Utility extends Model
 
     private static function settingsConnectionName(): string
     {
+        $default = (string) config('database.default', 'mysql');
+
         try {
-            $default = (string) config('database.default', 'mysql');
             DB::connection($default)->getPdo();
             return $default;
         } catch (\Throwable $e) {
+            $fallbackDatabase = env('DB_DATABASE', 'luppra');
+
+            config([
+                'database.default' => 'mysql',
+                'database.connections.mysql.host' => env('DB_HOST', '127.0.0.1'),
+                'database.connections.mysql.port' => env('DB_PORT', '3306'),
+                'database.connections.mysql.database' => $fallbackDatabase,
+                'database.connections.mysql.username' => env('DB_USERNAME', 'root'),
+                'database.connections.mysql.password' => env('DB_PASSWORD', ''),
+            ]);
+
+            DB::purge('mysql');
+
+            try {
+                DB::connection('mysql')->getPdo();
+                return 'mysql';
+            } catch (\Throwable $inner) {
+            }
         }
 
         return 'mysql';
@@ -1483,7 +1502,11 @@ class Utility extends Model
 
     public static function websiteLogo($for_pdf = false)
     {
-        $logo = self::settingsTable()->where('name', 'website_logo')->value('value');
+        try {
+            $logo = self::settingsTable()->where('name', 'website_logo')->value('value');
+        } catch (\Throwable $e) {
+            $logo = null;
+        }
 
         if (!empty($logo)) {
             $storagePath = public_path('website_logo/' . $logo);
@@ -1499,12 +1522,20 @@ class Utility extends Model
 
     public static function getWebsiteName()
     {
-        return self::settingsTable()->where('name', 'website_name')->value('value');
+        try {
+            return self::settingsTable()->where('name', 'website_name')->value('value') ?: config('app.name', 'Luppra');
+        } catch (\Throwable $e) {
+            return config('app.name', 'Luppra');
+        }
     }
 
     public static function getWebsiteShortName()
     {
-        return self::settingsTable()->where('name', 'website_short_name')->value('value');
+        try {
+            return self::settingsTable()->where('name', 'website_short_name')->value('value') ?: config('app.name', 'Luppra');
+        } catch (\Throwable $e) {
+            return config('app.name', 'Luppra');
+        }
     }
 
     public static function getUnitTypes()
@@ -1685,11 +1716,15 @@ class Utility extends Model
 
     public static function WebsiteName()
     {
-        $comp_name = self::settingsTable()->where('name', 'website_name')->value('value');
-        if ($comp_name) {
-            return $comp_name;
+        try {
+            $comp_name = self::settingsTable()->where('name', 'website_name')->value('value');
+            if ($comp_name) {
+                return $comp_name;
+            }
+        } catch (\Throwable $e) {
         }
-        return '';
+
+        return config('app.name', 'Luppra');
     }
 
     public static function getUnitName($unitId)

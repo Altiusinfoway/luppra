@@ -1,39 +1,128 @@
 @extends('layouts.app')
+@section('page-css')
+    <style>
+        .detail-suite {
+            background: linear-gradient(180deg, rgba(248, 250, 252, 0.78) 0%, rgba(245, 247, 251, 0) 100%);
+        }
+
+        .detail-suite .hero-shell {
+            border: 1px solid rgba(255, 255, 255, 0.78);
+            border-radius: 28px;
+            background:
+                radial-gradient(circle at top right, rgba(15, 118, 110, 0.14), transparent 28%),
+                radial-gradient(circle at left center, rgba(37, 99, 235, 0.16), transparent 30%),
+                linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            box-shadow: 0 20px 48px rgba(15, 23, 42, 0.08);
+        }
+
+        .detail-suite .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.76);
+            border: 1px solid #dbeafe;
+            color: #1d4ed8;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .detail-suite .hero-title {
+            font-size: clamp(1.9rem, 3vw, 2.5rem);
+            line-height: 1.05;
+            letter-spacing: -0.04em;
+            font-weight: 800;
+            margin: 1rem 0 .45rem;
+            color: #0f172a;
+        }
+
+        .detail-suite .hero-subtitle {
+            color: #64748b;
+        }
+
+        .detail-suite .surface-card,
+        .detail-suite .sidebar-card {
+            border: 1px solid rgba(255, 255, 255, 0.78);
+            border-radius: 22px;
+            background: rgba(255, 255, 255, 0.92);
+            box-shadow: 0 14px 32px rgba(15, 23, 42, 0.05);
+        }
+
+        .detail-suite .section-title {
+            font-size: 1rem;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+        }
+
+        .detail-suite .section-subtitle {
+            color: #64748b;
+            font-size: .84rem;
+        }
+
+        .detail-suite .table-shell {
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        .detail-suite .summary-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-size: 12px;
+            font-weight: 700;
+        }
+    </style>
+@endsection
 @section('content')
     @php
         $check_discount_flag = \App\Models\Utility::isDiscountAllowed();
         $totalBlankColspan = $check_discount_flag == 1 ? 4 : 3;
     @endphp
-    <div class="page-content">
+    <div class="page-content detail-suite">
         <div class="container-fluid">
-
-            <!-- start page title -->
             <div class="row">
                 <div class="col-12">
-                    <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-galaxy-transparent">
-                        <h4 class="mb-sm-0">Invoice Details</h4>
-
-                        <div class="page-title-right">
-                            <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a href="{{ route('invoices.index') }}">Invoice</a></li>
-                                <li class="breadcrumb-item active">Invoice Details</li>
-                            </ol>
+                    <div class="hero-shell mb-4">
+                        <div class="card-body p-4 p-lg-5">
+                            <div class="row align-items-center g-4">
+                                <div class="col-lg-8">
+                                    <span class="hero-eyebrow">Invoice Detail</span>
+                                    <h1 class="hero-title">Invoice {{ str_replace('ORDER-', 'Inv-', $order['order_number']) }}</h1>
+                                    <p class="hero-subtitle mb-0">Inspect billed products, tax breakdown, transport, and invoice actions from the same refined detail layout.</p>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="d-flex justify-content-lg-end">
+                                        <ol class="breadcrumb m-0">
+                                            <li class="breadcrumb-item"><a href="{{ route('invoices.index') }}">Invoices</a></li>
+                                            <li class="breadcrumb-item active">Details</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-
                     </div>
                 </div>
             </div>
-            <!-- end page title -->
 
             <div class="row">
                 <div class="col-xl-9 ">
-                    <div class="card">
+                    <div class="card surface-card">
                         <div class="card-header">
                             <div class="d-flex align-items-center">
-                                <h5 class="card-title flex-grow-1 mb-0">Invoice :
-                                    {{ str_replace('ORDER-', 'Inv-', $order['order_number']) }}
-                                    {{-- ({{ $order->Orderstatus->name ?? '' }} ) --}}
-                                </h5>
+                                <div class="flex-grow-1">
+                                    <h5 class="card-title mb-1 section-title">Invoice Summary</h5>
+                                    <div class="section-subtitle">Line items, taxes, and billing totals for {{ str_replace('ORDER-', 'Inv-', $order['order_number']) }}.</div>
+                                </div>
                                 <div class="d-flex justify-content-end gap-3">
                                     {{-- <div class="">
                                         @if (count($order_status_list) > 0)
@@ -84,7 +173,10 @@
                             </div> --}}
                         </div>
                         <div class="card-body">
-                            <div class="table-responsive table-card">
+                            <div class="mb-3">
+                                <span class="summary-chip">Invoice Ref {{ str_replace('ORDER-', 'Inv-', $order['order_number']) }}</span>
+                            </div>
+                            <div class="table-responsive table-shell">
                                 <table class="table table-sm table-nowrap align-middle table-bordered mb-0">
                                     <thead class=" ">
                                         <tr>
@@ -251,7 +343,7 @@
                 </div>
                 <!--end col-->
                 <div class="col-xl-3">
-                    <div class="card">
+                    <div class="card sidebar-card">
                         <div class="card-header">
                             <div class="d-flex">
                                 <h5 class="card-title flex-grow-1 mb-0"><i
@@ -318,7 +410,7 @@
                     </div>
                     <!--end card-->
 
-                    <div class="card">
+                    <div class="card sidebar-card">
                         <div class="card-header">
                             <div class="d-flex">
                                 <h5 class="card-title flex-grow-1 mb-0">Customer Details</h5>
@@ -360,7 +452,7 @@
                         </div>
                     </div>
                     <!--end card-->
-                    <div class="card">
+                    <div class="card sidebar-card">
                         <div class="card-header">
                             <h5 class="card-title mb-0"><i class="ri-map-pin-line align-middle me-1 text-muted"></i>
                                 Billing Address</h5>
@@ -378,7 +470,7 @@
                         </div>
                     </div>
                     <!--end card-->
-                    <div class="card">
+                    <div class="card sidebar-card">
                         <div class="card-header">
                             <h5 class="card-title mb-0"><i class="ri-map-pin-line align-middle me-1 text-muted"></i>
                                 Shipping Address</h5>
@@ -406,7 +498,7 @@
 
                 <div class="row mt-4" id="activity-history">
                     <div class="col-12">
-                        <div class="card">
+                        <div class="card sidebar-card">
                             <div class="card-header">
                                 <h5 class="card-title mb-0">Activity History</h5>
                             </div>

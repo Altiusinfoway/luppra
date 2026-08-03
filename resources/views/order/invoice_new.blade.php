@@ -31,6 +31,111 @@
             -webkit-print-color-adjust: exact;
         }
 
+        @media screen {
+            body {
+                background:
+                    radial-gradient(circle at top right, rgba(15, 118, 110, 0.08), transparent 24%),
+                    radial-gradient(circle at left top, rgba(37, 99, 235, 0.1), transparent 26%),
+                    linear-gradient(180deg, #f8fafc 0%, #eef3f8 100%);
+            }
+        }
+
+        .preview-suite {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 28px 20px 40px;
+        }
+
+        .preview-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 18px;
+            padding: 18px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.78);
+            border-radius: 24px;
+            background:
+                radial-gradient(circle at top right, rgba(15, 118, 110, 0.14), transparent 28%),
+                radial-gradient(circle at left center, rgba(37, 99, 235, 0.16), transparent 30%),
+                linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+        }
+
+        .preview-toolbar h1 {
+            margin: 0;
+            font-size: clamp(1.4rem, 2vw, 2rem);
+            line-height: 1.05;
+            letter-spacing: -0.04em;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .preview-toolbar p {
+            margin: 6px 0 0;
+            color: #64748b;
+            font-size: .9rem;
+        }
+
+        .preview-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.76);
+            border: 1px solid #dbeafe;
+            color: #1d4ed8;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .preview-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .preview-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 40px;
+            padding: 0 14px;
+            border-radius: 12px;
+            border: 1px solid #dbeafe;
+            background: #fff;
+            color: #0f172a;
+            text-decoration: none;
+            font-weight: 700;
+            transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease;
+        }
+
+        .preview-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+            color: #0f172a;
+        }
+
+        .preview-btn.primary {
+            border-color: transparent;
+            background: linear-gradient(135deg, #0f766e 0%, #2563eb 100%);
+            color: #fff;
+        }
+
+        .preview-stage {
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.82);
+            border-radius: 28px;
+            background: rgba(255, 255, 255, 0.55);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        }
+
         body.layout_2 .cm-bg {
             background: #f2f4f8;
         }
@@ -455,7 +560,21 @@
 </head>
 
 <body class="{{ $invoiceLayout }}">
-    @include('order.partials.invoice-pdf-pages')
+    <div class="preview-suite">
+        <div class="preview-toolbar no-print">
+            <div>
+                <span class="preview-chip">Invoice Preview</span>
+                <h1>{{ $order->bill_number ?? str_replace('ORDER', 'INV', $order->order_number) }}</h1>
+                <p>Review the rendered invoice layout before printing or downloading it.</p>
+            </div>
+            <div class="preview-actions">
+                <button type="button" class="preview-btn" onclick="window.print()">Print</button>
+            </div>
+        </div>
+        <div class="preview-stage">
+            @include('order.partials.invoice-pdf-pages')
+        </div>
+    </div>
 </body>
 
 </html>

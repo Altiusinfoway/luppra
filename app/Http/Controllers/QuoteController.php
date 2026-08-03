@@ -32,13 +32,30 @@ use App\Models\BankDetail;
 use App\Models\OrderPayment;
 use App\Models\OrderActivity;
 use App\Models\CustomerPriceHistory;
+use App\Models\MarketplaceListing;
 use App\Models\User;
 use App\Services\ActivityLogger;
 use App\Services\TermsAndConditionService;
+use Illuminate\Support\Facades\Schema;
 
 
 class QuoteController extends Controller
 {
+    private function resolveMarketplaceListing(?string $listingId, int $productId): ?MarketplaceListing
+    {
+        if (empty($listingId)) {
+            return null;
+        }
+
+        if (!Schema::hasTable('marketplace_listings')) {
+            return null;
+        }
+
+        return MarketplaceListing::where('id', (int) $listingId)
+            ->where('product_id', $productId)
+            ->firstOrFail();
+    }
+
     private function writeQuoteActivity(string $action, string $eventKey, Quotes $quote, string $description, array $properties = []): void
     {
         ActivityLogger::writeFor('quotes', $action, $quote, null, [
@@ -330,6 +347,9 @@ class QuoteController extends Controller
 
             $transport_list = Entity::IsTransport()->toArray();
             $product_list = Products::with('getGstSlabMaster')->get();
+            if (Schema::hasTable('marketplace_listings')) {
+                $product_list->load('marketplaceListings');
+            }
 
             $lead = null;
             if ($lead_id) {
@@ -504,11 +524,12 @@ class QuoteController extends Controller
         foreach ($products['id'] as $index => $productId) {
 
             $product_id = $products['id'][$index];
+            $marketplaceListing = $this->resolveMarketplaceListing($products['listing_id'][$index] ?? null, (int) $product_id);
             $qty = (float) $products['qty'][$index];
             $product = Products::find($product_id);
-            $mrp = (float) ($products['mrp'][$index] ?? $product?->price ?? 0); // not used product
+            $mrp = (float) ($products['mrp'][$index] ?? $marketplaceListing?->mrp ?? $product?->price ?? 0);
             $units = $products['units'][$index] ?? null;
-            $dealer_price = (float) $products['price'][$index];
+            $dealer_price = (float) ($products['price'][$index] ?? $marketplaceListing?->selling_price ?? 0);
             $discount = (float) ($products['discount'][$index] ?? 0);
             $product_total = (float) $products['product_total'][$index];
             $short_note = $products['short_notes'][$index] ?? null;
@@ -516,6 +537,7 @@ class QuoteController extends Controller
             QuoteProducts::create([
                 'quote_id' => $quote_id['id'],
                 'product_id' => $product_id,
+                'marketplace_listing_id' => $marketplaceListing?->id,
                 'qty' => $qty,
                 'unit_id' => $units,
                 'mrp' => $mrp,
@@ -593,7 +615,10 @@ class QuoteController extends Controller
 
         $transport_list = Entity::IsTransport()->toArray();
 
-        $product_list = Products::InHouse()->get();
+        $product_list = Products::with('getGstSlabMaster')->InHouse()->get();
+        if (Schema::hasTable('marketplace_listings')) {
+            $product_list->load('marketplaceListings');
+        }
         $cust_gst = Entity::where('id', $quote_id->customer_id)->first();
 
         return view('quotes.edit')->with(['leads' => $leads, 'client_type' => $client_type, 'transport_list' => $transport_list, 'quote_id' => $quote_id, 'product_list' => $product_list, 'cust_gst' => $cust_gst->gst_no ?? '', 'activityTimeline' => $activityTimeline]);
@@ -743,27 +768,31 @@ class QuoteController extends Controller
 
         $quote_id->update($qt);
 
+        $submittedQuoteIds = [];
         foreach ($products['id'] as $index => $productId) {
             $prod_prc = Products::where('id', $products['id'][$index])->first();
+            $marketplaceListing = $this->resolveMarketplaceListing($products['listing_id'][$index] ?? null, (int) $products['id'][$index]);
             $product_id    = isset($products['id'][$index]) ? (int) $products['id'][$index] : 0;
             $qty           = isset($products['qty'][$index]) ? (int) $products['qty'][$index] : 0;
-            $mrp           = isset($prod_prc['price']) ? $prod_prc['price'] : 0;
+            $mrp           = (float) ($products['mrp'][$index] ?? $marketplaceListing?->mrp ?? ($prod_prc['price'] ?? 0));
             $units         = isset($products['units'][$index]) && $products['units'][$index] != 0  ? (int)$products['units'][$index] : null;
-            $dealer_price  = isset($products['price'][$index]) ? (float) $products['price'][$index] : 0;
+            $dealer_price  = isset($products['price'][$index]) ? (float) $products['price'][$index] : (float) ($marketplaceListing?->selling_price ?? 0);
             $discount      = isset($products['discount'][$index]) ? (float) $products['discount'][$index] : 0;
             $product_total = isset($products['product_total'][$index]) ? (float) $products['product_total'][$index] : 0;
             $short_note    = isset($products['short_notes'][$index]) ? $products['short_notes'][$index] : null;
             $product_gst = (float) ($products['gst_value'][$index] ?? 0);
 
-            $quoteProduct = QuoteProducts::where('quote_id', $quote_id['id'])
-                ->where('product_id', $product_id)
-                ->first();
+            $quoteProductId = $products['quote_ids'][$index] ?? null;
+            $quoteProduct = !empty($quoteProductId)
+                ? QuoteProducts::where('quote_id', $quote_id['id'])->where('id', (int) $quoteProductId)->first()
+                : null;
 
             if ($quoteProduct) {
 
                 $quoteProduct->update([
                     'quote_id' => $quote_id['id'],
                     'product_id' => $product_id,
+                    'marketplace_listing_id' => $marketplaceListing?->id,
                     'qty' => $qty,
                     'unit_id' => $units,
                     'mrp' => $mrp,
@@ -775,10 +804,12 @@ class QuoteController extends Controller
                     'tax'=> $product_gst ?? 0
 
                 ]);
+                $submittedQuoteIds[] = $quoteProduct->id;
             } else {
-                QuoteProducts::create([
+                $createdQuoteProduct = QuoteProducts::create([
                     'quote_id' => $quote_id['id'],
                     'product_id' => $product_id,
+                    'marketplace_listing_id' => $marketplaceListing?->id,
                     'qty' => $qty,
                     'unit_id' => $units,
                     'mrp' => $mrp,
@@ -790,6 +821,7 @@ class QuoteController extends Controller
                     'tax'=> $product_gst ?? 0
 
                 ]);
+                $submittedQuoteIds[] = $createdQuoteProduct->id;
             }
 
             //customer price history
@@ -805,13 +837,9 @@ class QuoteController extends Controller
             }
         }
 
-        $existingProductIds = QuoteProducts::where('quote_id', $quote_id->id)
-            ->pluck('product_id')->toArray();
-        $submittedProductIds = $products['id'] ?? [];
-        $productIdsToDelete = array_diff($existingProductIds, $submittedProductIds);
-        if (!empty($productIdsToDelete)) {
+        if (!empty($submittedQuoteIds)) {
             QuoteProducts::where('quote_id', $quote_id->id)
-                ->whereIn('product_id', $productIdsToDelete)
+                ->whereNotIn('id', $submittedQuoteIds)
                 ->delete();
         }
 
@@ -1170,6 +1198,7 @@ class QuoteController extends Controller
                 foreach ($quote_product as $quo_pro) {
                     $ord_prod['order_id'] = $order_id['id'];
                     $ord_prod['product_id'] = $quo_pro['product_id'];
+                    $ord_prod['marketplace_listing_id'] = $quo_pro['marketplace_listing_id'];
                     $ord_prod['short_notes'] = $quo_pro['short_notes'];
                     $ord_prod['qty'] = $quo_pro['qty'];
                     $ord_prod['unit_id'] = $quo_pro['unit_id'];
@@ -1520,6 +1549,7 @@ class QuoteController extends Controller
                 foreach ($quote_product as $quo_pro) {
                     $ord_prod['order_id'] = $order_id['id'];
                     $ord_prod['product_id'] = $quo_pro['product_id'];
+                    $ord_prod['marketplace_listing_id'] = $quo_pro['marketplace_listing_id'];
                     $ord_prod['qty'] = $quo_pro['qty'];
                     $ord_prod['price'] = $quo_pro['price'];
                     $ord_prod['discount'] = $quo_pro['discount'];

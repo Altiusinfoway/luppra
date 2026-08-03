@@ -1,41 +1,189 @@
 @extends('layouts.app')
 
-@section('content')
-<div class="page-content">
-    <div class="container-fluid">
+@section('page-css')
+    <style>
+        .hr-suite {
+            background: linear-gradient(180deg, rgba(248, 250, 252, 0.78) 0%, rgba(245, 247, 251, 0) 100%);
+        }
 
-        <!-- start page title -->
+        .hr-suite .hero-shell,
+        .hr-suite .table-shell {
+            border: 1px solid rgba(255, 255, 255, 0.78);
+            border-radius: 26px;
+            background:
+                radial-gradient(circle at top right, rgba(15, 118, 110, 0.12), transparent 28%),
+                radial-gradient(circle at left center, rgba(37, 99, 235, 0.12), transparent 30%),
+                #ffffff;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.07);
+        }
+
+        .hr-suite .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.76);
+            border: 1px solid #dbeafe;
+            color: #1d4ed8;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .hr-suite .summary-card {
+            border: 1px solid rgba(255, 255, 255, 0.78);
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.84);
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.05);
+        }
+
+        .hr-suite .summary-card .label {
+            display: block;
+            margin-bottom: 8px;
+            color: #64748b;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .hr-suite .summary-card h3 {
+            margin: 0;
+            font-size: 1.7rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: #0f172a;
+        }
+
+        .hr-suite .toolbar-shell {
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            background: #f8fafc;
+            padding: 14px;
+        }
+
+        .hr-suite .filter-shell {
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            background: #f8fafc;
+            padding: 1rem;
+        }
+
+        .hr-suite .filter-label {
+            display: block;
+            margin-bottom: 0.35rem;
+            color: #64748b;
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        .hr-suite .table-wrap {
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        .hr-suite .table-wrap table {
+            margin-bottom: 0;
+        }
+    </style>
+@endsection
+
+@section('content')
+<div class="page-content hr-suite">
+    <div class="container-fluid">
         <div class="row">
             <div class="col-12">
-                <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-galaxy-transparent">
-                    <h4 class="mb-sm-0">Leave Type</h4>
-                    <div class="page-title-right">
-                        <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="{{ route('leave-types.index') }}">Leave Type</a></li>
-                            <li class="breadcrumb-item active">List</li>
-                        </ol>
+                <div class="hero-shell mb-4">
+                    <div class="card-body p-4 p-lg-5">
+                        <div class="row align-items-center g-4">
+                            <div class="col-lg-8">
+                                <span class="hero-eyebrow">Time Off Setup</span>
+                                <h1 class="mb-3">Leave Types</h1>
+                                <p class="text-muted mb-0">Maintain leave categories in the same simplified administrative table shell as the rest of the updated UI.</p>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="d-flex justify-content-lg-end">
+                                    <ol class="breadcrumb m-0">
+                                        <li class="breadcrumb-item"><a href="{{ route('leave-types.index') }}">Leave Type</a></li>
+                                        <li class="breadcrumb-item active">List</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-
                 </div>
             </div>
         </div>
-        <!-- end page title -->
         <div class="row">
-
-            <!-- Varying Modal Content -->
+            <div class="col-md-6 col-xl-3 mb-4">
+                <div class="card summary-card h-100">
+                    <div class="card-body">
+                        <span class="label">Policies</span>
+                        <h3>Leave Types</h3>
+                        <p class="text-muted mb-0 mt-2">Standardize leave categories with the same polished setup shell used across HR pages.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3 mb-4">
+                <div class="card summary-card h-100">
+                    <div class="card-body">
+                        <span class="label">Workflow</span>
+                        <h3>Simple</h3>
+                        <p class="text-muted mb-0 mt-2">Keep naming and policy options easy to scan before assigning them elsewhere.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3 mb-4">
+                <div class="card summary-card h-100">
+                    <div class="card-body">
+                        <span class="label">View</span>
+                        <h3>Searchable</h3>
+                        <p class="text-muted mb-0 mt-2">Find policy types faster from the same structured HR setup shell.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3 mb-4">
+                <div class="card summary-card h-100">
+                    <div class="card-body">
+                        <span class="label">Policy</span>
+                        <h3>HR Ready</h3>
+                        <p class="text-muted mb-0 mt-2">Keep leave rules and category setup visually grouped in one workspace.</p>
+                    </div>
+                </div>
+            </div>
             <div class="col-lg-12">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0">Leave Type List</h5>
+                <div class="card table-shell">
+                    <div class="card-header">
+                        <div class="toolbar-shell d-flex justify-content-between align-items-start flex-wrap gap-3">
+                            <div>
+                                <h5 class="card-title mb-1">Leave Type List</h5>
+                                <p class="text-muted mb-0">Manage leave policy categories from the same polished HR setup shell.</p>
+                            </div>
 
-                        @can('create leave type')
-                        <a href="{{ route('leave-types.create') }}" class="btn btn-sm btn-success" id="addproduct-btn">
-                            <i class="ri-add-line align-bottom me-1"></i> Add Leave Type
-                        </a>
-                        @endcan
+                            @can('create leave type')
+                            <a href="{{ route('leave-types.create') }}" class="btn btn-sm btn-primary" id="addproduct-btn">
+                                <i class="ri-add-line align-bottom me-1"></i> Add Leave Type
+                            </a>
+                            @endcan
+                        </div>
                     </div>
                     <div class="card-body">
-                        <table id="departmentList" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
+                        <div class="filter-shell mb-3">
+                            <div class="row g-3 align-items-end">
+                                <div class="col-md-6 col-xl-4">
+                                    <label class="filter-label" for="leave-type-search">Search</label>
+                                    <input type="text" class="form-control" id="leave-type-search" placeholder="Search leave type name...">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive table-wrap">
+                        <table id="departmentList" class="table table-bordered dt-responsive nowrap table-striped align-middle mb-0" style="width:100%">
                             <thead>
                                 <tr>
                                     <th data-ordering="false">Sr No</th>
@@ -45,6 +193,7 @@
                             </thead>
                             <tbody></tbody>
                         </table>
+                        </div>
 
                     </div>
                 </div>
@@ -91,7 +240,10 @@ $(document).ready(function ()
             }
         ]
     });
+
+    $('#leave-type-search').on('keyup change', function () {
+        table.search($(this).val()).draw();
+    });
 });
 </script>
 @endsection
-

@@ -1,41 +1,161 @@
+<style>
+    .payroll-history-suite .summary-row {
+        margin-bottom: 1.5rem;
+    }
+
+    .payroll-history-suite .metric-card {
+        border: 1px solid rgba(255, 255, 255, 0.82);
+        border-radius: 22px;
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        box-shadow: 0 16px 32px rgba(15, 23, 42, 0.06);
+    }
+
+    .payroll-history-suite .metric-label {
+        display: block;
+        margin-bottom: 8px;
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+    }
+
+    .payroll-history-suite .metric-value {
+        margin: 0;
+        font-size: 1.9rem;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        color: #0f172a;
+    }
+
+    .payroll-history-suite .filter-shell,
+    .payroll-history-suite .table-shell,
+    .payroll-history-suite .transaction-details {
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        background: #ffffff;
+        box-shadow: 0 12px 24px rgba(15, 23, 42, 0.05);
+    }
+
+    .payroll-history-suite .filter-shell {
+        padding: 18px;
+        background: #f8fafc;
+    }
+
+    .payroll-history-suite .filter-label {
+        display: block;
+        margin-bottom: 0.35rem;
+        color: #64748b;
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+    }
+
+    .payroll-history-suite .table-shell {
+        overflow: hidden;
+    }
+
+    .payroll-history-suite .section-title {
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: #0f172a;
+    }
+
+    .payroll-history-suite .section-copy {
+        color: #64748b;
+        margin: 0;
+    }
+
+    .payroll-history-suite .toolbar-shell {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-bottom: 1rem;
+    }
+
+    .payroll-history-suite .search-shell {
+        position: relative;
+    }
+
+    .payroll-history-suite .search-shell .form-control {
+        min-height: 44px;
+        padding-left: 2.7rem;
+        border-radius: 14px;
+        border-color: #cbd5e1;
+        background: #fff;
+    }
+
+    .payroll-history-suite .search-shell .search-icon {
+        position: absolute;
+        top: 50%;
+        left: 14px;
+        transform: translateY(-50%);
+        color: #64748b;
+        pointer-events: none;
+    }
+
+    .payroll-history-suite .action-btn {
+        border-radius: 999px;
+        font-weight: 700;
+    }
+
+    .payroll-history-suite .transaction-details {
+        padding: 18px;
+    }
+
+    .payroll-history-suite .transaction-details h6 {
+        margin-bottom: 14px;
+        font-weight: 800;
+        color: #0f172a;
+    }
+
+    .payroll-history-suite .modal-content {
+        border: 1px solid rgba(255, 255, 255, 0.82);
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 20px 48px rgba(15, 23, 42, 0.12);
+    }
+
+    .payroll-history-suite .modal-header,
+    .payroll-history-suite .modal-footer {
+        border-color: #e2e8f0;
+        background: #f8fafc;
+    }
+</style>
+
+<div class="payroll-history-suite">
 <!-- Summary Cards -->
-<div class="row">
+<div class="row summary-row">
     <div class="col-md-4">
-        <div class="card card-animate">
+        <div class="card metric-card h-100">
             <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h2 class="mt-4 ff-secondary fw-semibold"><span class="">{{ $all_paid_sal_sum ?? 0 }}</h2>
-                        <p class="mb-0 text-muted">Employees Paid</p>
-                    </div>
-                </div>
+                <span class="metric-label">Employees Paid</span>
+                <h2 class="metric-value">{{ $all_paid_sal_sum ?? 0 }}</h2>
+                <p class="mb-0 text-muted mt-2">Completed payroll records across the tracked history.</p>
             </div><!-- end card body -->
         </div> <!-- end card-->
     </div> <!-- end col-4-->
 
     <div class="col-md-4">
-        <div class="card card-animate">
+        <div class="card metric-card h-100">
             <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h2 class="mt-4 ff-secondary fw-semibold"><span class="">{{ $cur_month_sal ?? 0 }}</h2>
-                        <p class="mb-0 text-muted">Total Paid This Month</p>
-                    </div>
-                </div>
+                <span class="metric-label">This Month</span>
+                <h2 class="metric-value">{{ $cur_month_sal ?? 0 }}</h2>
+                <p class="mb-0 text-muted mt-2">Total salary value already processed in the current month.</p>
             </div><!-- end card body -->
         </div> <!-- end card-->
     </div> <!-- end col-4-->
 
     <div class="col-md-4">
 
-        <div class="card card-animate">
+        <div class="card metric-card h-100">
             <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h2 class="mt-4 ff-secondary fw-semibold"><span class="">{{ $pending_all_sal ?? 0 }}</h2>
-                        <p class="mb-0 text-muted">Pending Payments</p>
-                    </div>
-                </div>
+                <span class="metric-label">Pending</span>
+                <h2 class="metric-value">{{ $pending_all_sal ?? 0 }}</h2>
+                <p class="mb-0 text-muted mt-2">Remaining payroll payments still waiting to be settled.</p>
             </div><!-- end card body -->
         </div> <!-- end card-->
     </div>
@@ -43,10 +163,10 @@
 </div>
 
 <!-- Filter Section -->
-<div class="filter-section">
+<div class="filter-shell mt-4">
     <div class="row">
         <div class="col-md-4 mb-3">
-            <label for="dateRange" class="form-label">Date Range</label>
+            <label for="dateRange" class="filter-label">Date Range</label>
             <select class="form-select" id="dateRange">
                 <option selected>All Time</option>
                 <option>This Month</option>
@@ -55,7 +175,7 @@
             </select>
         </div>
         <div class="col-md-4 mb-3">
-            <label for="statusFilter" class="form-label">Status</label>
+            <label for="statusFilter" class="filter-label">Status</label>
             <select class="form-select" id="statusFilter">
                 <option selected>All Statuses</option>
                 <option>Paid</option>
@@ -63,21 +183,19 @@
             </select>
         </div>
         <div class="col-md-4 mb-3">
-            <label for="searchInput" class="form-label">Search</label>
-            <div class="input-group">
+            <label for="searchInput" class="filter-label">Search</label>
+            <div class="search-shell">
+                <i class="fas fa-search search-icon"></i>
                 <input type="text" class="form-control" id="searchInput" placeholder="Search amount,payment method...">
-                <button class="btn btn-primary" type="button">
-                    <i class="fas fa-search"></i>
-                </button>
             </div>
         </div>
     </div>
     <div class="row">
         <div class="col-12 text-end">
-            <button class="btn btn-outline-secondary me-2">
+            <button class="btn btn-outline-secondary me-2" id="applyPayrollFilters">
                 <i class="fas fa-filter me-1"></i> Apply Filters
             </button>
-            <button class="btn btn-outline-danger">
+            <button class="btn btn-outline-danger" id="resetPayrollFilters">
                 <i class="fas fa-redo me-1"></i> Reset
             </button>
         </div>
@@ -85,12 +203,15 @@
 </div>
 
 <!-- Export Section -->
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h4>Payment History</h4>
+<div class="toolbar-shell">
+    <div>
+        <h4 class="section-title">Payment History</h4>
+        <p class="section-copy">Review processed payouts, inspect receipt details, and drill into transaction data from one cleaner payroll history panel.</p>
+    </div>
 </div>
 
 <!-- Payroll Table -->
-<div class="card">
+<div class="card table-shell border-0">
 
     <div class="card-body p-0">
         <div class="table-responsive" style="max-height:350px; overflow-y:auto;">
@@ -231,6 +352,8 @@
     </div>
 </div>
 
+</div>
+
 <script>
     function showPaymentDetails(id) {
 
@@ -307,16 +430,19 @@
     }
 
     // 🔹 Apply Filters Button
-    $(".btn-outline-secondary").click(function() {
+    $("#applyPayrollFilters").click(function() {
         loadPaymentHistory();
     });
-    $(".btn-outline-danger").click(function() {
+    $("#resetPayrollFilters").click(function() {
         $("#dateRange").val("All Time");
         $("#statusFilter").val("All Statuses");
         $("#searchInput").val("");
         loadPaymentHistory();
     });
     $("#searchInput").keyup(function() {
+        loadPaymentHistory();
+    });
+    $("#dateRange, #statusFilter").change(function() {
         loadPaymentHistory();
     });
 </script>

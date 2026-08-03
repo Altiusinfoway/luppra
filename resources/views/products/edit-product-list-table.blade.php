@@ -47,9 +47,16 @@
 
                             <tr class="product-row">
                                 <input type="hidden" name="products[id][]" value="{{ $qt_product->product_id }}">
+                                <input type="hidden" name="products[listing_id][]" value="{{ $qt_product->marketplace_listing_id ?? '' }}">
+                                <input type="hidden" name="products[row_key][]" value="{{ $qt_product->product_id }}:{{ $qt_product->marketplace_listing_id ?? 'master' }}">
                                 <input type="hidden" name="products[quote_ids][]" value="{{ $qt_product->id }}">
 
-                                <td>{{ $qt_product->getProduct->name ?? '' }} </td>
+                                <td>
+                                    {{ $qt_product->getProduct->name ?? '' }}
+                                    @if(!empty($qt_product->marketplace_listing_id) && $qt_product->marketplaceListing)
+                                        <div class="small text-muted">{{ ucfirst($qt_product->marketplaceListing->platform ?? '') }} SKU: {{ $qt_product->marketplaceListing->platform_sku ?? '' }}</div>
+                                    @endif
+                                </td>
                                 <td>
                                     <img src="@if (!empty($qt_product->getProduct->image)) {{ $qt_product->getProduct->image }} @else {{ $default_img }} @endif"
                                         height="70px" width="70px">

@@ -12,6 +12,7 @@ class QuoteProducts extends Model
     protected $fillable = [
         'quote_id',
         'product_id',
+        'marketplace_listing_id',
         'qty',
         'mrp',
         'discount',
@@ -31,5 +32,10 @@ class QuoteProducts extends Model
      public function getProduct()
     {
         return $this->belongsTo(Products::class, 'product_id');
+    }
+
+    public function marketplaceListing()
+    {
+        return $this->belongsTo(MarketplaceListing::class, 'marketplace_listing_id');
     }
 }

@@ -11,10 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('entities', function (Blueprint $table) {
-            $table->string('company_name')->nullable()->after('name');
-            $table->text('billing_address')->nullable()->after('address');
+        if (!Schema::hasTable('entities')) {
+            return;
+        }
 
+        Schema::table('entities', function (Blueprint $table) {
+            if (!Schema::hasColumn('entities', 'company_name')) {
+                $table->string('company_name')->nullable();
+            }
+
+            if (!Schema::hasColumn('entities', 'billing_address')) {
+                $table->text('billing_address')->nullable();
+            }
         });
     }
 
@@ -23,8 +31,18 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('entities', function (Blueprint $table) {
+        if (!Schema::hasTable('entities')) {
+            return;
+        }
 
+        Schema::table('entities', function (Blueprint $table) {
+            if (Schema::hasColumn('entities', 'billing_address')) {
+                $table->dropColumn('billing_address');
+            }
+
+            if (Schema::hasColumn('entities', 'company_name')) {
+                $table->dropColumn('company_name');
+            }
         });
     }
 };

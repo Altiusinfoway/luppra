@@ -17,6 +17,11 @@
         .status-pill { display:inline-flex; align-items:center; padding:.4rem .8rem; border-radius:999px; background:linear-gradient(135deg,#fff2ea,#f9eff9); color:var(--brand-primary-dark); border:1px solid #f1dde5; font-weight:700; font-size:.85rem; }
         .status-pill.failed { background:#fef2f2; color:#b91c1c; border-color:#fecaca; }
         .status-pill.processing { background:#fff7ed; color:#9a3412; border-color:#fed7aa; }
+        .status-banner { border-radius:18px; padding:1rem 1.1rem; border:1px solid #f1dde5; background:linear-gradient(180deg,#fff8f4,#fffdfb); box-shadow:0 12px 26px rgba(34,27,32,.06); }
+        .status-banner .banner-label { display:block; font-size:.76rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; margin-bottom:.35rem; opacity:.82; }
+        .status-banner.is-success { border-color:#b7e4c7; background:linear-gradient(180deg,#ecfdf3,#f7fffb); color:#067647; }
+        .status-banner.is-warning { border-color:#fed7aa; background:linear-gradient(180deg,#fff7ed,#fffdf9); color:#9a3412; }
+        .status-banner.is-info { border-color:#bfdbfe; background:linear-gradient(180deg,#eff6ff,#f8fbff); color:#1d4ed8; }
         .summary-label { color:var(--brand-muted); font-size:.86rem; }
         .summary-value { font-weight:700; }
         .timeline-step { border-radius:16px; padding:.95rem 1rem; border:1px solid #eee2dc; background:linear-gradient(180deg,#fffefd,#fff8f4); }
@@ -122,19 +127,22 @@
                                 <h2 class="h5 fw-bold mb-3">Next steps</h2>
 
                                 @if($isActivated)
-                                    <div class="alert alert-success">
+                                    <div class="status-banner is-success">
+                                        <span class="banner-label">Workspace ready</span>
                                         <div><strong>Login URL:</strong> <a class="brand-link" href="{{ $meta['login_url'] ?? route('login') }}">{{ $meta['login_url'] ?? route('login') }}</a></div>
                                         <div class="mt-2"><strong>Email:</strong> {{ $meta['login_email'] ?? optional($signupRecord)->email }}</div>
                                         <div class="mt-2"><strong>Temporary Password:</strong> {{ $meta['temp_password'] ?? 'Use Forgot Password' }}</div>
                                     </div>
                                     <div class="small text-secondary mb-3">Please change the password immediately after your first login.</div>
                                 @elseif($isFailed)
-                                    <div class="alert alert-warning">
+                                    <div class="status-banner is-warning">
+                                        <span class="banner-label">Activation note</span>
                                         <strong>Activation note:</strong> {{ $meta['activation_error'] ?? 'Workspace setup could not be completed automatically.' }}
                                     </div>
                                     <div class="small text-secondary">Keep this signup ID available when contacting support so the team can finish activation faster.</div>
                                 @else
-                                    <div class="alert alert-info">
+                                    <div class="status-banner is-info">
+                                        <span class="banner-label">Activation in progress</span>
                                         {{ $isTrial ? 'Your trial is active and we are still checking the latest activation result for your workspace. This page will keep refreshing the status for you automatically.' : 'We are still checking the latest activation result for your workspace. This page will keep refreshing the status for you automatically.' }}
                                     </div>
                                     <div class="small text-secondary">{{ $isTrial ? 'There is no need to open the payment gateway while this status is still processing.' : 'There is no need to attempt another payment while this status is still processing.' }}</div>

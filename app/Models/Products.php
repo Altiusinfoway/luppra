@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\UsesTenantConnection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Products extends Model
 {
@@ -76,5 +77,16 @@ class Products extends Model
         return $this->belongsTo(GstSlabMaster::class,'gst_slab_master_id');
     }
 
+    public function marketplaceListings(): HasMany
+    {
+        return $this->hasMany(MarketplaceListing::class, 'product_id')
+            ->orderBy('platform')
+            ->orderBy('platform_sku');
+    }
+
+    public function activeMarketplaceListings(): HasMany
+    {
+        return $this->marketplaceListings()->where('listing_status', 'active');
+    }
 
 }

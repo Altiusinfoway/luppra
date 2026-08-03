@@ -103,6 +103,21 @@
             font-size: 0.75rem;
             font-weight: 700;
         }
+
+        .activity-history-card {
+            border: 1px solid rgba(255, 255, 255, 0.82);
+            border-radius: 18px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            box-shadow: 0 12px 24px rgba(15, 23, 42, 0.05);
+        }
+
+        .activity-history-changes {
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            background: #f8fafc;
+            padding: 10px 12px;
+            margin-top: 12px;
+        }
     </style>
 @endonce
 
@@ -156,7 +171,7 @@
                     {{ strtoupper(substr($userName, 0, 1)) }}
                 </span>
 
-                <div class="card border shadow-none mb-0">
+                <div class="card border shadow-none mb-0 activity-history-card">
                     <div class="card-body">
                         <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
                             <h6 class="mb-0">{{ $userName }}</h6>
@@ -172,7 +187,7 @@
                         <p class="text-muted mb-0">{{ $description }}</p>
 
                         @if (!empty($changes))
-                            <div class="border rounded bg-light-subtle p-2 mt-3">
+                            <div class="activity-history-changes">
                                 @foreach ($changes as $field => $change)
                                     <div class="small text-muted mb-1">
                                         <span class="fw-semibold text-body">{{ ucwords(str_replace('_', ' ', $field)) }}</span>:

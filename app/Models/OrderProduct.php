@@ -10,7 +10,7 @@ class OrderProduct extends Model
     use UsesTenantConnection;
 
     protected $fillable=[
-        'order_id','product_id','qty','price','discount','total','created_by',
+        'order_id','product_id','marketplace_listing_id','qty','price','discount','total','created_by',
         'short_notes','unit_id','tax'
     ];
 
@@ -22,5 +22,10 @@ class OrderProduct extends Model
     public function product()
     {
         return $this->belongsTo(Products::class, 'product_id');
+    }
+
+    public function marketplaceListing()
+    {
+        return $this->belongsTo(MarketplaceListing::class, 'marketplace_listing_id');
     }
 }

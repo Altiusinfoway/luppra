@@ -1,30 +1,139 @@
 @extends('layouts.app')
 
-@section('content')
-    <div class="page-content">
-        <div class="container-fluid">
+@section('page-css')
+    <style>
+        .detail-suite {
+            background: linear-gradient(180deg, rgba(248, 250, 252, 0.78) 0%, rgba(245, 247, 251, 0) 100%);
+        }
 
-            <!-- start page title -->
+        .detail-suite .hero-shell,
+        .detail-suite .profile-shell {
+            border: 1px solid rgba(255, 255, 255, 0.78);
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 14px 32px rgba(15, 23, 42, 0.05);
+        }
+
+        .detail-suite .hero-shell {
+            border-radius: 28px;
+            background:
+                radial-gradient(circle at top right, rgba(15, 118, 110, 0.14), transparent 28%),
+                radial-gradient(circle at left center, rgba(37, 99, 235, 0.16), transparent 30%),
+                linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            box-shadow: 0 20px 48px rgba(15, 23, 42, 0.08);
+        }
+
+        .detail-suite .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.76);
+            border: 1px solid #dbeafe;
+            color: #1d4ed8;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .detail-suite .hero-title {
+            font-size: clamp(1.9rem, 3vw, 2.5rem);
+            line-height: 1.05;
+            letter-spacing: -0.04em;
+            font-weight: 800;
+            margin: 1rem 0 .45rem;
+            color: #0f172a;
+        }
+
+        .detail-suite .hero-subtitle {
+            color: #64748b;
+        }
+
+        .detail-suite .profile-shell {
+            border-radius: 22px;
+        }
+
+        .detail-suite .section-title {
+            font-size: 1rem;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+        }
+
+        .detail-suite .section-subtitle {
+            color: #64748b;
+            font-size: .84rem;
+        }
+
+        .detail-suite .summary-panel {
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            background: #f8fafc;
+            padding: 1rem;
+        }
+
+        .detail-suite .tab-shell {
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            background: #f8fafc;
+            padding: 8px;
+            gap: 8px;
+        }
+
+        .detail-suite .tab-shell .nav-link {
+            border: 0;
+            border-radius: 14px;
+            color: #475569;
+            font-weight: 700;
+            padding: 10px 16px;
+        }
+
+        .detail-suite .tab-shell .nav-link.active {
+            background: #ffffff;
+            color: #0f172a;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+        }
+
+        .detail-suite .table-wrap {
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #fff;
+        }
+    </style>
+@endsection
+
+@section('content')
+    <div class="page-content detail-suite">
+        <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-galaxy-transparent">
-                        <h4 class="mb-sm-0">Customer</h4>
-                        <div class="page-title-right">
-                            <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a href="{{ route('customers.index') }}">Customer</a>
-                                </li>
-                                <li class="breadcrumb-item active">Customer Details</li>
-                            </ol>
+                    <div class="hero-shell mb-4">
+                        <div class="card-body p-4 p-lg-5">
+                            <div class="row align-items-center g-4">
+                                <div class="col-lg-8">
+                                    <span class="hero-eyebrow">Customer Profile</span>
+                                    <h1 class="hero-title">{{ $customer->name }}</h1>
+                                    <p class="hero-subtitle mb-0">Follow customer sales history, open balances, leads, quotations, invoices, and activities from one cleaner profile screen.</p>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="d-flex justify-content-lg-end">
+                                        <ol class="breadcrumb m-0">
+                                            <li class="breadcrumb-item"><a href="{{ route('customers.index') }}">Customers</a></li>
+                                            <li class="breadcrumb-item active">Details</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-
                     </div>
                 </div>
             </div>
-            <!-- end page title -->
             <div class="row">
                 <!-- LEFT: CUSTOMER CARD -->
                 <div class="col-xl-3">
-                    <div class="card">
+                    <div class="card profile-shell">
                         <div class="card-body text-center pb-3">
                             <div class="position-relative d-inline-block">
                                 @php
@@ -103,7 +212,7 @@
                                 </span>
                             </div>
 
-                            <div class="p-3 rounded-3 bg-light bg-opacity-75">
+                            <div class="summary-panel">
                                 <ul class="list-unstyled mb-0">
                                     <li class="d-flex justify-content-between align-items-center mb-2">
                                         <div class="d-flex align-items-center">
@@ -164,9 +273,12 @@
                 </div>
                 <!-- RIGHT: TABS -->
                 <div class="col-xl-9">
-                    <div class="card">
+                    <div class="card profile-shell">
                         <div class="card-header d-flex align-items-center">
-                            <h5 class="card-title mb-0 flex-grow-1">Activity</h5>
+                            <div class="flex-grow-1">
+                                <h5 class="card-title mb-1 section-title">Customer Activity</h5>
+                                <div class="section-subtitle">Leads, quotations, invoices, orders, and recent actions linked to this customer.</div>
+                            </div>
                             <div class="flex-shrink-0">
                                 <a class="btn btn-sm btn-primary me-1"
                                     href="{{ route('quotes.create', [$customer->id]) }}">
@@ -179,7 +291,7 @@
                         </div>
 
                         <div class="card-header">
-	                            <ul class="nav nav-tabs card-header-tabs" role="tablist">
+	                            <ul class="nav nav-tabs card-header-tabs tab-shell" role="tablist">
 	                                <li class="nav-item">
 	                                    <a class="nav-link {{ request()->has('customer_activities_page') ? '' : 'active' }}" data-bs-toggle="tab" href="#leads-tab" role="tab">
 	                                        <i class="ri-lightbulb-line me-1"></i>Leads
@@ -213,7 +325,7 @@
 
 	                                <!-- LEADS -->
 	                                <div class="tab-pane {{ request()->has('customer_activities_page') ? '' : 'active' }}" id="leads-tab" role="tabpanel">
-	                                    <div class="table-responsive">
+	                                    <div class="table-responsive table-wrap">
                                         <table class="table table-hover align-middle mb-0">
                                             <thead class="table-light">
                                                 <tr>
@@ -253,7 +365,7 @@
 
                                 <!-- QUOTATIONS -->
                                 <div class="tab-pane" id="quotation-tab" role="tabpanel">
-                                    <div class="table-responsive">
+                                    <div class="table-responsive table-wrap">
                                         <table class="table table-hover align-middle mb-0">
                                             <thead class="table-light">
                                                 <tr>
@@ -318,7 +430,7 @@
 
                                 <!-- INVOICES -->
                                 <div class="tab-pane" id="invoices-tab" role="tabpanel">
-                                    <div class="table-responsive">
+                                    <div class="table-responsive table-wrap">
                                         <table class="table table-hover align-middle mb-0">
                                             <thead class="table-light">
                                                 <tr>
@@ -355,9 +467,9 @@
                                     </div>
                                 </div>
 
-                                <!-- ORDERS -->
+	                                <!-- ORDERS -->
 	                                <div class="tab-pane" id="orders-tab" role="tabpanel">
-	                                    <div class="table-responsive">
+	                                    <div class="table-responsive table-wrap">
                                         <table class="table table-hover align-middle mb-0">
                                             <thead class="table-light">
                                                 <tr>

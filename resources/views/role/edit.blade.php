@@ -1,25 +1,188 @@
 @extends('layouts.app')
+
+@section('page-css')
+    <style>
+        .role-form-suite {
+            background: linear-gradient(180deg, rgba(248, 250, 252, 0.78) 0%, rgba(245, 247, 251, 0) 100%);
+        }
+
+        .role-form-suite .hero-shell,
+        .role-form-suite .form-shell {
+            border: 1px solid rgba(255, 255, 255, 0.78);
+            border-radius: 26px;
+            background:
+                radial-gradient(circle at top right, rgba(15, 118, 110, 0.12), transparent 28%),
+                radial-gradient(circle at left center, rgba(37, 99, 235, 0.12), transparent 30%),
+                #ffffff;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.07);
+        }
+
+        .role-form-suite .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.76);
+            border: 1px solid #dbeafe;
+            color: #1d4ed8;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .role-form-suite .summary-card {
+            border: 1px solid rgba(255, 255, 255, 0.78);
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.84);
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.05);
+        }
+
+        .role-form-suite .summary-card .label {
+            display: block;
+            margin-bottom: 8px;
+            color: #64748b;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .role-form-suite .summary-card h3 {
+            margin: 0;
+            font-size: 1.7rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+        }
+
+        .role-form-suite .form-shell {
+            padding: 1.5rem !important;
+        }
+
+        .role-form-suite .role-intro {
+            margin-bottom: 1.25rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .role-form-suite .tab-content table {
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #ffffff;
+        }
+
+        .role-form-suite .tab-content thead th {
+            background: #f8fafc !important;
+            color: #475569;
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            vertical-align: middle;
+        }
+
+        .role-form-suite .tab-content tbody td {
+            vertical-align: top;
+        }
+
+        .role-form-suite .tab-content tbody tr td:first-child,
+        .role-form-suite .tab-content tbody tr td:nth-child(2) {
+            background: rgba(248, 250, 252, 0.72);
+        }
+
+        .role-form-suite .custom-checkbox,
+        .role-form-suite .custom-control.custom-checkbox {
+            margin-bottom: 0.85rem;
+            padding: 0.35rem 0.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            background: #f8fafc;
+        }
+
+        .role-form-suite .custom-control-label,
+        .role-form-suite label.ischeck {
+            color: #334155;
+            font-weight: 600;
+        }
+
+        .role-form-suite .tab-pane .form-group {
+            overflow: hidden;
+            border-radius: 22px;
+        }
+
+        .role-form-suite .activity-shell {
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            border-radius: 22px;
+            background: rgba(255, 255, 255, 0.92);
+        }
+
+        .role-form-suite .submit-row {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1.25rem;
+            border-top: 1px solid rgba(226, 232, 240, 0.8);
+        }
+    </style>
+@endsection
+
 @section('content')
-    <div class="page-content">
+    <div class="page-content role-form-suite">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-galaxy-transparent">
-                        <h5 class="mb-sm-0">Assign Roles Form Section</h5>
-                        <div class="page-title-right">
-                            <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a href="javascript: void(0);">Assign Roles</a></li>
-                                <li class="breadcrumb-item active">Edit</li>
-                            </ol>
+                    <div class="hero-shell mb-4">
+                        <div class="card-body p-4 p-lg-5">
+                            <div class="row align-items-center g-4">
+                                <div class="col-lg-8">
+                                    <span class="hero-eyebrow">Access Management</span>
+                                    <h1 class="mb-3">Edit Role</h1>
+                                    <p class="text-muted mb-0">Refine role definitions, permissions, and activity history inside the same updated role workspace.</p>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="d-flex justify-content-lg-end">
+                                        <ol class="breadcrumb m-0">
+                                            <li class="breadcrumb-item"><a href="{{ route('roles.index') }}">Roles</a></li>
+                                            <li class="breadcrumb-item active">Edit</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-
                     </div>
                 </div>
             </div>
             <div class="row justify-content-center">
                 <div class="col-xxl-10 col-xl-12">
-                    <div class="card p-4">
+                    <div class="card form-shell p-4">
                         {{ Form::model($role, ['route' => ['roles.update', $role->id], 'method' => 'PUT', 'class' => 'needs-validation', 'novalidate']) }}
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6 col-xl-3">
+                                <div class="card summary-card h-100">
+                                    <div class="card-body">
+                                        <span class="label">Workflow</span>
+                                        <h3>Edit</h3>
+                                        <p class="text-muted mb-0 mt-2">Refine an existing role without leaving the updated access-control workspace.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-xl-3">
+                                <div class="card summary-card h-100">
+                                    <div class="card-body">
+                                        <span class="label">Activity Feed</span>
+                                        <h3>{{ $activityTimeline->count() }}</h3>
+                                        <p class="text-muted mb-0 mt-2">Recent role changes stay visible alongside the permission editor.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="role-intro">
+                            <h5 class="mb-1">Role Configuration</h5>
+                            <p class="text-muted mb-0">Update the role name, adjust module permissions, and review recent activity from the same dashboard-style editor.</p>
+                        </div>
                         <div class="row g-3">
                             <div class="col-lg-12 col-md-12 col-sm-12 border-bottom py-3">
                                 <div class="form-group">
@@ -92,7 +255,7 @@
                                             <div class="form-group">
                                                 @if (!empty($permissions))
                                                     <table class="table table-bordered mb-0" id="">
-                                                        <thead class="bg-gradient bg-light">
+                                                        <thead class="table-light">
                                                             <tr>
                                                                 <th class="text-center" colspan="3">
                                                                     {{ __('Assign General Permission to Roles') }}
@@ -354,7 +517,7 @@
                                             <div class="form-group">
                                                 @if (!empty($permissions))
                                                     <table class="table table-bordered mb-0" id="">
-                                                        <thead class="bg-gradient bg-light">
+                                                        <thead class="table-light">
                                                             <tr>
                                                                 <th class="text-center" colspan="3">
                                                                     {{ __('Assign CRM related Permission to Roles') }}</th>
@@ -606,7 +769,7 @@
                                             <div class="form-group">
                                                 @if (!empty($permissions))
                                                     <table class="table table-bordered mb-0" id="">
-                                                        <thead class="bg-gradient bg-light">
+                                                        <thead class="table-light">
                                                             <tr>
                                                                 <th class="text-center" colspan="3">
                                                                     {{ __('Assign Project related Permission to Roles') }}
@@ -873,7 +1036,7 @@
                                             <div class="form-group">
                                                 @if (!empty($permissions))
                                                     <table class="table table-bordered mb-0" id="">
-                                                        <thead class="bg-gradient bg-light">
+                                                        <thead class="table-light">
                                                             <tr>
                                                                 <th class="text-center" colspan="3">
                                                                     {{ __('Assign HRM related Permission to Roles') }}
@@ -1126,7 +1289,7 @@
                                             <div class="form-group">
                                                 @if (!empty($permissions))
                                                     <table class="table table-bordered mb-0" id="">
-                                                        <thead class="bg-gradient bg-light">
+                                                        <thead class="table-light">
                                                             <tr>
                                                                 <th class="text-center" colspan="3">
                                                                     {{ __('Assign Account related Permission to Roles') }}
@@ -1390,7 +1553,7 @@
                                                     <h6 class="my-3">
                                                     </h6>
                                                     <table class="table table-bordered mb-0" id="">
-                                                        <thead class="bg-gradient bg-light">
+                                                        <thead class="table-light">
                                                             <tr>
                                                             <tr>
                                                                 <th class="text-center" colspan="3">
@@ -1539,7 +1702,7 @@
                                     </div>
                                     <div class="tab-pane fade {{ request()->has('role_activities_page') ? 'show active' : '' }}" id="activities" role="tabpanel"
                                         aria-labelledby="pills-activities-tab">
-                                        <div class="card border shadow-none mt-3">
+                                        <div class="card border shadow-none mt-3 activity-shell">
                                             <div class="card-body">
                                                 @include('activity._timeline', [
                                                     'activities' => $activityTimeline,
@@ -1551,7 +1714,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="d-flex justify-content-center mt-3">
+                        <div class="submit-row">
                             <input type="submit" value="{{ __('Update') }}" class="btn  btn-primary me-4">
                             <a href="{{ route('roles.index') }}" class="btn  btn-secondary">{{ __('Cancel') }}</a>
 

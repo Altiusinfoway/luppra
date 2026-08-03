@@ -12,20 +12,46 @@
 @endphp
 
 <style>
-    .form-control {
-    border: 1px solid black !important;
-}
-.file-preview-box {
-    width: 100%;
-    height: 300px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    background: #f9f9f9;
-}
+    .wa-file-modal-shell {
+        border: 1px solid rgba(255, 255, 255, 0.82);
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 20px 48px rgba(15, 23, 42, 0.12);
+    }
+
+    .wa-file-modal-shell .modal-header {
+        background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .wa-file-modal-shell .modal-body,
+    .wa-file-modal-shell .modal-footer {
+        background: #ffffff;
+    }
+
+    .wa-file-modal-shell .wa-form-intro {
+        border: 1px solid #e2e8f0;
+        border-radius: 18px;
+        background: #f8fafc;
+        padding: 14px 16px;
+        margin-bottom: 16px;
+    }
+
+    .wa-file-modal-shell .form-control {
+        border: 1px solid #cbd5e1 !important;
+    }
+
+    .file-preview-box {
+        width: 100%;
+        height: 300px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        background: #f9f9f9;
+    }
 
 .preview-image {
     max-width: 100%;
@@ -138,7 +164,7 @@
 
 <div class="modal fade" id="whatsappFileModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
+        <div class="modal-content wa-file-modal-shell">
 
             <!-- HEADER -->
             <div class="modal-header">
@@ -156,6 +182,10 @@
                       class="ajaxform_reset_form">
 
                     @csrf
+                    <div class="wa-form-intro">
+                        <strong class="d-block mb-1">Media message action</strong>
+                        <span class="text-muted">Choose a device, confirm the receiver, review recent messages, and send media with a caption from one cleaner modal flow.</span>
+                    </div>
 
                     <input type="hidden" id="customer_id_file" name="customer_id" class="form-control mb-3">
 

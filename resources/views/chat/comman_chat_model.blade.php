@@ -12,6 +12,30 @@
 
  @endphp
  <style>
+     .wa-modal-shell {
+         border: 1px solid rgba(255, 255, 255, 0.82);
+         border-radius: 24px;
+         overflow: hidden;
+         box-shadow: 0 20px 48px rgba(15, 23, 42, 0.12);
+     }
+
+     .wa-modal-shell .modal-header {
+         background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
+         border-bottom: 1px solid #e2e8f0;
+     }
+
+     .wa-modal-shell .modal-body {
+         background: #ffffff;
+     }
+
+     .wa-modal-shell .wa-form-intro {
+         border: 1px solid #e2e8f0;
+         border-radius: 18px;
+         background: #f8fafc;
+         padding: 14px 16px;
+         margin-bottom: 16px;
+     }
+
      .wa-mini-history {
          max-height: 280px;
          overflow-y: auto;
@@ -118,7 +142,7 @@
  </style>
  <div class="modal fade" id="whatsappModal" tabindex="-1" aria-hidden="true">
      <div class="modal-dialog modal-dialog-centered">
-         <div class="modal-content">
+         <div class="modal-content wa-modal-shell">
 
              <div class="modal-header">
                  <h5 class="modal-title">Send WhatsApp Message</h5>
@@ -133,6 +157,10 @@
                  <!-- ----------new -->
                  <form method="POST" action="{{ route('sent.customtext', 'plain-text') }}" class="ajaxform_reset_form" data-preserve-fields="phone">
                      @csrf
+                     <div class="wa-form-intro">
+                         <strong class="d-block mb-1">Chat action</strong>
+                         <span class="text-muted">Choose a device, confirm the phone number, review recent messages, and send a new WhatsApp reply from one cleaner modal flow.</span>
+                     </div>
                      <div class="row">
                          <div class="col-sm-6">
 

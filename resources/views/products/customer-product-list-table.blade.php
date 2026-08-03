@@ -3,9 +3,9 @@
    $default_img =  \App\Models\Utility::defaultImage();
 @endphp
 <div class="col-md-12">
-    <div class="card">
+    <div class="card" style="border:1px solid #e2e8f0;border-radius:22px;box-shadow:0 14px 28px rgba(15,23,42,.05);">
         <div class="card-body" id="product-rows">
-            <div class="table-responsive">
+            <div class="table-responsive" style="border:1px solid #e2e8f0;border-radius:18px;overflow:hidden;background:#fff;">
             <table class="table table-bordered table-striped align-middle" style="width:100%;">
                 <thead>
                     <tr>
@@ -36,6 +36,11 @@
                         <td>
                             {{ $product->name }}
                             <input type="hidden" name="products[id][]" value="{{ $product->id }}">
+                            <input type="hidden" name="products[listing_id][]" value="{{ $product->pivot->marketplace_listing_id ?? '' }}">
+                            <input type="hidden" name="products[row_key][]" value="{{ $product->id }}:{{ $product->pivot->marketplace_listing_id ?? 'master' }}">
+                            @if(!empty($product->pivot->marketplace_listing_id) && isset($product->pivot->marketplaceListing))
+                                <div class="small text-muted">{{ ucfirst($product->pivot->marketplaceListing->platform ?? '') }} SKU: {{ $product->pivot->marketplaceListing->platform_sku ?? '' }}</div>
+                            @endif
                         </td>
                         <td> <img src="@if(!empty($product->image)) {{  $product->image}} @else {{ $default_img }} @endif" height="70px" width="70px"> </td>
                          <td><textarea name="products[short_notes][]" class="form-control" cols="8" rows="3"></textarea></td>

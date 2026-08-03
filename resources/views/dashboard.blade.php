@@ -1,8 +1,147 @@
 @extends('layouts.app')
 
+@section('page-css')
+    <style>
+        .dashboard-home {
+            background: linear-gradient(180deg, rgba(248, 250, 252, 0.78) 0%, rgba(245, 247, 251, 0) 100%);
+        }
+
+        .dashboard-home .hero-shell {
+            border: 1px solid rgba(255, 255, 255, 0.78);
+            border-radius: 28px;
+            background:
+                radial-gradient(circle at top right, rgba(15, 118, 110, 0.14), transparent 28%),
+                radial-gradient(circle at left center, rgba(37, 99, 235, 0.16), transparent 30%),
+                linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            box-shadow: 0 20px 48px rgba(15, 23, 42, 0.08);
+        }
+
+        .dashboard-home .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.76);
+            border: 1px solid #dbeafe;
+            color: #1d4ed8;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .dashboard-home .hero-title {
+            font-size: clamp(2rem, 3vw, 2.85rem);
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            margin: 1rem 0 .45rem;
+            color: #0f172a;
+        }
+
+        .dashboard-home .card {
+            border-radius: 22px !important;
+        }
+
+        .dashboard-home .card-header {
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+
+        .dashboard-home .dashboard-card {
+            background: rgba(255, 255, 255, 0.88);
+            border: 1px solid rgba(255, 255, 255, 0.78);
+            box-shadow: 0 14px 32px rgba(15, 23, 42, 0.05);
+        }
+
+        .dashboard-home .section-title {
+            font-size: 1rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #0f172a;
+        }
+
+        .dashboard-home .section-subtitle {
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        .dashboard-home .soft-panel {
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            background: #f8fafc;
+            padding: 0.85rem 1rem;
+        }
+
+        .dashboard-home .control-cluster {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            align-items: end;
+        }
+
+        .dashboard-home .control-group label {
+            display: block;
+            margin-bottom: 0.35rem;
+            color: #64748b;
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .dashboard-home .chart-filter {
+            min-width: 160px;
+            border-radius: 14px;
+            border: 1px solid #dbe4f0;
+            background: rgba(255, 255, 255, 0.92);
+            color: #0f172a;
+            padding: 0.65rem 0.8rem;
+        }
+
+        .dashboard-home .report-trigger {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.55rem 0.8rem;
+            border-radius: 999px;
+            background: #eff6ff;
+            color: #1d4ed8 !important;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .dashboard-home .table-summary {
+            color: #64748b;
+            font-size: 0.84rem;
+        }
+    </style>
+@endsection
+
 @section('content')
 
-    <div class="page-content">
+    <div class="page-content dashboard-home">
+        <div class="container-fluid mb-4">
+            <div class="hero-shell">
+                <div class="card-body p-4 p-lg-5">
+                    <div class="row align-items-center g-4">
+                        <div class="col-lg-8">
+                            <span class="hero-eyebrow">Operations Overview</span>
+                            <h1 class="hero-title">Dashboard</h1>
+                            <p class="text-muted mb-0">A cleaner command center for charts, sales activity, lead movement, and day-to-day business visibility.</p>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="d-flex justify-content-lg-end">
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+                                    <li class="breadcrumb-item active">Overview</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         @if(\Auth::user()->type != 'Employee')
 
         <div class="row">
@@ -10,9 +149,14 @@
                 <div class="row">
                     <!-- end col -->
                     <div class="col-xl-12">
-                        <div class="card">
+                        <div class="card dashboard-card">
                             <div class="card-header">
-                                <h4 class="card-title mb-0">Credit & Debit Chart</h4>
+                                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                    <div>
+                                        <h4 class="card-title mb-1 section-title">Credit & Debit Trend</h4>
+                                        <div class="section-subtitle">Combined cash movement and transaction direction.</div>
+                                    </div>
+                                </div>
                             </div><!-- end card header -->
 
                             <div class="card-body">
@@ -25,16 +169,18 @@
                         </div><!-- end card -->
                     </div>
                     <div class="col-xl-6">
-                        <div class="card">
+                        <div class="card dashboard-card">
                             <div class="card-header">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <h4 class="card-title mb-0">Other Chart</h4>
+                                <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+                                    <div>
+                                        <h4 class="card-title mb-1 section-title">Call Attempt vs Connected</h4>
+                                        <div class="section-subtitle">Track outreach activity by month and staff.</div>
                                     </div>
-                                    <div class="col-md-8">
-                                        <!-- Filters -->
-                                        <label for="monthFilter">Select Month:</label>
-                                        <select id="monthFilter" onchange="updateCharts()">
+                                    <div class="soft-panel">
+                                        <div class="control-cluster">
+                                            <div class="control-group">
+                                                <label for="monthFilter">Month</label>
+                                                <select id="monthFilter" class="chart-filter" onchange="updateCharts()">
                                             <option value="January">January</option>
                                             <option value="February">February</option>
                                             <option value="March">March</option>
@@ -47,15 +193,18 @@
                                             <option value="October">October</option>
                                             <option value="November">November</option>
                                             <option value="December">December</option>
-                                        </select>
-
-                                        <label for="staffFilter">Select Staff:</label>
-                                        <select id="staffFilter" onchange="updateCharts()">
+                                                </select>
+                                            </div>
+                                            <div class="control-group">
+                                                <label for="staffFilter">Staff</label>
+                                                <select id="staffFilter" class="chart-filter" onchange="updateCharts()">
                                             <option value="All">All</option>
                                             <option value="Staff 1">Staff 1</option>
                                             <option value="Staff 2">Staff 2</option>
                                             <option value="Staff 3">Staff 3</option>
-                                        </select>
+                                                </select>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div><!-- end card header -->
@@ -68,9 +217,12 @@
                         </div><!-- end card -->
                     </div>
                     <div class="col-xl-6">
-                        <div class="card">
+                        <div class="card dashboard-card">
                             <div class="card-header">
-                                <h4 class="card-title mb-0">Other Chart</h4>
+                                <div>
+                                    <h4 class="card-title mb-1 section-title">Conversation Ratio</h4>
+                                    <div class="section-subtitle">Measure how much outreach turns into real conversations.</div>
+                                </div>
                             </div><!-- end card header -->
 
                             <div class="card-body">
@@ -80,13 +232,13 @@
                     </div>
                     <!-- end col -->
                     <div class="col-xl-4">
-                        <div class="card card-height-100">
+                        <div class="card dashboard-card card-height-100">
                             <div class="card-header align-items-center d-flex">
                                 <h4 class="card-title mb-0 flex-grow-1">Lead Status</h4>
                                 <div class="flex-shrink-0">
                                     <div class="dropdown card-header-dropdown">
                                         <a class="text-reset dropdown-btn" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <span class="text-muted">Report<i class="mdi mdi-chevron-down ms-1"></i></span>
+                                            <span class="report-trigger">Report<i class="mdi mdi-chevron-down"></i></span>
                                         </a>
                                         <div class="dropdown-menu dropdown-menu-end">
                                             <a class="dropdown-item" href="#">Download Report</a>
@@ -107,13 +259,13 @@
                     </div> <!-- .col-->
                     <!-- end col -->
                     <div class="col-xl-4">
-                        <div class="card card-height-100">
+                        <div class="card dashboard-card card-height-100">
                             <div class="card-header align-items-center d-flex">
                                 <h4 class="card-title mb-0 flex-grow-1">Lead Source</h4>
                                 <div class="flex-shrink-0">
                                     <div class="dropdown card-header-dropdown">
                                         <a class="text-reset dropdown-btn" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <span class="text-muted">Report<i class="mdi mdi-chevron-down ms-1"></i></span>
+                                            <span class="report-trigger">Report<i class="mdi mdi-chevron-down"></i></span>
                                         </a>
                                         <div class="dropdown-menu dropdown-menu-end">
                                             <a class="dropdown-item" href="#">Download Report</a>
@@ -134,13 +286,13 @@
                     </div> <!-- .col-->
                     <!-- end col -->
                     <div class="col-xl-4">
-                        <div class="card card-height-100">
+                        <div class="card dashboard-card card-height-100">
                             <div class="card-header align-items-center d-flex">
                                 <h4 class="card-title mb-0 flex-grow-1">Order status</h4>
                                 <div class="flex-shrink-0">
                                     <div class="dropdown card-header-dropdown">
                                         <a class="text-reset dropdown-btn" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <span class="text-muted">Report<i class="mdi mdi-chevron-down ms-1"></i></span>
+                                            <span class="report-trigger">Report<i class="mdi mdi-chevron-down"></i></span>
                                         </a>
                                         <div class="dropdown-menu dropdown-menu-end">
                                             <a class="dropdown-item" href="#">Download Report</a>
@@ -161,11 +313,14 @@
                     </div> <!-- .col-->
 
                     <div class="col-xl-12">
-                        <div class="card card-height-100">
+                        <div class="card dashboard-card card-height-100">
                             <div class="card-header align-items-center d-flex">
-                                <h4 class="card-title mb-0 flex-grow-1">Sales Report</h4>
+                                <div class="flex-grow-1">
+                                    <h4 class="card-title mb-1 section-title">Sales Report</h4>
+                                    <div class="section-subtitle">Recent sales activity by salesperson.</div>
+                                </div>
                                 <div class="flex-shrink-0">
-                                    <select class="form-select form-select-sm p-none" aria-label=".form-select-sm example" disabled>
+                                    <select class="form-select form-select-sm p-none chart-filter" aria-label=".form-select-sm example" disabled>
                                         <option selected="" desable>Filter</option>
                                         <option value="1">Active Deals</option>
                                         <option value="2">Paused Deals</option>
@@ -240,18 +395,21 @@
                             </div><!-- end card body -->
 
                             <!-- View More Button -->
-                            <div class="text-center mb-3">
+                            <div class="text-center mb-3 table-summary">
                                 <button id="viewMoreBtn" class="btn btn-primary">View More</button>
                             </div>
                         </div><!-- end card -->
                     </div><!-- end col -->
 
                     <div class="col-xl-12">
-                        <div class="card card-height-100">
+                        <div class="card dashboard-card card-height-100">
                             <div class="card-header align-items-center d-flex">
-                                <h4 class="card-title mb-0 flex-grow-1">Call Report</h4>
+                                <div class="flex-grow-1">
+                                    <h4 class="card-title mb-1 section-title">Call Report</h4>
+                                    <div class="section-subtitle">Call volume and outreach summary by staff.</div>
+                                </div>
                                 <div class="flex-shrink-0">
-                                    <select class="form-select form-select-sm p-none" aria-label=".form-select-sm example" disabled>
+                                    <select class="form-select form-select-sm p-none chart-filter" aria-label=".form-select-sm example" disabled>
                                         <option selected="" desable>Filter</option>
                                         <option value="1">Active Deals</option>
                                         <option value="2">Paused Deals</option>
@@ -593,14 +751,23 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
-                        <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-galaxy-transparent">
-                            <h4 class="mb-sm-0">Dashboard</h4>
-                            <div class="page-title-right">
-                                <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard </a></li>
-                                </ol>
+                        <div class="card border-0 mb-4" style="border-radius:24px;background:radial-gradient(circle at top right, rgba(14,165,233,.14), transparent 30%), radial-gradient(circle at left center, rgba(16,185,129,.14), transparent 30%), linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); box-shadow:0 18px 40px rgba(15,23,42,.06);">
+                            <div class="card-body p-4 p-lg-5">
+                                <div class="row align-items-center g-4">
+                                    <div class="col-lg-7">
+                                        <span style="display:inline-flex;align-items:center;padding:7px 12px;border-radius:999px;border:1px solid #dbeafe;background:rgba(255,255,255,.86);color:#1d4ed8;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;">Workday Actions</span>
+                                        <h4 class="mt-3 mb-2">Dashboard</h4>
+                                        <p class="text-muted mb-0">Use quick attendance actions from the same lighter dashboard surface as the rest of the refreshed project.</p>
+                                    </div>
+                                    <div class="col-lg-5">
+                                        <div class="d-flex justify-content-lg-end">
+                                            <ol class="breadcrumb m-0">
+                                                <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard </a></li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-
                         </div>
                     </div>
                 </div>

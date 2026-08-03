@@ -276,6 +276,7 @@
                 @foreach ($pageProducts as $key => $product)
                     @php
                         $product_detail = \App\Models\Products::where('id', $product['product_id'])->first();
+                        $listing_detail = $product->marketplaceListing;
                         $product_total = $product ? ((float) $product->qty * (float) $product->price) : 0;
                         $unit_nm = \App\Models\Units::where('id', $product->unit_id)->first();
                     @endphp
@@ -286,8 +287,11 @@
                             <table class="image-table">
                                 <tr>
 	                                    <td style="padding:2px 5px; vertical-align:middle;  border: none;">
-                                        <div class="bold" style="text-align: justify;">{{ $product_detail['sku_code'] }} -
-                                            {{ $product_detail['name'] }}</div>
+                                        <div class="bold" style="text-align: justify;">{{ $listing_detail?->platform_sku ?? $product_detail['sku_code'] }} -
+                                            {{ $listing_detail?->listing_title ?? $product_detail['name'] }}</div>
+                                        @if($listing_detail)
+                                            <div class="small">{{ ucfirst($listing_detail->platform ?? '') }} listing</div>
+                                        @endif
                                         <div class="small">({{ $product->short_notes ?? '' }})</div>
                                     </td>
                                 </tr>

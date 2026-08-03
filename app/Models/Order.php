@@ -10,7 +10,7 @@ class Order extends Model
     use UsesTenantConnection;
 
     protected $fillable=[
-        'order_number','customer_type','customer_id','date','status','transport_id','gst',
+        'order_number','order_source_type','external_order_id','external_order_reference','customer_type','customer_id','date','status','transport_id','gst',
         'grand_total','is_advance_payment','payment_after_days','advance_payment','is_final',
         'notes','quote_invoice','created_by','tax_detail_json','total_tax_sum',
         'remaining_payment','payment_status','bill_number','lr_number','no_article','transport_charge','order_invoice','user_id'

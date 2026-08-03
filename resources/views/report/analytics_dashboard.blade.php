@@ -1,24 +1,43 @@
 @extends('layouts.app')
 
+@section('page-css')
+<style>
+.report-suite{background:linear-gradient(180deg,rgba(248,250,252,.72) 0%,rgba(245,247,251,0) 100%)}
+.report-suite .hero-shell,.report-suite .shell-card,.report-suite .chart-card,.report-suite .kpi-card{border:1px solid rgba(255,255,255,.8);border-radius:24px;background:rgba(255,255,255,.9);box-shadow:0 18px 40px rgba(15,23,42,.06)}
+.report-suite .hero-shell{background:radial-gradient(circle at top right, rgba(99,102,241,.14), transparent 30%),radial-gradient(circle at left center, rgba(59,130,246,.12), transparent 30%),linear-gradient(135deg,#ffffff 0%,#f8fafc 100%)}
+.report-suite .hero-eyebrow{display:inline-flex;align-items:center;padding:7px 12px;border-radius:999px;border:1px solid #c7d2fe;background:rgba(255,255,255,.86);color:#4338ca;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+</style>
+@endsection
+
 @section('content')
-<div class="page-content">
+<div class="page-content report-suite">
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
-                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <h4 class="mb-sm-0">{{ $reportTitle }}</h4>
-                    <div class="page-title-right">
-                        <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-                            <li class="breadcrumb-item"><a href="javascript:void(0)">Reports</a></li>
-                            <li class="breadcrumb-item active">{{ $reportTitle }}</li>
-                        </ol>
+                <div class="card hero-shell mb-4">
+                    <div class="card-body p-4 p-lg-5">
+                        <div class="row align-items-center g-4">
+                            <div class="col-lg-7">
+                                <span class="hero-eyebrow">Dynamic Analytics</span>
+                                <h2 class="mt-3 mb-2">{{ $reportTitle }}</h2>
+                                <p class="text-muted mb-0">Switch reporting periods, inspect KPI shifts, and review detailed trends from a unified analytics surface.</p>
+                            </div>
+                            <div class="col-lg-5">
+                                <div class="d-flex justify-content-lg-end">
+                                    <ol class="breadcrumb m-0">
+                                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+                                        <li class="breadcrumb-item"><a href="javascript:void(0)">Reports</a></li>
+                                        <li class="breadcrumb-item active">{{ $reportTitle }}</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="card mb-3">
+        <div class="card shell-card mb-3">
             <div class="card-body">
                 <div class="row g-2 align-items-end">
                     <div class="col-md-3">
@@ -43,7 +62,7 @@
 
         <div class="row g-3 mb-3" id="kpi-row"></div>
 
-        <div class="card mb-3">
+        <div class="card chart-card border-0 mb-3">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="card-title mb-0" id="chart-title">Trend</h5>
             </div>
@@ -52,7 +71,7 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card shell-card">
             <div class="card-header">
                 <h5 class="card-title mb-0">Detailed Listing</h5>
             </div>
@@ -93,7 +112,7 @@
                 const col = document.createElement('div');
                 col.className = 'col-md-3';
                 col.innerHTML = `
-                    <div class="card mb-0">
+                    <div class="card kpi-card mb-0 border-0">
                         <div class="card-body">
                             <p class="text-muted mb-1">${escapeHtml(kpi.label || '')}</p>
                             <h5 class="mb-0">${escapeHtml(kpi.value || '0')}</h5>
@@ -198,4 +217,3 @@
     })();
 </script>
 @endsection
-

@@ -1,7 +1,101 @@
 @extends('layouts.app')
 
-@section('content')
+@section('page-css')
     <style>
+        .form-suite {
+            background: linear-gradient(180deg, rgba(248, 250, 252, 0.78) 0%, rgba(245, 247, 251, 0) 100%);
+        }
+
+        .form-suite .hero-shell,
+        .form-suite .form-shell {
+            border: 1px solid rgba(255, 255, 255, 0.78);
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 14px 32px rgba(15, 23, 42, 0.05);
+        }
+
+        .form-suite .hero-shell {
+            border-radius: 28px;
+            background:
+                radial-gradient(circle at top right, rgba(15, 118, 110, 0.14), transparent 28%),
+                radial-gradient(circle at left center, rgba(37, 99, 235, 0.16), transparent 30%),
+                linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            box-shadow: 0 20px 48px rgba(15, 23, 42, 0.08);
+            margin-bottom: 1rem;
+        }
+
+        .form-suite .form-shell {
+            border-radius: 22px;
+        }
+
+        .form-suite .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.76);
+            border: 1px solid #dbeafe;
+            color: #1d4ed8;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .form-suite .hero-title {
+            font-size: clamp(2rem, 3vw, 2.7rem);
+            line-height: 1.05;
+            letter-spacing: -0.04em;
+            font-weight: 800;
+            margin: 1rem 0 .45rem;
+            color: #0f172a;
+        }
+
+        .form-suite .hero-subtitle {
+            color: #64748b;
+        }
+
+        .form-suite .summary-card {
+            border: 1px solid rgba(255, 255, 255, 0.78);
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.86);
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.05);
+        }
+
+        .form-suite .summary-card .label {
+            display: block;
+            margin-bottom: 8px;
+            color: #64748b;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .form-suite .summary-card h3 {
+            margin: 0;
+            font-size: 1.7rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: #0f172a;
+        }
+
+        .form-suite .section-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            background: #f8fafc;
+            box-shadow: none;
+        }
+
+        .form-suite .section-card .card-header {
+            background: transparent;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .form-suite .section-card .card-body {
+            background: transparent;
+        }
+
         .star {
             display: none;
         }
@@ -27,26 +121,60 @@
             cursor: pointer;
         }
     </style>
+@endsection
 
-    <div class="page-content">
+@section('content')
+    <div class="page-content form-suite">
         <div class="container-fluid">
 
-            <!-- PAGE TITLE -->
             <div class="row">
                 <div class="col-12">
-                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4>Customer</h4>
-                        <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item">
-                                <a href="{{ route('customers.index') }}">Customer</a>
-                            </li>
-                            <li class="breadcrumb-item active">Create</li>
-                        </ol>
+                    <div class="hero-shell">
+                        <div class="card-body p-4 p-lg-5">
+                            <div class="row align-items-center g-4">
+                                <div class="col-lg-8">
+                                    <span class="hero-eyebrow">Create Workflow</span>
+                                    <h1 class="hero-title">Create Customer</h1>
+                                    <p class="hero-subtitle mb-0">Add a customer profile, contact numbers, billing and shipping addresses, and lead classification in the same modern form system as the rest of the refreshed CRM.</p>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="d-flex justify-content-lg-end">
+                                        <ol class="breadcrumb m-0">
+                                            <li class="breadcrumb-item">
+                                                <a href="{{ route('customers.index') }}">Customers</a>
+                                            </li>
+                                            <li class="breadcrumb-item active">Create</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="card">
+            <div class="row g-3 mb-4">
+                <div class="col-md-6 col-xl-3">
+                    <div class="card summary-card h-100">
+                        <div class="card-body">
+                            <span class="label">CRM Setup</span>
+                            <h3>New Customer</h3>
+                            <p class="text-muted mb-0 mt-2">Create a full customer profile using the same polished dashboard language as the refreshed customer workspace.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-3">
+                    <div class="card summary-card h-100">
+                        <div class="card-body">
+                            <span class="label">Profile Scope</span>
+                            <h3>Details + Address</h3>
+                            <p class="text-muted mb-0 mt-2">Keep contact data, phone numbers, and billing-shipping structure grouped into one cleaner CRM form flow.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card form-shell">
                 <div class="card-header">
                     <h5 class="mb-0">Customer Add</h5>
                 </div>
@@ -57,7 +185,7 @@
                         @csrf
 
                         <!-- ================= CUSTOMER DETAIL ================= -->
-                        <div class="card mb-4">
+                        <div class="card mb-4 section-card">
                             <div class="card-header">
                                 <h5 class="mb-0">Customer Detail</h5>
                             </div>
@@ -177,7 +305,7 @@
                         </div>
 
                         <!-- ================= ADDRESS DETAIL ================= -->
-                        <div class="card mb-4 company-block">
+                        <div class="card mb-4 company-block section-card">
                             <div class="card-header">
                                 <h5 class="mb-0">Address Detail</h5>
                             </div>
@@ -306,7 +434,7 @@
 
                         <!-- ================= SUBMIT ================= -->
                         <div class="d-flex justify-content-end">
-                            <button type="submit" class="btn btn-sm btn-success px-4" id="submitBtn">
+                            <button type="submit" class="btn btn-sm btn-primary px-4" id="submitBtn">
                                 Submit
                             </button>
                         </div>
