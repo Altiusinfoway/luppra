@@ -61,7 +61,7 @@
         $brandLogo = asset('public/build/assets/images/engage-logo.png');
     @endphp
     <div class="top-strip py-2">
-        <div class="top-marquee" aria-label="EngageNet CRM highlights">
+        <div class="top-marquee" aria-label="Luppra CRM highlights">
             <span>All-in-one CRM for sales, WhatsApp, quotations, orders, tenants, and HRM</span>
             <span>Start with a plan and activate your workspace online</span>
             <span>Track leads, quotes, invoices, payments, attendance, payroll, and reports</span>
@@ -75,7 +75,7 @@
     <nav class="navbar navbar-expand-lg site-nav sticky-top">
         <div class="container">
             <a class="navbar-brand fw-bold fs-5 d-flex align-items-center gap-2" href="{{ route('website.home') }}">
-                <img src="{{ $brandLogo }}" alt="Engage Net" class="brand-logo">
+                <img src="{{ $brandLogo }}" alt="Luppra" class="brand-logo">
             </a>
             <div class="d-none d-lg-flex align-items-center gap-4">
                 <a href="{{ route('website.home') }}" class="site-link {{ $pageKey === 'home' ? 'active' : '' }}">Home</a>
@@ -200,7 +200,7 @@
                 <div class="row align-items-center g-4">
                     <div class="col-lg-8">
                         <h2 class="h2 fw-bold mb-2">Ready to activate your CRM workspace?</h2>
-                        <p class="mb-0 opacity-75">Choose a plan on the homepage, complete checkout, and let EngageNet prepare the tenant workspace.</p>
+                        <p class="mb-0 opacity-75">Choose a plan on the homepage, complete checkout, and let Luppra prepare the tenant workspace.</p>
                     </div>
                     <div class="col-lg-4 text-lg-end">
                         <a href="{{ route('website.home') }}#pricing" class="btn btn-light btn-lg">Go To Pricing</a>

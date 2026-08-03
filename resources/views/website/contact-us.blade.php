@@ -83,7 +83,7 @@
     <nav class="navbar navbar-expand-lg site-nav sticky-top">
         <div class="container">
             <a class="navbar-brand fw-bold fs-5 d-flex align-items-center gap-2" href="#">
-                <img src="{{ $brandLogo }}" alt="Engage Net" class="brand-logo">
+                <img src="{{ $brandLogo }}" alt="Luppra" class="brand-logo">
             </a>
         </div>
     </nav>
@@ -102,19 +102,19 @@
 
     <div class="mt-4">
         <h4>Business Name</h4>
-        <p>Engagenet</p>
+        <p>Luppra</p>
     </div>
 
     <div class="mt-4">
         <h4>Email</h4>
-        <p>support@engagenet.in</p>
+        <p>support@luppra.in</p>
     </div>
 
     <div class="mt-4">
         <h4>Website</h4>
         <p>
-            <a href="https://engagenet.in" target="_blank">
-                https://engagenet.in
+            <a href="https://luppra.in" target="_blank">
+                https://luppra.in
             </a>
         </p>
     </div>

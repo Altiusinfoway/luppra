@@ -599,9 +599,9 @@ class PublicWebsiteController extends Controller
     {
         $pages = [
             'features' => [
-                'eyebrow' => 'EngageNet features',
+                'eyebrow' => 'Luppra features',
                 'title' => 'CRM modules that cover sales, accounts, communication, and teams.',
-                'intro' => 'Explore how EngageNet connects daily customer work into one tenant-ready CRM workspace.',
+                'intro' => 'Explore how Luppra connects daily customer work into one tenant-ready CRM workspace.',
                 'image' => 'public/build/assets/images/feature-main.png',
                 'summary' => [
                     'Lead capture and stage tracking',
@@ -631,7 +631,7 @@ class PublicWebsiteController extends Controller
                 ],
             ],
             'workflow' => [
-                'eyebrow' => 'EngageNet workflow',
+                'eyebrow' => 'Luppra workflow',
                 'title' => 'A clear operating flow from inquiry to collection.',
                 'intro' => 'The workflow page shows how a team can move through customer work without losing context between departments.',
                 'image' => 'public/build/assets/images/workflow-main.png',
@@ -663,9 +663,9 @@ class PublicWebsiteController extends Controller
                 ],
             ],
             'integrations' => [
-                'eyebrow' => 'EngageNet integrations',
+                'eyebrow' => 'Luppra integrations',
                 'title' => 'Connected essentials for communication, payment, files, and reports.',
-                'intro' => 'EngageNet focuses on practical integrations that reduce manual work in sales and customer operations.',
+                'intro' => 'Luppra focuses on practical integrations that reduce manual work in sales and customer operations.',
                 'image' => 'public/build/assets/images/integration-main.png',
                 'summary' => [
                     'WhatsApp device and chat support',
@@ -695,7 +695,7 @@ class PublicWebsiteController extends Controller
                 ],
             ],
             'pricing' => [
-                'eyebrow' => 'EngageNet pricing',
+                'eyebrow' => 'Luppra pricing',
                 'title' => 'Choose the plan that matches your team size and CRM usage.',
                 'intro' => 'Review active plans here, then continue to the homepage checkout to activate your workspace securely.',
                 'image' => 'public/build/assets/images/pricing-main1.png',
@@ -714,7 +714,7 @@ class PublicWebsiteController extends Controller
                     ],
                     [
                         'title' => 'How activation works',
-                        'copy' => 'After checkout, EngageNet verifies payment, creates or updates the tenant workspace, applies defaults, and prepares login access.',
+                        'copy' => 'After checkout, Luppra verifies payment, creates or updates the tenant workspace, applies defaults, and prepares login access.',
                         'image' => 'public/build/assets/images/activation-works.png',
                         'items' => ['Select plan', 'Pay securely', 'Provision workspace', 'Start using CRM'],
                     ],

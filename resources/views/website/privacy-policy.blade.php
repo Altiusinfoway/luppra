@@ -83,7 +83,7 @@
     <nav class="navbar navbar-expand-lg site-nav sticky-top">
         <div class="container">
             <a class="navbar-brand fw-bold fs-5 d-flex align-items-center gap-2" href="#">
-                <img src="{{ $brandLogo }}" alt="Engage Net" class="brand-logo">
+                <img src="{{ $brandLogo }}" alt="Luppra" class="brand-logo">
             </a>
         </div>
     </nav>
@@ -96,7 +96,7 @@
 						<h1 class="mb-4">Privacy Policy</h1>
 
 						<p>
-							This Privacy Policy explains how Engagenet collects, uses, stores, and protects
+							This Privacy Policy explains how Luppra collects, uses, stores, and protects
 							information when users access our website and services.
 						</p>
 

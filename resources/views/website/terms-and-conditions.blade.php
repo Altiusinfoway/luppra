@@ -83,7 +83,7 @@
     <nav class="navbar navbar-expand-lg site-nav sticky-top">
         <div class="container">
             <a class="navbar-brand fw-bold fs-5 d-flex align-items-center gap-2" href="#">
-                <img src="{{ $brandLogo }}" alt="Engage Net" class="brand-logo">
+                <img src="{{ $brandLogo }}" alt="Luppra" class="brand-logo">
             </a>
         </div>
     </nav>
@@ -96,7 +96,7 @@
 						<h1 class="mb-4">Terms and Conditions</h1>
 
     <p>
-        These Terms and Conditions govern the use of Engagenet and its related services.
+        These Terms and Conditions govern the use of Luppra and its related services.
         By accessing or using our platform, users agree to comply with these terms.
     </p>
 
@@ -133,12 +133,12 @@
     <h3 class="mt-4">5. Intellectual Property</h3>
     <p>
         All website content, branding, software, and materials are the property
-        of Engagenet unless otherwise stated.
+        of Luppra unless otherwise stated.
     </p>
 
     <h3 class="mt-4">6. Limitation of Liability</h3>
     <p>
-        Engagenet shall not be liable for any indirect, incidental,
+        Luppra shall not be liable for any indirect, incidental,
         or consequential damages resulting from the use of the platform.
     </p>
 

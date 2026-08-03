@@ -56,7 +56,7 @@
                 <div class="col-lg-5">
                     <div class="auth-left d-flex flex-column justify-content-between">
                         <div>
-                            <img src="{{ $website_img }}" alt="Engage Net" class="auth-logo mb-4">
+                            <img src="{{ $website_img }}" alt="Luppra" class="auth-logo mb-4">
                             <p class="mb-4 opacity-75">Create your account and get ready to work inside a structured CRM environment built for business teams.</p>
                             <div class="auth-point">
                                 <div class="auth-point-icon"><i class="ri-building-line"></i></div>

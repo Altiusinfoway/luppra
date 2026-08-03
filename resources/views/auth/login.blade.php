@@ -343,7 +343,7 @@
                 <div class="col-lg-5">
                     <div class="auth-left d-flex flex-column justify-content-between">
                         <div>
-                            <img src="{{ $website_img }}" alt="Engage Net" class="auth-logo mb-4">
+                            <img src="{{ $website_img }}" alt="Luppra" class="auth-logo mb-4">
                             <p class="mb-0 opacity-75">Bring sales, quotation, follow-up, WhatsApp, and business operations into one professional CRM workspace.</p>
                             <div class="auth-points">
                                 <div class="auth-point">

@@ -179,7 +179,7 @@ class CompanyInvoiceTemplateController extends Controller
     {
         return [
             'company' => [
-                'name' => 'EngageNet Industries',
+                'name' => 'Luppra Industries',
                 'address_line_1' => 'A-12 Industrial Estate',
                 'address_line_2' => 'Phase 2',
                 'city' => 'Ahmedabad',
@@ -255,7 +255,7 @@ class CompanyInvoiceTemplateController extends Controller
                 'amount_in_words' => 'Rupees Fifty Five Thousand Seven Hundred Twenty Four and Seventy Two Paise Only',
             ],
             'bank' => [
-                'account_name' => 'EngageNet Industries',
+                'account_name' => 'Luppra Industries',
                 'account_number' => '123456789012',
                 'ifsc' => 'HDFC0001234',
                 'bank_name' => 'HDFC Bank',

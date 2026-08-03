@@ -138,7 +138,7 @@
         $brandLogo = asset('public/build/assets/images/engage-logo.png');
     @endphp
     <div class="top-strip py-2">
-        <div class="top-marquee" aria-label="EngageNet CRM highlights">
+        <div class="top-marquee" aria-label="Luppra CRM highlights">
             <span>All-in-one CRM for sales, WhatsApp, quotations, orders, accounts, and HRM</span>
             <span>Start with a plan and activate your workspace online</span>
             <span>Track leads, quotes, invoices, payments, attendance, payroll, and reports</span>
@@ -152,7 +152,7 @@
     <nav class="navbar navbar-expand-lg site-nav sticky-top">
         <div class="container nav-shell d-flex align-items-center justify-content-between gap-3">
             <a class="navbar-brand fw-bold fs-5 d-flex align-items-center gap-2" href="#">
-                <img src="{{ $brandLogo }}" alt="Engage Net" class="brand-logo">
+                <img src="{{ $brandLogo }}" alt="Luppra" class="brand-logo">
             </a>
             <div class="d-none d-lg-flex align-items-center gap-4">
                 <a href="{{ route('website.home') }}" class="site-link">Home</a>
@@ -173,7 +173,7 @@
             <div class="text-center">
                 <span class="badge badge-soft rounded-pill px-3 py-2 mb-3">Built for Indian teams. Ready for growing businesses.</span>
                 <h1 class="hero-title fw-bold mb-3">Run every customer flow from one CRM.</h1>
-                <p class="hero-sub mb-4">EngageNet brings leads, follow-ups, WhatsApp chats, quotations, orders, invoices, payments, attendance, payroll, and reports into one tenant-ready workspace. Choose a plan and the system prepares your CRM automatically after checkout.</p>
+                <p class="hero-sub mb-4">Luppra brings leads, follow-ups, WhatsApp chats, quotations, orders, invoices, payments, attendance, payroll, and reports into one tenant-ready workspace. Choose a plan and the system prepares your CRM automatically after checkout.</p>
                 <div class="d-flex flex-wrap gap-2 hero-actions justify-content-center">
                     <a href="#pricing" class="btn btn-brand btn-lg px-4">Start Now</a>
                     <a href="{{ route('login') }}" class="btn btn-outline-dark btn-lg px-4">Client Login</a>
@@ -189,7 +189,7 @@
                 </div>
             </div>
             <div class="hero-banner-card mt-5">
-                <img src="{{ asset('public/website_logo/banner.jpg') }}" alt="EngageNet streamlines leads, quotes, orders, team collaboration, and WhatsApp integration" class="hero-banner-img">
+                <img src="{{ asset('public/website_logo/banner.jpg') }}" alt="Luppra streamlines leads, quotes, orders, team collaboration, and WhatsApp integration" class="hero-banner-img">
             </div>
         </div>
     </section>
@@ -265,7 +265,7 @@
                     <span class="badge badge-soft rounded-pill px-3 py-2 mb-3">Connected workspace</span>
                     <div class="section-eyebrow justify-content-center">Integrations</div>
                     <h2 class="section-title fw-bold mb-2">Integrations and essentials your team already expects</h2>
-                    <p class="muted mb-0 mx-auto" style="max-width:760px;">The homepage keeps the reference site's all-in-one idea, but uses EngageNet's own checkout, tenant, WhatsApp, and reporting strengths.</p>
+                    <p class="muted mb-0 mx-auto" style="max-width:760px;">The homepage keeps the reference site's all-in-one idea, but uses Luppra's own checkout, tenant, WhatsApp, and reporting strengths.</p>
                     <a href="{{ route('website.integrations') }}" class="site-link d-inline-block mt-3">View integration details</a>
                 </div>
                 <div class="mx-auto" style="max-width:900px;">
