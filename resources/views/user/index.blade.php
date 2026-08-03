@@ -126,7 +126,7 @@
                 <div class="card summary-card h-100">
                     <div class="card-body">
                         <span class="label">Accounts</span>
-                        <h3>{{ number_format($users->count() ?? 0) }}</h3>
+                        <h3>{{ number_format($usersCount ?? 0) }}</h3>
                         <p class="text-muted mb-0 mt-2">User accounts currently available across your internal workspace.</p>
                     </div>
                 </div>

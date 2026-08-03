@@ -353,7 +353,12 @@ class UserController extends Controller
                 ], 500);
             }
         }
-        return view('user.index');
+        $user = \Auth::user();
+        $usersCount = User::Isdeleted()
+            ->where('created_by', '=', $user->creatorId())
+            ->count();
+
+        return view('user.index', compact('usersCount'));
 
         //User::defaultEmail();
 

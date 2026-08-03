@@ -66,6 +66,23 @@
             border-radius: 22px;
         }
 
+        .products-dashboard .filter-shell {
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            background: #f8fafc;
+            padding: 1rem;
+        }
+
+        .products-dashboard .filter-label {
+            display: block;
+            margin-bottom: 0.35rem;
+            color: #64748b;
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
         .products-dashboard #productStaticTable tbody tr.product-list-row,
         .products-dashboard #productList tbody tr.product-list-row {
             position: relative;
@@ -282,6 +299,15 @@
                         </div>
 
                         <div class="card-body">
+                            <div class="filter-shell mb-3">
+                                <div class="row g-3 align-items-end">
+                                    <div class="col-md-6 col-xl-4">
+                                        <label class="filter-label" for="product-search">Search Products</label>
+                                        <input type="text" class="form-control" id="product-search"
+                                            placeholder="Search by name, SKU, price, or GST...">
+                                    </div>
+                                </div>
+                            </div>
                             <table id="productStaticTable"
                                 class="table table-bordered dt-responsive nowrap table-striped align-middle"
                                 style="width:100%">
@@ -479,6 +505,16 @@
             neutralizeLegacyProductDataTable();
             setTimeout(neutralizeLegacyProductDataTable, 250);
             setTimeout(neutralizeLegacyProductDataTable, 1000);
+
+            $('#product-search').on('keyup change', function () {
+                const keyword = $(this).val().toString().trim().toLowerCase();
+
+                $('#productStaticTable tbody tr.product-list-row').each(function () {
+                    const rowText = $(this).text().toLowerCase();
+                    const matches = keyword === '' || rowText.indexOf(keyword) !== -1;
+                    $(this).toggle(matches);
+                });
+            });
         });
 
         $(document).on('change', '.stock-input', function() {
