@@ -486,7 +486,7 @@ class ProductController extends Controller
                     DB::raw('COALESCE(SUM(order_products.total), 0) as revenue'),
                     DB::raw('COALESCE(AVG(order_products.price), 0) as avg_sale_price')
                 )
-                ->groupBy('marketplace_listings.id', 'marketplace_listings.platform')
+                ->groupBy('marketplace_listings.id', 'marketplace_listings.platform', 'marketplace_listings.account_name')
                 ->get()
                 ->keyBy('listing_id');
         }
