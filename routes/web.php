@@ -200,6 +200,10 @@ Route::group(['prefix' => '', 'middleware' => ['auth']], function () {
 
     Route::post('/bulk-stock-update',[ProductController::class,'bulkStockUpdate'])->name('products.bulk_stock_update');
     Route::get('products/data', [ProductController::class, 'data'])->name('products.data');
+    Route::get('marketplace-accounts', [ProductController::class, 'marketplaceAccounts'])->name('products.marketplace.accounts.index');
+    Route::post('marketplace-accounts', [ProductController::class, 'storeMarketplaceAccount'])->name('products.marketplace.accounts.store');
+    Route::patch('marketplace-accounts/{account}', [ProductController::class, 'updateMarketplaceAccount'])->name('products.marketplace.accounts.update');
+    Route::delete('marketplace-accounts/{account}', [ProductController::class, 'destroyMarketplaceAccount'])->name('products.marketplace.accounts.destroy');
     Route::get('products/{product}/marketplace', [ProductController::class, 'marketplace'])->name('products.marketplace');
     Route::get('products/{product}/activity', [ProductController::class, 'activity'])->name('products.activity');
     Route::patch('products/{product}/marketplace', [ProductController::class, 'updateMarketplace'])->name('products.marketplace.update');

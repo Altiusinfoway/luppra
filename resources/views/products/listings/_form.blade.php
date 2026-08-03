@@ -1,7 +1,7 @@
 <div class="row g-3">
     <div class="col-md-6">
         <label class="form-label">Platform</label>
-        <select class="form-select" name="platform" required>
+        <select class="form-select" name="platform" id="listing-platform" required>
             <option value="">Select Platform</option>
             @foreach ($supportedPlatforms as $platformKey => $platformLabel)
                 <option value="{{ $platformKey }}" {{ old('platform', $listing->platform) === $platformKey ? 'selected' : '' }}>
@@ -15,12 +15,32 @@
     </div>
 
     <div class="col-md-6">
+        <div class="d-flex justify-content-between align-items-center gap-2">
+            <label class="form-label mb-0">Marketplace Account</label>
+            <a href="{{ route('products.marketplace.accounts.index') }}" class="small text-decoration-none">Manage Accounts</a>
+        </div>
+        <select class="form-select" name="marketplace_account_id" id="listing-account" required data-selected-account="{{ old('marketplace_account_id', $listing->marketplace_account_id) }}">
+            <option value="">Select Marketplace Account</option>
+            @foreach ($marketplaceAccounts as $account)
+                <option value="{{ $account->id }}" data-platform="{{ $account->platform }}" {{ (string) old('marketplace_account_id', $listing->marketplace_account_id) === (string) $account->id ? 'selected' : '' }}>
+                    {{ ucfirst($account->platform) }} / {{ $account->name }}
+                </option>
+            @endforeach
+        </select>
+        @error('marketplace_account_id')
+            <small class="text-danger">{{ $message }}</small>
+        @enderror
+    </div>
+
+    <div class="col-md-6">
         <label class="form-label">Platform SKU</label>
         <input type="text" class="form-control" name="platform_sku" value="{{ old('platform_sku', $listing->platform_sku) }}" placeholder="AMZ-SKU-001" required>
         @error('platform_sku')
             <small class="text-danger">{{ $message }}</small>
         @enderror
     </div>
+
+    <input type="hidden" name="account_name" id="listing-account-name" value="{{ old('account_name', $listing->account_name ?? '') }}">
 
     <div class="col-md-6">
         <label class="form-label">Marketplace Item ID</label>
@@ -168,3 +188,61 @@
         </div>
     </div>
 </div>
+
+<script>
+    (function () {
+        const platformSelect = document.getElementById('listing-platform');
+        const accountSelect = document.getElementById('listing-account');
+        const accountNameInput = document.getElementById('listing-account-name');
+
+        if (!platformSelect || !accountSelect || !accountNameInput) {
+            return;
+        }
+
+        const selectedAccountId = accountSelect.dataset.selectedAccount || accountSelect.value;
+
+        const syncAccounts = function () {
+            const platform = platformSelect.value;
+            let matched = false;
+
+            Array.from(accountSelect.options).forEach(function (option, index) {
+                if (index === 0) {
+                    option.hidden = false;
+                    return;
+                }
+
+                const optionPlatform = option.dataset.platform || '';
+                const visible = !platform || optionPlatform === platform;
+                option.hidden = !visible;
+
+                if (!visible && option.selected) {
+                    option.selected = false;
+                }
+
+                if (visible && option.value === selectedAccountId) {
+                    option.selected = true;
+                    matched = true;
+                }
+            });
+
+            if (!matched && accountSelect.selectedIndex <= 0) {
+                accountSelect.value = '';
+            }
+
+            const selectedOption = accountSelect.options[accountSelect.selectedIndex];
+            accountNameInput.value = selectedOption && selectedOption.value
+                ? selectedOption.text.split('/').slice(1).join('/').trim()
+                : '';
+        };
+
+        platformSelect.addEventListener('change', syncAccounts);
+        accountSelect.addEventListener('change', function () {
+            const selectedOption = accountSelect.options[accountSelect.selectedIndex];
+            accountNameInput.value = selectedOption && selectedOption.value
+                ? selectedOption.text.split('/').slice(1).join('/').trim()
+                : '';
+        });
+
+        syncAccounts();
+    })();
+</script>

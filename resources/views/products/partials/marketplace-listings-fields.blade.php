@@ -2,6 +2,7 @@
     $marketplaceRows = old('marketplace_listings', isset($product) ? $product->marketplaceListings->map(fn($listing) => [
         'id' => $listing->id,
         'platform' => $listing->platform,
+        'account_name' => $listing->account_name,
         'platform_sku' => $listing->platform_sku,
         'marketplace_item_id' => $listing->marketplace_item_id,
         'listing_title' => $listing->listing_title,
@@ -18,6 +19,7 @@
         $marketplaceRows = [[
             'id' => '',
             'platform' => '',
+            'account_name' => 'Primary Account',
             'platform_sku' => '',
             'marketplace_item_id' => '',
             'listing_title' => '',
@@ -66,6 +68,10 @@
                     <div class="col-md-3">
                         <label class="form-label">Platform SKU</label>
                         <input type="text" class="form-control" name="marketplace_listings[{{ $index }}][platform_sku]" value="{{ $listing['platform_sku'] ?? '' }}" placeholder="AMZ-SKU-001">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Account</label>
+                        <input type="text" class="form-control" name="marketplace_listings[{{ $index }}][account_name]" value="{{ $listing['account_name'] ?? 'Primary Account' }}" placeholder="Flipkart Account 1">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Marketplace Item ID</label>
@@ -137,6 +143,10 @@
             <div class="col-md-3">
                 <label class="form-label">Platform SKU</label>
                 <input type="text" class="form-control" name="marketplace_listings[__INDEX__][platform_sku]" placeholder="AMZ-SKU-001">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Account</label>
+                <input type="text" class="form-control" name="marketplace_listings[__INDEX__][account_name]" value="Primary Account" placeholder="Flipkart Account 1">
             </div>
             <div class="col-md-3">
                 <label class="form-label">Marketplace Item ID</label>

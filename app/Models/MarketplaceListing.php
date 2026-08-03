@@ -13,6 +13,8 @@ class MarketplaceListing extends Model
         'product_id',
         'created_by',
         'platform',
+        'account_name',
+        'marketplace_account_id',
         'platform_sku',
         'marketplace_item_id',
         'listing_title',
@@ -53,6 +55,11 @@ class MarketplaceListing extends Model
         return $this->belongsTo(Products::class, 'product_id');
     }
 
+    public function marketplaceAccount()
+    {
+        return $this->belongsTo(MarketplaceAccount::class, 'marketplace_account_id');
+    }
+
     public function getAvailableStockAttribute(): int
     {
         $masterStock = (int) ($this->product?->stock_qty ?? 0);
@@ -71,7 +78,8 @@ class MarketplaceListing extends Model
         $title = trim((string) ($this->listing_title ?? ''));
         $sku = trim((string) ($this->platform_sku ?? ''));
         $platform = ucfirst((string) ($this->platform ?? ''));
+        $accountName = trim((string) ($this->marketplaceAccount?->name ?? $this->account_name ?? ''));
 
-        return trim($platform . ' - ' . ($sku !== '' ? $sku : $title));
+        return trim($platform . ($accountName !== '' ? ' / ' . $accountName : '') . ' - ' . ($sku !== '' ? $sku : $title));
     }
 }

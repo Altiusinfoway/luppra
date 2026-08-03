@@ -80,7 +80,9 @@ class Products extends Model
     public function marketplaceListings(): HasMany
     {
         return $this->hasMany(MarketplaceListing::class, 'product_id')
+            ->with('marketplaceAccount')
             ->orderBy('platform')
+            ->orderBy('account_name')
             ->orderBy('platform_sku');
     }
 

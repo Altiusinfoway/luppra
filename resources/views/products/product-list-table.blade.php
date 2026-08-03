@@ -37,7 +37,11 @@
                              <input type="hidden" name="products[listing_id][]" value="{{ $product->pivot->marketplace_listing_id ?? '' }}">
                              <input type="hidden" name="products[row_key][]" value="{{ $product->id }}:{{ $product->pivot->marketplace_listing_id ?? 'master' }}">
                              @if(!empty($product->pivot->marketplace_listing_id) && isset($product->pivot->marketplaceListing))
-                                <div class="small text-muted">{{ ucfirst($product->pivot->marketplaceListing->platform ?? '') }} SKU: {{ $product->pivot->marketplaceListing->platform_sku ?? '' }}</div>
+                                <div class="small text-muted">
+                                    {{ ucfirst($product->pivot->marketplaceListing->platform ?? '') }}
+                                    / {{ $product->pivot->marketplaceListing->account_name ?? 'Primary Account' }}
+                                    SKU: {{ $product->pivot->marketplaceListing->platform_sku ?? '' }}
+                                </div>
                              @endif
                         </td>
                         <td> <img src="@if(!empty($product->image)) {{  $product->image}} @else {{ $default_img }} @endif" height="70px" width="70px"> </td>

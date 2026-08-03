@@ -235,6 +235,11 @@
                                                         <i class="ri-history-line align-middle me-2"></i>View Activity
                                                     </a>
                                                 </li>
+                                                <li>
+                                                    <a class="dropdown-item" href="{{ route('products.marketplace.accounts.index') }}">
+                                                        <i class="ri-store-3-line align-middle me-2"></i>Manage Accounts
+                                                    </a>
+                                                </li>
                                             </ul>
                                         </div>
                                         <ol class="breadcrumb m-0">
@@ -357,6 +362,7 @@
                                                         <div>
                                                             <span class="platform-chip">{{ $listing->platform }}</span>
                                                             <h5 class="mt-3 mb-1">{{ $listing->listing_title }}</h5>
+                                                            <div class="text-muted small">{{ $listing->account_name ?: 'Primary Account' }}</div>
                                                             <div class="text-muted">{{ $listing->platform_sku }}</div>
                                                         </div>
                                                         <span class="badge bg-light text-dark">{{ ucfirst($listing->listing_status) }}</span>
@@ -414,6 +420,7 @@
 
                                                     <div class="row g-2 text-muted small mb-3">
                                                         <div class="col-sm-6">Pack Size: <span class="text-dark">{{ $listing->pack_size ?: '-' }}</span></div>
+                                                        <div class="col-sm-6">Account: <span class="text-dark">{{ $listing->account_name ?: 'Primary Account' }}</span></div>
                                                         <div class="col-sm-6">Fulfillment: <span class="text-dark">{{ $listing->fulfillment_type ?: '-' }}</span></div>
                                                         <div class="col-sm-6">Marketplace Item ID: <span class="text-dark">{{ $listing->marketplace_item_id ?: '-' }}</span></div>
                                                         <div class="col-sm-6">Reserved Stock: <span class="text-dark">{{ number_format((int) ($listing->reserved_stock ?? 0)) }}</span></div>
@@ -551,6 +558,7 @@
                                                 <td>
                                                     @if(!empty($quoteRow->platform_sku))
                                                         <div>{{ strtoupper($quoteRow->platform ?? '') }} | {{ $quoteRow->platform_sku }}</div>
+                                                        <div class="text-muted small">{{ $quoteRow->account_name ?: 'Primary Account' }}</div>
                                                         <div class="text-muted small">{{ $quoteRow->listing_title }}</div>
                                                     @else
                                                         <span class="text-muted">Master SKU only</span>
@@ -601,6 +609,7 @@
                                                     <div>{{ ucfirst($orderRow->order_source_type ?? 'manual') }}</div>
                                                     @if(!empty($orderRow->platform_sku))
                                                         <div class="text-muted small">{{ strtoupper($orderRow->platform ?? '') }} | {{ $orderRow->platform_sku }}</div>
+                                                        <div class="text-muted small">{{ $orderRow->account_name ?: 'Primary Account' }}</div>
                                                     @endif
                                                 </td>
                                                 <td>{{ number_format((float) $orderRow->qty, 2) }}</td>

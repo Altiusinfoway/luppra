@@ -45,7 +45,7 @@
                                 <div class="col-lg-8">
                                     <span class="hero-eyebrow">Marketplace Listing</span>
                                     <h1 class="mb-3">Add Marketplace Listing</h1>
-                                    <p class="text-muted mb-0">{{ $product->name }} under master SKU {{ $product->sku_code }}. Add a marketplace-ready Amazon or Flipkart listing without changing the dashboard display page.</p>
+                                    <p class="text-muted mb-0">{{ $product->name }} under master SKU {{ $product->sku_code }}. Add a marketplace-ready Amazon or Flipkart listing and attach it to the right seller account for separate stock control.</p>
                                 </div>
                                 <div class="col-lg-4">
                                     <div class="d-flex justify-content-lg-end">
@@ -67,7 +67,7 @@
                     <div class="card form-shell">
                         <div class="card-header">
                             <h5 class="card-title mb-1">Create Listing</h5>
-                            <p class="text-muted mb-0">Add a new Amazon or Flipkart listing for this master product.</p>
+                            <p class="text-muted mb-0">Add a new Amazon or Flipkart listing for this master product and choose the marketplace account it belongs to.</p>
                         </div>
                         <div class="card-body">
                             <form action="{{ route('products.marketplace.listings.store', $product->id) }}" method="POST">

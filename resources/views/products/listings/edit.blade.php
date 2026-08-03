@@ -45,7 +45,7 @@
                                 <div class="col-lg-8">
                                     <span class="hero-eyebrow">Marketplace Listing</span>
                                     <h1 class="mb-3">Edit Marketplace Listing</h1>
-                                    <p class="text-muted mb-0">{{ $product->name }} under master SKU {{ $product->sku_code }}. Update listing data on a dedicated form while keeping the marketplace dashboard read-only.</p>
+                                    <p class="text-muted mb-0">{{ $product->name }} under master SKU {{ $product->sku_code }}. Update listing data and keep the correct marketplace account tied to this stock bucket.</p>
                                 </div>
                                 <div class="col-lg-4">
                                     <div class="d-flex justify-content-lg-end">
@@ -67,7 +67,7 @@
                     <div class="card form-shell">
                         <div class="card-header">
                             <h5 class="card-title mb-1">Update Listing</h5>
-                            <p class="text-muted mb-0">Change listing details on a separate page without making the dashboard editable.</p>
+                            <p class="text-muted mb-0">Change listing details, account mapping, and stock settings on a separate page without making the dashboard editable.</p>
                         </div>
                         <div class="card-body">
                             <form action="{{ route('products.marketplace.listings.update', [$product->id, $listing->id]) }}" method="POST">

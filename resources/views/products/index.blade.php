@@ -293,6 +293,11 @@
                                             </li>
                                         </ul>
                                     </div>
+                                    <div>
+                                        <a href="{{ route('products.marketplace.accounts.index') }}" class="btn btn-sm btn-soft-secondary">
+                                            <i class="ri-store-3-line align-bottom me-1"></i> Marketplace Accounts
+                                        </a>
+                                    </div>
                                 </div>
 
                             </div>

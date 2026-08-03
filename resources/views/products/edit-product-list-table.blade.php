@@ -54,7 +54,11 @@
                                 <td>
                                     {{ $qt_product->getProduct->name ?? '' }}
                                     @if(!empty($qt_product->marketplace_listing_id) && $qt_product->marketplaceListing)
-                                        <div class="small text-muted">{{ ucfirst($qt_product->marketplaceListing->platform ?? '') }} SKU: {{ $qt_product->marketplaceListing->platform_sku ?? '' }}</div>
+                                        <div class="small text-muted">
+                                            {{ ucfirst($qt_product->marketplaceListing->platform ?? '') }}
+                                            / {{ $qt_product->marketplaceListing->account_name ?? 'Primary Account' }}
+                                            SKU: {{ $qt_product->marketplaceListing->platform_sku ?? '' }}
+                                        </div>
                                     @endif
                                 </td>
                                 <td>

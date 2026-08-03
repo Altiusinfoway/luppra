@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Cache;
 use App\Models\GstSlabMaster;
 use App\Models\ProductStockActivity;
 use App\Models\MarketplaceListing;
+use App\Models\MarketplaceAccount;
 use App\Models\OrderProduct;
 use App\Models\QuoteProducts;
 use App\Services\ActivityLogger;
@@ -413,13 +414,15 @@ class ProductController extends Controller
                 ->where('product_id', $product->id)
                 ->select(
                     'platform',
+                    'account_name',
                     DB::raw('COUNT(*) as total_listings'),
                     DB::raw("SUM(CASE WHEN listing_status = 'active' THEN 1 ELSE 0 END) as active_listings"),
                     DB::raw('COALESCE(SUM(allocated_stock), 0) as allocated_stock'),
                     DB::raw('COALESCE(SUM(reserved_stock), 0) as reserved_stock')
                 )
-                ->groupBy('platform')
+                ->groupBy('platform', 'account_name')
                 ->orderBy('platform')
+                ->orderBy('account_name')
                 ->get();
         }
 
@@ -439,6 +442,7 @@ class ProductController extends Controller
                 'quotes.date as quote_date',
                 'entities.name as customer_name',
                 'marketplace_listings.platform',
+                'marketplace_listings.account_name',
                 'marketplace_listings.platform_sku',
                 'marketplace_listings.listing_title',
             ]);
@@ -460,6 +464,7 @@ class ProductController extends Controller
                 'orders.order_source_type',
                 'entities.name as customer_name',
                 'marketplace_listings.platform',
+                'marketplace_listings.account_name',
                 'marketplace_listings.platform_sku',
                 'marketplace_listings.listing_title',
             ]);
@@ -475,6 +480,7 @@ class ProductController extends Controller
                 ->select(
                     'marketplace_listings.id as listing_id',
                     'marketplace_listings.platform',
+                    'marketplace_listings.account_name',
                     DB::raw('COUNT(DISTINCT order_products.order_id) as order_count'),
                     DB::raw('COALESCE(SUM(order_products.qty), 0) as sold_qty'),
                     DB::raw('COALESCE(SUM(order_products.total), 0) as revenue'),
@@ -508,6 +514,7 @@ class ProductController extends Controller
                 return (object) [
                     'listing' => $listing,
                     'platform' => $listing->platform,
+                    'account_name' => $listing->account_name,
                     'analytics_source' => $hasExternalFeed ? 'api' : 'internal',
                     'order_count' => $reportedOrderCount,
                     'sold_qty' => $reportedSoldQty,
@@ -607,6 +614,124 @@ class ProductController extends Controller
         return view('products.activity', compact('product', 'activityTimeline', 'stockActivities'));
     }
 
+    public function marketplaceAccounts()
+    {
+        if (!\Auth::user()->can('edit product & service')) {
+            return redirect()->back()->with('error', 'Permission denied.');
+        }
+
+        $accounts = MarketplaceAccount::query()
+            ->where('created_by', \Auth::user()->creatorId())
+            ->orderBy('platform')
+            ->orderBy('name')
+            ->get();
+
+        return view('products.accounts.index', [
+            'accounts' => $accounts,
+            'supportedPlatforms' => $this->supportedPlatforms,
+        ]);
+    }
+
+    public function storeMarketplaceAccount(Request $request)
+    {
+        if (!\Auth::user()->can('edit product & service')) {
+            return redirect()->back()->with('error', 'Permission denied.');
+        }
+
+        $validated = $request->validate([
+            'platform' => 'required|in:amazon,flipkart',
+            'name' => 'required|string|max:255',
+            'is_active' => 'nullable|boolean',
+        ]);
+
+        $platform = strtolower(trim((string) $validated['platform']));
+        $name = trim((string) $validated['name']);
+
+        $exists = MarketplaceAccount::query()
+            ->where('created_by', \Auth::user()->creatorId())
+            ->where('platform', $platform)
+            ->where('name', $name)
+            ->exists();
+
+        if ($exists) {
+            return redirect()->back()->with('error', 'This marketplace account already exists.');
+        }
+
+        MarketplaceAccount::query()->create([
+            'created_by' => \Auth::user()->creatorId(),
+            'platform' => $platform,
+            'name' => $name,
+            'is_active' => (bool) ($validated['is_active'] ?? true),
+        ]);
+
+        return redirect()->route('products.marketplace.accounts.index')->with('success', 'Marketplace account added successfully.');
+    }
+
+    public function updateMarketplaceAccount(Request $request, string $accountId)
+    {
+        if (!\Auth::user()->can('edit product & service')) {
+            return redirect()->back()->with('error', 'Permission denied.');
+        }
+
+        $account = MarketplaceAccount::query()
+            ->where('created_by', \Auth::user()->creatorId())
+            ->findOrFail($accountId);
+
+        $validated = $request->validate([
+            'platform' => 'required|in:amazon,flipkart',
+            'name' => 'required|string|max:255',
+            'is_active' => 'nullable|boolean',
+        ]);
+
+        $platform = strtolower(trim((string) $validated['platform']));
+        $name = trim((string) $validated['name']);
+
+        $exists = MarketplaceAccount::query()
+            ->where('created_by', \Auth::user()->creatorId())
+            ->where('platform', $platform)
+            ->where('name', $name)
+            ->where('id', '!=', $account->id)
+            ->exists();
+
+        if ($exists) {
+            return redirect()->back()->with('error', 'This marketplace account already exists.');
+        }
+
+        $account->update([
+            'platform' => $platform,
+            'name' => $name,
+            'is_active' => (bool) ($validated['is_active'] ?? false),
+        ]);
+
+        MarketplaceListing::query()
+            ->where('marketplace_account_id', $account->id)
+            ->update([
+                'platform' => $account->platform,
+                'account_name' => $account->name,
+            ]);
+
+        return redirect()->route('products.marketplace.accounts.index')->with('success', 'Marketplace account updated successfully.');
+    }
+
+    public function destroyMarketplaceAccount(string $accountId)
+    {
+        if (!\Auth::user()->can('edit product & service')) {
+            return redirect()->back()->with('error', 'Permission denied.');
+        }
+
+        $account = MarketplaceAccount::query()
+            ->where('created_by', \Auth::user()->creatorId())
+            ->findOrFail($accountId);
+
+        if ($account->listings()->exists()) {
+            return redirect()->route('products.marketplace.accounts.index')->with('error', 'This account is already linked to listings. Move those listings first.');
+        }
+
+        $account->delete();
+
+        return redirect()->route('products.marketplace.accounts.index')->with('success', 'Marketplace account deleted successfully.');
+    }
+
     public function updateMarketplace(Request $request, string $id)
     {
         if (!\Auth::user()->can('edit product & service')) {
@@ -648,8 +773,9 @@ class ProductController extends Controller
         $supportedPlatforms = $this->supportedPlatforms;
         $listingStatuses = $this->listingStatuses;
         $fulfillmentTypes = $this->fulfillmentTypes;
+        $marketplaceAccounts = $this->marketplaceAccountsForForms();
 
-        return view('products.listings.create', compact('product', 'listing', 'supportedPlatforms', 'listingStatuses', 'fulfillmentTypes'));
+        return view('products.listings.create', compact('product', 'listing', 'supportedPlatforms', 'listingStatuses', 'fulfillmentTypes', 'marketplaceAccounts'));
     }
 
     public function storeMarketplaceListing(Request $request, string $id)
@@ -684,8 +810,9 @@ class ProductController extends Controller
         $supportedPlatforms = $this->supportedPlatforms;
         $listingStatuses = $this->listingStatuses;
         $fulfillmentTypes = $this->fulfillmentTypes;
+        $marketplaceAccounts = $this->marketplaceAccountsForForms();
 
-        return view('products.listings.edit', compact('product', 'listing', 'supportedPlatforms', 'listingStatuses', 'fulfillmentTypes'));
+        return view('products.listings.edit', compact('product', 'listing', 'supportedPlatforms', 'listingStatuses', 'fulfillmentTypes', 'marketplaceAccounts'));
     }
 
     public function updateMarketplaceListing(Request $request, string $productId, string $listingId)
@@ -1268,6 +1395,20 @@ class ProductController extends Controller
 
             $platformSku = trim((string) ($row['platform_sku'] ?? ''));
             $platform = strtolower(trim((string) ($row['platform'] ?? '')));
+            $marketplaceAccountId = !empty($row['marketplace_account_id']) ? (int) $row['marketplace_account_id'] : null;
+            $accountName = trim((string) ($row['account_name'] ?? '')) ?: 'Primary Account';
+
+            if ($marketplaceAccountId) {
+                $account = MarketplaceAccount::query()
+                    ->where('created_by', \Auth::user()->creatorId())
+                    ->where('id', $marketplaceAccountId)
+                    ->first();
+
+                if ($account) {
+                    $platform = strtolower(trim((string) $account->platform));
+                    $accountName = trim((string) $account->name);
+                }
+            }
 
             if ($platformSku === '' && $platform === '') {
                 continue;
@@ -1277,6 +1418,8 @@ class ProductController extends Controller
                 'product_id' => $product->id,
                 'created_by' => \Auth::user()->creatorId(),
                 'platform' => $platform,
+                'marketplace_account_id' => $marketplaceAccountId,
+                'account_name' => $accountName,
                 'platform_sku' => $platformSku,
                 'marketplace_item_id' => trim((string) ($row['marketplace_item_id'] ?? '')) ?: null,
                 'listing_title' => trim((string) ($row['listing_title'] ?? '')),
@@ -1297,6 +1440,8 @@ class ProductController extends Controller
 
             validator($payload, [
                 'platform' => 'required|in:amazon,flipkart',
+                'marketplace_account_id' => 'nullable|integer|exists:marketplace_accounts,id',
+                'account_name' => 'nullable|string|max:255',
                 'platform_sku' => 'required|string|max:255',
                 'listing_title' => 'required|string|max:255',
                 'selling_price' => 'nullable|numeric|min:0',
@@ -1334,6 +1479,7 @@ class ProductController extends Controller
     {
         $validated = $request->validate([
             'platform' => 'required|in:amazon,flipkart',
+            'marketplace_account_id' => 'required|integer|exists:marketplace_accounts,id',
             'platform_sku' => 'required|string|max:255',
             'marketplace_item_id' => 'nullable|string|max:255',
             'listing_title' => 'required|string|max:255',
@@ -1353,12 +1499,18 @@ class ProductController extends Controller
         ]);
 
         $platform = strtolower(trim((string) $validated['platform']));
+        $account = MarketplaceAccount::query()
+            ->where('created_by', \Auth::user()->creatorId())
+            ->where('id', (int) $validated['marketplace_account_id'])
+            ->firstOrFail();
+        $accountName = trim((string) $account->name);
+        $platform = strtolower(trim((string) $account->platform));
         $platformSku = trim((string) $validated['platform_sku']);
         $marketplaceItemId = trim((string) ($validated['marketplace_item_id'] ?? '')) ?: null;
 
         $duplicateSku = MarketplaceListing::query()
             ->where('created_by', \Auth::user()->creatorId())
-            ->where('platform', $platform)
+            ->where('marketplace_account_id', $account->id)
             ->where('platform_sku', $platformSku);
 
         if ($listingId) {
@@ -1367,14 +1519,14 @@ class ProductController extends Controller
 
         if ($duplicateSku->exists()) {
             throw ValidationException::withMessages([
-                'platform_sku' => 'This platform SKU is already used for another listing.',
+                'platform_sku' => 'This platform SKU is already used for this marketplace account.',
             ]);
         }
 
         if ($marketplaceItemId !== null) {
             $duplicateItem = MarketplaceListing::query()
                 ->where('created_by', \Auth::user()->creatorId())
-                ->where('platform', $platform)
+                ->where('marketplace_account_id', $account->id)
                 ->where('marketplace_item_id', $marketplaceItemId);
 
             if ($listingId) {
@@ -1383,7 +1535,7 @@ class ProductController extends Controller
 
             if ($duplicateItem->exists()) {
                 throw ValidationException::withMessages([
-                    'marketplace_item_id' => 'This marketplace item id is already used for another listing.',
+                    'marketplace_item_id' => 'This marketplace item id is already used for this marketplace account.',
                 ]);
             }
         }
@@ -1392,6 +1544,8 @@ class ProductController extends Controller
             'product_id' => $product->id,
             'created_by' => \Auth::user()->creatorId(),
             'platform' => $platform,
+            'marketplace_account_id' => $account->id,
+            'account_name' => $accountName,
             'platform_sku' => $platformSku,
             'marketplace_item_id' => $marketplaceItemId,
             'listing_title' => trim((string) $validated['listing_title']),
@@ -1409,6 +1563,16 @@ class ProductController extends Controller
             'external_last_synced_at' => !empty($validated['external_last_synced_at']) ? $validated['external_last_synced_at'] : null,
             'external_sync_note' => trim((string) ($validated['external_sync_note'] ?? '')) ?: null,
         ];
+    }
+
+    private function marketplaceAccountsForForms()
+    {
+        return MarketplaceAccount::query()
+            ->where('created_by', \Auth::user()->creatorId())
+            ->where('is_active', true)
+            ->orderBy('platform')
+            ->orderBy('name')
+            ->get();
     }
 
     private function productSnapshot(Products $product): array
