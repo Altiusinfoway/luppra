@@ -13,6 +13,10 @@ class ProductStockActivity extends Model
         'user_id',
     ];
 
+    protected $casts = [
+        'date_time' => 'datetime',
+    ];
+
     public function created_user()
     {
         return $this->belongsTo(User::class,'user_id');

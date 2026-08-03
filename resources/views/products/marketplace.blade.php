@@ -230,6 +230,11 @@
                                                         <i class="ri-add-line align-middle me-2"></i>Add Listing
                                                     </a>
                                                 </li>
+                                                <li>
+                                                    <a class="dropdown-item" href="{{ route('products.activity', $product->id) }}">
+                                                        <i class="ri-history-line align-middle me-2"></i>View Activity
+                                                    </a>
+                                                </li>
                                             </ul>
                                         </div>
                                         <ol class="breadcrumb m-0">

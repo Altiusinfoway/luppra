@@ -5,6 +5,11 @@
 /public/storage
 /storage/*.key
 /storage/pail
+/storage/uploads/**
+!/storage/uploads/
+!/storage/uploads/.gitkeep
+!/storage/uploads/products/
+!/storage/uploads/products/**
 /vendor
 .env
 .env.backup

@@ -20,8 +20,10 @@ use App\Models\ProductStockActivity;
 use App\Models\MarketplaceListing;
 use App\Models\OrderProduct;
 use App\Models\QuoteProducts;
+use App\Services\ActivityLogger;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 ;
 
 class ProductController extends Controller
@@ -170,6 +172,12 @@ class ProductController extends Controller
                                             <i class="ri-store-2-line align-bottom me-2 text-muted"></i> Manage Listings
                                         </a>
                                     </li>';
+
+                        $html .= '<li>
+                                        <a href="' . route('products.activity', $row->id) . '" class="dropdown-item">
+                                            <i class="ri-history-line align-bottom me-2 text-muted"></i> View Activity
+                                        </a>
+                                    </li>';
                     }
 
                     $html .= '</ul></div>';
@@ -309,12 +317,27 @@ class ProductController extends Controller
 
             $product->save();
             $this->syncMarketplaceListings($product, $request);
+            $product->load(['getCategory', 'getGstSlabMaster']);
+            $after = $this->productSnapshot($product);
 
-            // ProductStockActivity::create([
-            //     'product_id'=>$product->id,
-            //     'message'=>'Product added by',
-            //     'user_id'=>\Auth::user()->id,
-            // ]);
+            ActivityLogger::writeFor('products', 'create', $product, null, [
+                'event_key' => 'product.created',
+                'description' => 'Created product ' . $product->name . '.',
+                'properties' => [
+                    'after' => $after,
+                    'changes' => collect($after)->map(fn ($value) => [
+                        'before' => null,
+                        'after' => $value,
+                    ])->all(),
+                ],
+            ]);
+
+            $this->recordProductStockChange(
+                $product,
+                null,
+                (float) ($product->stock_qty ?? 0),
+                'Initial stock set during product creation.'
+            );
 
             return redirect()->route('products.index')->with('success', 'Product successfully created.', 'Product ' . $product->name . ' added!');
         } else {
@@ -565,6 +588,25 @@ class ProductController extends Controller
         ));
     }
 
+    public function activity(string $id)
+    {
+        if (!\Auth::user()->can('edit product & service')) {
+            return redirect()->back()->with('error', 'Permission denied.');
+        }
+
+        $product = Products::where('created_by', \Auth::user()->creatorId())->findOrFail($id);
+        $activityTimeline = ActivityLogger::activityForRecord($product, null, 12, 'product_activities_page');
+        $stockActivities = ProductStockActivity::query()
+            ->with('created_user:id,name')
+            ->where('product_id', $product->id)
+            ->orderByDesc('date_time')
+            ->orderByDesc('id')
+            ->paginate(12, ['*'], 'stock_activities_page')
+            ->withQueryString();
+
+        return view('products.activity', compact('product', 'activityTimeline', 'stockActivities'));
+    }
+
     public function updateMarketplace(Request $request, string $id)
     {
         if (!\Auth::user()->can('edit product & service')) {
@@ -684,6 +726,9 @@ class ProductController extends Controller
         if (\Auth::user()->can('edit product & service')) {
 
             $product = Products::find($id);
+            $product->loadMissing(['getCategory', 'getGstSlabMaster']);
+            $before = $this->productSnapshot($product);
+            $previousStockQty = (float) ($product->stock_qty ?? 0);
 
             $validator = \Validator::make(
 
@@ -750,6 +795,28 @@ class ProductController extends Controller
             $product->stock_qty = $request['stock_qty'];
             $product->save();
             $this->syncMarketplaceListings($product, $request);
+            $product->load(['getCategory', 'getGstSlabMaster']);
+            $after = $this->productSnapshot($product);
+            $changes = ActivityLogger::diff($before, $after);
+
+            if (!empty($changes)) {
+                ActivityLogger::writeFor('products', 'update', $product, null, [
+                    'event_key' => 'product.updated',
+                    'description' => 'Updated product ' . $product->name . '.',
+                    'properties' => [
+                        'before' => $before,
+                        'after' => $after,
+                        'changes' => $changes,
+                    ],
+                ]);
+            }
+
+            $this->recordProductStockChange(
+                $product,
+                $previousStockQty,
+                (float) ($product->stock_qty ?? 0),
+                'Stock adjusted from the product edit form.'
+            );
 
 
             return redirect()->route('products.index')->with('success', 'Product successfully updated.', 'Product ' . $product->name . ' updated!');
@@ -852,6 +919,20 @@ class ProductController extends Controller
 
             $product->save();
             $this->syncMarketplaceListings($product, $request);
+            $product->load(['getCategory', 'getGstSlabMaster']);
+            $after = $this->productSnapshot($product);
+
+            ActivityLogger::writeFor('products', 'create', $product, null, [
+                'event_key' => 'product.quick_created',
+                'description' => 'Created product ' . $product->name . ' from quick create.',
+                'properties' => [
+                    'after' => $after,
+                    'changes' => collect($after)->map(fn ($value) => [
+                        'before' => null,
+                        'after' => $value,
+                    ])->all(),
+                ],
+            ]);
 
             return redirect()->back()->with('success', 'Product successfully created.', 'Product ' . $product->name . ' added!');
         } else {
@@ -1139,11 +1220,25 @@ class ProductController extends Controller
     public function bulkStockUpdate(Request $request)
     {
         foreach ($request->products as $item) {
+            $product = Products::where('created_by', \Auth::user()->creatorId())->find($item['id']);
 
-            Products::where('id',$item['id'])
-                ->update([
-                    'stock_qty' => $item['qty']
-                ]);
+            if (!$product) {
+                continue;
+            }
+
+            $beforeQty = (float) ($product->stock_qty ?? 0);
+            $afterQty = (float) ($item['qty'] ?? 0);
+
+            $product->update([
+                'stock_qty' => $afterQty,
+            ]);
+
+            $this->recordProductStockChange(
+                $product->fresh(),
+                $beforeQty,
+                $afterQty,
+                'Stock updated from the product list screen.'
+            );
         }
 
         return response()->json([
@@ -1314,6 +1409,72 @@ class ProductController extends Controller
             'external_last_synced_at' => !empty($validated['external_last_synced_at']) ? $validated['external_last_synced_at'] : null,
             'external_sync_note' => trim((string) ($validated['external_sync_note'] ?? '')) ?: null,
         ];
+    }
+
+    private function productSnapshot(Products $product): array
+    {
+        return [
+            'name' => (string) ($product->name ?? ''),
+            'category' => optional($product->getCategory)->name,
+            'sku_code' => (string) ($product->sku_code ?? ''),
+            'price' => (float) ($product->price ?? 0),
+            'dealer_price' => (float) ($product->dealer_price ?? 0),
+            'unit_type' => (string) ($product->unit_type ?? ''),
+            'unit' => (string) ($product->unit ?? ''),
+            'hsn_code' => (string) ($product->hsn_code ?? ''),
+            'gst_rate' => (string) (optional($product->getGstSlabMaster)->rate ?? ''),
+            'stock_qty' => (float) ($product->stock_qty ?? 0),
+            'image' => (string) ($product->getRawOriginal('image') ?? ''),
+        ];
+    }
+
+    private function recordProductStockChange(Products $product, ?float $beforeQty, ?float $afterQty, string $contextMessage): void
+    {
+        $beforeQty = $beforeQty === null ? null : (float) $beforeQty;
+        $afterQty = $afterQty === null ? null : (float) $afterQty;
+
+        if ($beforeQty !== null && $afterQty !== null && abs($beforeQty - $afterQty) < 0.00001) {
+            return;
+        }
+
+        $message = $beforeQty === null
+            ? 'Stock initialized to ' . $this->formatStockValue($afterQty) . '.'
+            : 'Stock changed from ' . $this->formatStockValue($beforeQty) . ' to ' . $this->formatStockValue($afterQty) . '.';
+
+        ProductStockActivity::create([
+            'product_id' => $product->id,
+            'date_time' => now(),
+            'message' => $message . ' ' . $contextMessage,
+            'user_id' => \Auth::id(),
+        ]);
+
+        ActivityLogger::writeFor('products', 'update', $product, null, [
+            'event_key' => 'product.stock_updated',
+            'description' => $message,
+            'properties' => [
+                'changes' => [
+                    'stock_qty' => [
+                        'before' => $beforeQty,
+                        'after' => $afterQty,
+                    ],
+                ],
+                'context' => $contextMessage,
+            ],
+        ]);
+    }
+
+    private function formatStockValue(?float $value): string
+    {
+        $value = (float) ($value ?? 0);
+
+        if (floor($value) === $value) {
+            return (string) (int) $value;
+        }
+
+        return Str::of(number_format($value, 2, '.', ''))
+            ->rtrim('0')
+            ->rtrim('.')
+            ->toString();
     }
 
 }

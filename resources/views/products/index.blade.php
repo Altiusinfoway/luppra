@@ -66,29 +66,19 @@
             border-radius: 22px;
         }
 
-        .products-dashboard #productStaticTable tbody,
-        .products-dashboard #productList tbody {
-            cursor: pointer;
-        }
-
         .products-dashboard #productStaticTable tbody tr.product-list-row,
         .products-dashboard #productList tbody tr.product-list-row {
-            cursor: pointer !important;
             position: relative;
-            box-shadow: inset 0 0 0 1px transparent;
-            transition: transform .18s ease, box-shadow .18s ease, filter .18s ease, outline-color .18s ease;
-            outline: 2px solid transparent;
-            outline-offset: -2px;
+            transition: background-color .18s ease, box-shadow .18s ease;
         }
 
         .products-dashboard #productStaticTable tbody tr.product-list-row > td,
         .products-dashboard #productList tbody tr.product-list-row > td {
             position: relative;
-            cursor: pointer !important;
             background: #ffffff !important;
             border-top-color: #e2e8f0 !important;
             border-bottom-color: #e2e8f0 !important;
-            transition: background-color .18s ease, color .18s ease, border-color .18s ease, box-shadow .18s ease, padding .18s ease, transform .18s ease;
+            transition: background-color .18s ease, color .18s ease, border-color .18s ease, box-shadow .18s ease;
         }
 
         .products-dashboard #productStaticTable.table-striped > tbody > tr.product-list-row:nth-of-type(odd) > *,
@@ -108,153 +98,45 @@
             padding-left: 1.15rem !important;
         }
 
-        .products-dashboard #productStaticTable tbody tr.product-list-row > td:last-child,
-        .products-dashboard #productList tbody tr.product-list-row > td:last-child {
-            border-right: 1px solid #cbd5e1 !important;
-            padding-right: 5.6rem;
-        }
-
         .products-dashboard #productStaticTable tbody tr.product-list-row:hover,
-        .products-dashboard #productStaticTable tbody tr.product-list-row:focus-within,
-        .products-dashboard #productStaticTable tbody tr.product-list-row.row-hovered,
         .products-dashboard #productList tbody tr.product-list-row:hover,
-        .products-dashboard #productList tbody tr.product-list-row:focus-within,
-        .products-dashboard #productList tbody tr.product-list-row.row-hovered {
-            transform: translateX(12px) scale(1.012);
-            filter: saturate(1.18);
-            box-shadow: 0 24px 44px rgba(37, 99, 235, 0.24);
-            outline-color: rgba(37, 99, 235, 0.4);
+        .products-dashboard #productList tbody tr.product-list-row:focus-within {
+            box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.12);
         }
 
         .products-dashboard #productStaticTable tbody tr.product-list-row:hover > td,
-        .products-dashboard #productStaticTable tbody tr.product-list-row:focus-within > td,
-        .products-dashboard #productStaticTable tbody tr.product-list-row.row-hovered > td,
         .products-dashboard #productList tbody tr.product-list-row:hover > td,
-        .products-dashboard #productList tbody tr.product-list-row:focus-within > td,
-        .products-dashboard #productList tbody tr.product-list-row.row-hovered > td {
-            background: #bfdbfe !important;
+        .products-dashboard #productList tbody tr.product-list-row:focus-within > td {
+            background: #f8fbff !important;
             color: #0f172a !important;
-            border-top-color: #2563eb !important;
-            border-bottom-color: #2563eb !important;
-            box-shadow:
-                inset 0 0 0 999px rgba(191, 219, 254, 0.98),
-                inset 0 1px 0 #3b82f6,
-                inset 0 -1px 0 #3b82f6,
-                inset 0 0 0 2px rgba(37, 99, 235, 0.14);
+            border-top-color: #dbeafe !important;
+            border-bottom-color: #dbeafe !important;
         }
 
         .products-dashboard #productStaticTable tbody tr.product-list-row:hover > td:first-child,
-        .products-dashboard #productStaticTable tbody tr.product-list-row:focus-within > td:first-child,
-        .products-dashboard #productStaticTable tbody tr.product-list-row.row-hovered > td:first-child,
         .products-dashboard #productList tbody tr.product-list-row:hover > td:first-child,
-        .products-dashboard #productList tbody tr.product-list-row:focus-within > td:first-child,
-        .products-dashboard #productList tbody tr.product-list-row.row-hovered > td:first-child {
+        .products-dashboard #productList tbody tr.product-list-row:focus-within > td:first-child {
             border-left-color: #1d4ed8 !important;
-            padding-left: 1.9rem !important;
-        }
-
-        .products-dashboard #productStaticTable tbody tr.product-list-row:hover > td:last-child,
-        .products-dashboard #productStaticTable tbody tr.product-list-row:focus-within > td:last-child,
-        .products-dashboard #productStaticTable tbody tr.product-list-row.row-hovered > td:last-child,
-        .products-dashboard #productList tbody tr.product-list-row:hover > td:last-child,
-        .products-dashboard #productList tbody tr.product-list-row:focus-within > td:last-child,
-        .products-dashboard #productList tbody tr.product-list-row.row-hovered > td:last-child {
-            border-right-color: #2563eb !important;
         }
 
         .products-dashboard #productStaticTable tbody tr.product-list-row:hover .badge,
-        .products-dashboard #productStaticTable tbody tr.product-list-row:focus-within .badge,
-        .products-dashboard #productStaticTable tbody tr.product-list-row.row-hovered .badge,
         .products-dashboard #productList tbody tr.product-list-row:hover .badge,
-        .products-dashboard #productList tbody tr.product-list-row:focus-within .badge,
-        .products-dashboard #productList tbody tr.product-list-row.row-hovered .badge {
-            transform: translateX(3px);
-            box-shadow: 0 8px 16px rgba(37, 99, 235, 0.18);
+        .products-dashboard #productList tbody tr.product-list-row:focus-within .badge {
+            box-shadow: 0 8px 16px rgba(37, 99, 235, 0.12);
         }
 
         .products-dashboard #productStaticTable tbody tr.product-list-row:hover > td:nth-child(3),
-        .products-dashboard #productStaticTable tbody tr.product-list-row:focus-within > td:nth-child(3),
-        .products-dashboard #productStaticTable tbody tr.product-list-row.row-hovered > td:nth-child(3),
         .products-dashboard #productStaticTable tbody tr.product-list-row:hover > td:nth-child(4),
-        .products-dashboard #productStaticTable tbody tr.product-list-row:focus-within > td:nth-child(4),
-        .products-dashboard #productStaticTable tbody tr.product-list-row.row-hovered > td:nth-child(4),
         .products-dashboard #productList tbody tr.product-list-row:hover > td:nth-child(3),
-        .products-dashboard #productList tbody tr.product-list-row:focus-within > td:nth-child(3),
-        .products-dashboard #productList tbody tr.product-list-row.row-hovered > td:nth-child(3),
         .products-dashboard #productList tbody tr.product-list-row:hover > td:nth-child(4),
-        .products-dashboard #productList tbody tr.product-list-row:focus-within > td:nth-child(4),
-        .products-dashboard #productList tbody tr.product-list-row.row-hovered > td:nth-child(4) {
+        .products-dashboard #productList tbody tr.product-list-row:focus-within > td:nth-child(3),
+        .products-dashboard #productList tbody tr.product-list-row:focus-within > td:nth-child(4) {
             color: #1d4ed8 !important;
-            transform: translateX(3px);
-        }
-
-        .products-dashboard #productStaticTable tbody tr.product-list-row > td:first-child::before,
-        .products-dashboard #productList tbody tr.product-list-row > td:first-child::before {
-            content: 'View';
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 64px;
-            margin-right: 10px;
-            padding: 6px 11px;
-            border-radius: 999px;
-            background: #dbeafe;
-            color: #1d4ed8;
-            font-size: 10px;
-            font-weight: 800;
-            letter-spacing: .06em;
-            text-transform: uppercase;
-            opacity: 1;
-            transition: background-color .18s ease, color .18s ease, transform .18s ease, opacity .18s ease, box-shadow .18s ease;
-        }
-
-        .products-dashboard #productStaticTable tbody tr.product-list-row > td:last-child::after,
-        .products-dashboard #productList tbody tr.product-list-row > td:last-child::after {
-            content: 'Open ->';
-            position: absolute;
-            right: 14px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #1d4ed8;
-            font-size: 12px;
-            font-weight: 800;
-            letter-spacing: .08em;
-            text-transform: uppercase;
-            opacity: .82;
-            transition: transform .18s ease, opacity .18s ease, color .18s ease;
-            pointer-events: none;
-        }
-
-        .products-dashboard #productStaticTable tbody tr.product-list-row:hover > td:first-child::before,
-        .products-dashboard #productStaticTable tbody tr.product-list-row:focus-within > td:first-child::before,
-        .products-dashboard #productStaticTable tbody tr.product-list-row.row-hovered > td:first-child::before,
-        .products-dashboard #productList tbody tr.product-list-row:hover > td:first-child::before,
-        .products-dashboard #productList tbody tr.product-list-row:focus-within > td:first-child::before,
-        .products-dashboard #productList tbody tr.product-list-row.row-hovered > td:first-child::before {
-            background: #2563eb;
-            color: #ffffff;
-            opacity: 1;
-            transform: translateX(6px) scale(1.03);
-            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.26);
-        }
-
-        .products-dashboard #productStaticTable tbody tr.product-list-row:hover > td:last-child::after,
-        .products-dashboard #productStaticTable tbody tr.product-list-row:focus-within > td:last-child::after,
-        .products-dashboard #productStaticTable tbody tr.product-list-row.row-hovered > td:last-child::after,
-        .products-dashboard #productList tbody tr.product-list-row:hover > td:last-child::after,
-        .products-dashboard #productList tbody tr.product-list-row:focus-within > td:last-child::after,
-        .products-dashboard #productList tbody tr.product-list-row.row-hovered > td:last-child::after {
-            opacity: 1;
-            color: #1d4ed8;
-            transform: translateY(-50%) translateX(12px);
         }
 
         .products-dashboard #productStaticTable tbody tr.product-list-row:hover .stock-input,
-        .products-dashboard #productStaticTable tbody tr.product-list-row:focus-within .stock-input,
-        .products-dashboard #productStaticTable tbody tr.product-list-row.row-hovered .stock-input,
         .products-dashboard #productList tbody tr.product-list-row:hover .stock-input,
-        .products-dashboard #productList tbody tr.product-list-row:focus-within .stock-input,
-        .products-dashboard #productList tbody tr.product-list-row.row-hovered .stock-input {
+        .products-dashboard #productList tbody tr.product-list-row:focus-within .stock-input {
             box-shadow: 0 0 0 3px rgba(191, 219, 254, 0.8);
         }
 
@@ -265,19 +147,31 @@
         }
 
         .products-dashboard #productStaticTable tbody tr.product-list-row:hover .flex-shrink-0,
-        .products-dashboard #productStaticTable tbody tr.product-list-row:focus-within .flex-shrink-0,
-        .products-dashboard #productStaticTable tbody tr.product-list-row.row-hovered .flex-shrink-0,
         .products-dashboard #productList tbody tr.product-list-row:hover .flex-shrink-0,
-        .products-dashboard #productList tbody tr.product-list-row:focus-within .flex-shrink-0,
-        .products-dashboard #productList tbody tr.product-list-row.row-hovered .flex-shrink-0 {
-            transform: scale(1.06);
+        .products-dashboard #productList tbody tr.product-list-row:focus-within .flex-shrink-0 {
+            transform: scale(1.02);
             border-color: #60a5fa;
-            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.16);
+            box-shadow: 0 8px 16px rgba(37, 99, 235, 0.12);
         }
 
         .product-list-row .stock-input {
             position: relative;
             z-index: 2;
+        }
+
+        .product-list-row .product-action-cell {
+            width: 68px;
+            text-align: center;
+        }
+
+        .product-list-row .product-action-toggle {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px !important;
+            border: 1px solid rgba(203, 213, 225, 0.9) !important;
+            background: rgba(255, 255, 255, 0.94) !important;
+            color: #475569 !important;
+            padding: 0 !important;
         }
     </style>
 @endsection
@@ -357,7 +251,7 @@
                             <div class="d-flex justify-content-between flex-wrap gap-3 align-items-start">
                                 <div>
                                     <h5 class="card-title mb-1">Product List</h5>
-                                    <p class="text-muted mb-0">Click any row to open the master product's marketplace view.</p>
+                                    <p class="text-muted mb-0">Use the action menu to open the master product's marketplace view.</p>
                                 </div>
                                 <div class="d-flex justify-content-end gap-3 flex-wrap">
                                     @can('create product & service')
@@ -402,12 +296,13 @@
                                         <th>MRP</th>
                                         <th>GST</th>
                                         <th>Stock Qty</th>
+                                        <th data-ordering="false" style="width: 70px;">Actions</th>
                                     </tr>
 
                                 </thead>
                                 <tbody>
                                     @foreach($products as $index => $product)
-                                        <tr class="main-row product-list-row" data-href="{{ route('products.marketplace', $product->id) }}">
+                                        <tr class="main-row product-list-row">
                                             <td>{{ $index + 1 }}</td>
                                             <td>
                                                 <div class="flex-shrink-0 bg-light rounded p-1" style="width: 50px; height: 50px;">
@@ -438,6 +333,25 @@
                                                     min="0"
                                                     style="width:120px;"
                                                 >
+                                            </td>
+                                            <td class="product-action-cell">
+                                                <div class="dropdown">
+                                                    <button class="btn btn-sm product-action-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Product actions">
+                                                        <i class="ri-more-2-fill"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu dropdown-menu-end">
+                                                        <li>
+                                                            <a class="dropdown-item" href="{{ route('products.marketplace', $product->id) }}">
+                                                                <i class="ri-eye-line align-bottom me-2 text-muted"></i> View Product
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="dropdown-item" href="{{ route('products.activity', $product->id) }}">
+                                                                <i class="ri-history-line align-bottom me-2 text-muted"></i> Product Activity
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -565,26 +479,6 @@
             neutralizeLegacyProductDataTable();
             setTimeout(neutralizeLegacyProductDataTable, 250);
             setTimeout(neutralizeLegacyProductDataTable, 1000);
-        });
-
-        $(document).on('click', '.product-list-row', function (event) {
-            if ($(event.target).closest('a, button, input, select, textarea, label').length) {
-                return;
-            }
-
-            const url = $(this).data('href');
-
-            if (url) {
-                window.location.href = url;
-            }
-        });
-
-        $(document).on('mouseenter focusin', '.product-list-row', function () {
-            $(this).addClass('row-hovered');
-        });
-
-        $(document).on('mouseleave focusout', '.product-list-row', function () {
-            $(this).removeClass('row-hovered');
         });
 
         $(document).on('change', '.stock-input', function() {
