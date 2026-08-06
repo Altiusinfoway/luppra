@@ -1,6 +1,7 @@
 @php
     $timelineActivities = $activities ?? null;
     $emptyMessage = $emptyMessage ?? 'No activity found.';
+    $activityTimezone = $activityTimezone ?? 'Asia/Kolkata';
     $normalizeActivityValue = static function ($value) use (&$normalizeActivityValue) {
         if (is_array($value)) {
             $normalized = [];
@@ -180,7 +181,7 @@
                                 <span class="badge bg-light text-muted">{{ ucfirst($module) }}</span>
                             @endif
                             <small class="text-muted ms-auto">
-                                {{ optional($activity->created_at)->format('d M Y, h:i A') }}
+                                {{ optional($activity->created_at)->timezone($activityTimezone)->format('d M Y, h:i A') }}
                             </small>
                         </div>
 

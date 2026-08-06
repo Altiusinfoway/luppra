@@ -57,6 +57,10 @@
 @endsection
 
 @section('content')
+    @php
+        $indiaTimezone = 'Asia/Kolkata';
+    @endphp
+
     <div class="page-content product-activity-suite">
         <div class="container-fluid">
             <div class="row">
@@ -134,7 +138,9 @@
                                             <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
                                                 <h6 class="mb-0">{{ optional($stockActivity->created_user)->name ?: 'System' }}</h6>
                                                 <span class="badge bg-primary-subtle text-primary">Stock Update</span>
-                                                <small class="text-muted ms-auto">{{ optional($stockActivity->date_time)->format('d M Y, h:i A') }}</small>
+                                                <small class="text-muted ms-auto">
+                                                    {{ optional($stockActivity->date_time)->timezone($indiaTimezone)->format('d M Y, h:i A') }}
+                                                </small>
                                             </div>
                                             <p class="text-muted mb-0">{{ $stockActivity->message }}</p>
                                         </div>
