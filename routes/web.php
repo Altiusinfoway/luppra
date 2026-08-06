@@ -200,6 +200,7 @@ Route::group(['prefix' => '', 'middleware' => ['auth']], function () {
 
     Route::post('/bulk-stock-update',[ProductController::class,'bulkStockUpdate'])->name('products.bulk_stock_update');
     Route::get('products/data', [ProductController::class, 'data'])->name('products.data');
+    Route::get('products/partial-inventory', [ProductController::class, 'partialInventory'])->name('products.partial_inventory');
     Route::get('marketplace-accounts', [ProductController::class, 'marketplaceAccounts'])->name('products.marketplace.accounts.index');
     Route::post('marketplace-accounts', [ProductController::class, 'storeMarketplaceAccount'])->name('products.marketplace.accounts.store');
     Route::patch('marketplace-accounts/{account}', [ProductController::class, 'updateMarketplaceAccount'])->name('products.marketplace.accounts.update');
@@ -210,6 +211,7 @@ Route::group(['prefix' => '', 'middleware' => ['auth']], function () {
     Route::get('products/{product}/marketplace/create-listing', [ProductController::class, 'createMarketplaceListing'])->name('products.marketplace.listings.create');
     Route::post('products/{product}/marketplace/listings', [ProductController::class, 'storeMarketplaceListing'])->name('products.marketplace.listings.store');
     Route::get('products/{product}/marketplace/listings/{listing}/edit', [ProductController::class, 'editMarketplaceListing'])->name('products.marketplace.listings.edit');
+    Route::patch('products/{product}/marketplace/listings/{listing}/quick-update', [ProductController::class, 'quickUpdateMarketplaceListing'])->name('products.marketplace.listings.quick_update');
     Route::patch('products/{product}/marketplace/listings/{listing}', [ProductController::class, 'updateMarketplaceListing'])->name('products.marketplace.listings.update');
     Route::delete('products/{product}/marketplace/listings/{listing}', [ProductController::class, 'destroyMarketplaceListing'])->name('products.marketplace.listings.destroy');
     Route::resource('products', ProductController::class);

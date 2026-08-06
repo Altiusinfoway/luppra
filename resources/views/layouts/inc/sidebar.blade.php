@@ -1051,12 +1051,34 @@
                     </li>
                 @endif
 
+                @php
+                    $isPartialInventoryRoute = request()->routeIs('products.partial_inventory');
+                    $isProductsMenuOpen = $isProductRoute || $isPartialInventoryRoute;
+                @endphp
+
                 @if ($uiCanSales && \Auth::user()->can('manage product & service'))
                     <li class="nav-item">
-                        <a href="{{ route('products.index') }}"
-                            class="nav-link {{ $isProductRoute ? 'active' : '' }} menu-link">
+                        <a class="nav-link menu-link {{ $isProductsMenuOpen ? 'active' : '' }}" href="#products-menu"
+                            data-bs-toggle="collapse" role="button"
+                            aria-expanded="{{ $isProductsMenuOpen ? 'true' : 'false' }}" aria-controls="products-menu">
                             <i class="ri-box-3-line"></i> <span>Products</span>
                         </a>
+                        <div class="collapse menu-dropdown {{ $isProductsMenuOpen ? 'show' : '' }}" id="products-menu">
+                            <ul class="nav nav-sm flex-column">
+                                <li class="nav-item">
+                                    <a href="{{ route('products.index') }}"
+                                        class="nav-link {{ $isProductRoute && !$isPartialInventoryRoute ? 'active' : '' }}">
+                                        Product List
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('products.partial_inventory') }}"
+                                        class="nav-link {{ $isPartialInventoryRoute ? 'active' : '' }}">
+                                        Partial Inventory
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                     </li>
                 @endif
 

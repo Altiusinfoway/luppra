@@ -14,7 +14,7 @@
                 radial-gradient(circle at left center, rgba(37, 99, 235, 0.16), transparent 30%),
                 linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
             color: #0f172a;
-            overflow: hidden;
+            overflow: visible;
             position: relative;
             box-shadow: 0 20px 48px rgba(15, 23, 42, 0.08);
         }
@@ -27,6 +27,14 @@
             height: 220px;
             background: rgba(37, 99, 235, 0.08);
             border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .marketplace-dashboard .hero-card .card-body {
+            position: relative;
+            z-index: 1;
+            overflow: visible;
         }
 
         .marketplace-dashboard .stat-card,
@@ -190,6 +198,15 @@
             font-weight: 800;
             letter-spacing: .08em;
             text-transform: uppercase;
+        }
+
+        .marketplace-dashboard .dropdown,
+        .marketplace-dashboard .btn-group {
+            position: relative;
+        }
+
+        .marketplace-dashboard .dropdown-menu {
+            z-index: 1085;
         }
 
         @media (max-width: 767.98px) {

@@ -206,6 +206,42 @@ class ProductController extends Controller
         }
     }
 
+    public function partialInventory()
+    {
+        if (!\Auth::user()->can('manage product & service')) {
+            return redirect()->back()->with('error', 'Permission denied.');
+        }
+
+        $products = Products::query()
+            ->where('created_by', \Auth::user()->creatorId())
+            ->with(['marketplaceListings', 'getGstSlabMaster'])
+            ->orderBy('name')
+            ->get();
+
+        $accountColumns = $products
+            ->flatMap(function ($product) {
+                return $product->marketplaceListings->map(function ($listing) {
+                    $platform = strtolower(trim((string) ($listing->platform ?? '')));
+                    $accountName = trim((string) ($listing->account_name ?? '')) ?: 'Primary Account';
+
+                    return [
+                        'key' => $platform . '::' . $accountName,
+                        'platform' => $platform,
+                        'account_name' => $accountName,
+                        'label' => trim(ucfirst($platform) . ' / ' . $accountName),
+                    ];
+                });
+            })
+            ->unique('key')
+            ->sortBy('label')
+            ->values();
+
+        return view('products.partial_inventory', [
+            'products' => $products,
+            'accountColumns' => $accountColumns,
+            'listingStatuses' => $this->listingStatuses,
+        ]);
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -829,6 +865,29 @@ class ProductController extends Controller
         $listing->save();
 
         return redirect()->route('products.marketplace', $product->id)->with('success', 'Marketplace listing updated successfully.');
+    }
+
+    public function quickUpdateMarketplaceListing(Request $request, string $productId, string $listingId)
+    {
+        if (!\Auth::user()->can('edit product & service')) {
+            return redirect()->back()->with('error', 'Permission denied.');
+        }
+
+        $product = Products::where('created_by', \Auth::user()->creatorId())->findOrFail($productId);
+        $listing = MarketplaceListing::where('product_id', $product->id)->findOrFail($listingId);
+
+        $validated = $request->validate([
+            'allocated_stock' => 'nullable|integer|min:0',
+            'reserved_stock' => 'nullable|integer|min:0',
+            'listing_status' => 'required|in:' . implode(',', array_keys($this->listingStatuses)),
+        ]);
+
+        $listing->allocated_stock = $validated['allocated_stock'] ?? null;
+        $listing->reserved_stock = (int) ($validated['reserved_stock'] ?? 0);
+        $listing->listing_status = strtolower((string) $validated['listing_status']);
+        $listing->save();
+
+        return redirect()->back()->with('success', 'Marketplace listing updated successfully.');
     }
 
     public function destroyMarketplaceListing(string $productId, string $listingId)
@@ -1478,7 +1537,7 @@ class ProductController extends Controller
     private function validateMarketplaceListing(Request $request, Products $product, ?int $listingId = null): array
     {
         $validated = $request->validate([
-            'platform' => 'required|in:amazon,flipkart',
+            'platform' => 'nullable|in:amazon,flipkart',
             'marketplace_account_id' => 'required|integer|exists:marketplace_accounts,id',
             'platform_sku' => 'required|string|max:255',
             'marketplace_item_id' => 'nullable|string|max:255',

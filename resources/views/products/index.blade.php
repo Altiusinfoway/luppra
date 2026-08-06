@@ -64,6 +64,7 @@
         .products-dashboard .toolbar-card {
             border: 1px solid rgba(255, 255, 255, 0.78);
             border-radius: 22px;
+            overflow: visible;
         }
 
         .products-dashboard .filter-shell {
@@ -176,9 +177,27 @@
             z-index: 2;
         }
 
+        .product-stock-value {
+            min-width: 90px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: .55rem .75rem;
+            border-radius: 12px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-weight: 700;
+        }
+
+        .stock-adjust-input {
+            width: 110px;
+        }
+
         .product-list-row .product-action-cell {
             width: 68px;
             text-align: center;
+            position: relative;
+            overflow: visible;
         }
 
         .product-list-row .product-action-toggle {
@@ -189,6 +208,22 @@
             background: rgba(255, 255, 255, 0.94) !important;
             color: #475569 !important;
             padding: 0 !important;
+        }
+
+        .products-dashboard .card-body,
+        .products-dashboard .table-responsive,
+        .products-dashboard .dataTables_wrapper,
+        .products-dashboard .dt-container {
+            overflow: visible;
+        }
+
+        .products-dashboard .dropdown,
+        .products-dashboard .btn-group {
+            position: relative;
+        }
+
+        .products-dashboard .dropdown-menu {
+            z-index: 1085;
         }
     </style>
 @endsection
@@ -327,6 +362,8 @@
                                         <th>MRP</th>
                                         <th>GST</th>
                                         <th>Stock Qty</th>
+                                        <th data-ordering="false">Deduct Inventory</th>
+                                        <th data-ordering="false">Add Inventory</th>
                                         <th data-ordering="false" style="width: 70px;">Actions</th>
                                     </tr>
 
@@ -356,13 +393,30 @@
                                             <td>{{ number_format((float) $product->price, 2) }}</td>
                                             <td>{{ $product?->getGstSlabMaster?->rate ?? 0 }}</td>
                                             <td>
+                                                <span class="product-stock-value stock-current-display" data-product-id="{{ $product->id }}">
+                                                    {{ number_format((float) ($product->stock_qty ?? 0), 2) }}
+                                                </span>
+                                            </td>
+                                            <td>
                                                 <input
                                                     type="number"
-                                                    class="form-control stock-input"
+                                                    class="form-control stock-adjust-input stock-deduct-input"
                                                     data-product-id="{{ $product->id }}"
-                                                    value="{{ $product->stock_qty ?? 0 }}"
+                                                    data-current-stock="{{ (float) ($product->stock_qty ?? 0) }}"
+                                                    value="0"
                                                     min="0"
-                                                    style="width:120px;"
+                                                    step="1"
+                                                >
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    class="form-control stock-adjust-input stock-add-input"
+                                                    data-product-id="{{ $product->id }}"
+                                                    data-current-stock="{{ (float) ($product->stock_qty ?? 0) }}"
+                                                    value="0"
+                                                    min="0"
+                                                    step="1"
                                                 >
                                             </td>
                                             <td class="product-action-cell">
@@ -522,16 +576,41 @@
             });
         });
 
-        $(document).on('change', '.stock-input', function() {
+        function formatStockValue(value) {
+            const numericValue = parseFloat(value || 0);
 
-            let productId = $(this).data('product-id');
+            if (Number.isInteger(numericValue)) {
+                return numericValue.toString();
+            }
 
-            let qty = $(this).val();
+            return numericValue.toFixed(2);
+        }
 
-            pendingStockUpdates[productId] = qty;
+        function updatePendingStock(productId) {
+            const $deductInput = $(`.stock-deduct-input[data-product-id="${productId}"]`);
+            const $addInput = $(`.stock-add-input[data-product-id="${productId}"]`);
+
+            if (!$deductInput.length || !$addInput.length) {
+                return;
+            }
+
+            const currentStock = parseFloat($deductInput.data('current-stock')) || 0;
+            const deductQty = Math.max(parseFloat($deductInput.val()) || 0, 0);
+            const addQty = Math.max(parseFloat($addInput.val()) || 0, 0);
+            const finalQty = Math.max(currentStock - deductQty + addQty, 0);
+
+            if (deductQty === 0 && addQty === 0) {
+                delete pendingStockUpdates[productId];
+            } else {
+                pendingStockUpdates[productId] = finalQty;
+            }
 
             refreshStockPanel();
+        }
 
+        $(document).on('input change', '.stock-deduct-input, .stock-add-input', function() {
+            const productId = $(this).data('product-id');
+            updatePendingStock(productId);
         });
 
         function refreshStockPanel() {
@@ -550,19 +629,25 @@
 
             let html = '';
 
-            /*
-                ids.forEach(function(id){
+            ids.forEach(function(id) {
+                const currentStock = parseFloat($(`.stock-deduct-input[data-product-id="${id}"]`).data('current-stock')) || 0;
+                const deductQty = Math.max(parseFloat($(`.stock-deduct-input[data-product-id="${id}"]`).val()) || 0, 0);
+                const addQty = Math.max(parseFloat($(`.stock-add-input[data-product-id="${id}"]`).val()) || 0, 0);
+                const finalQty = pendingStockUpdates[id];
+                const productName = $(`.stock-deduct-input[data-product-id="${id}"]`).closest('tr').find('td:eq(2)').text().trim();
 
-                    html += `
-                    <div class="border-bottom py-1">
-                        Product ID : ${id}
-                        <br>
-                        Qty : ${pendingStockUpdates[id]}
+                html += `
+                    <div class="border rounded p-2 mb-2">
+                        <strong>${productName}</strong><br>
+                        Current: ${formatStockValue(currentStock)} |
+                        Deduct: ${formatStockValue(deductQty)} |
+                        Add: ${formatStockValue(addQty)} |
+                        New Qty: ${formatStockValue(finalQty)}
                     </div>
                 `;
+            });
 
-                });
-                */
+            $('#pendingProductList').html(html);
 
         }
 
@@ -592,9 +677,20 @@
 
                 success: function(response) {
 
+                    products.forEach(function(product) {
+                        const $deductInput = $(`.stock-deduct-input[data-product-id="${product.id}"]`);
+                        const $addInput = $(`.stock-add-input[data-product-id="${product.id}"]`);
+                        const $display = $(`.stock-current-display[data-product-id="${product.id}"]`);
+
+                        $deductInput.data('current-stock', product.qty).val(0);
+                        $addInput.data('current-stock', product.qty).val(0);
+                        $display.text(formatStockValue(product.qty));
+                    });
+
                     pendingStockUpdates = {};
 
                     $('#stockUpdatePanel').hide();
+                    $('#pendingProductList').html('');
 
                     show_toastr('success', 'Stock Updated Successfully.');
                 }
