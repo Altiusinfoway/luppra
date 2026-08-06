@@ -200,7 +200,7 @@ class AuthenticatedSessionController extends Controller
 
         $setting = Utility::settingsById($user->creatorId());
 
-        $timezone = $setting['timezone'] ? $setting['timezone'] : 'UTC';
+        $timezone = $setting['timezone'] ? $setting['timezone'] : 'Asia/Kolkata';
         date_default_timezone_set($timezone);
 
         // Update Last Login Time
