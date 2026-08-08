@@ -24,16 +24,12 @@ use App\Models\QuoteProducts;
 use App\Services\ActivityLogger;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 ;
 
 class ProductController extends Controller
 {
-    private array $supportedPlatforms = [
-        'amazon' => 'Amazon',
-        'flipkart' => 'Flipkart',
-    ];
-
     private array $listingStatuses = [
         'active' => 'Active',
         'inactive' => 'Inactive',
@@ -45,7 +41,61 @@ class ProductController extends Controller
         'fbm' => 'FBM',
         'flipkart_fbf' => 'Flipkart Fulfilled',
         'seller' => 'Seller Fulfilled',
+        'warehouse' => 'Warehouse Fulfilled',
+        'dropship' => 'Dropship',
     ];
+
+    private function supportedPlatformRule(bool $nullable = false): string
+    {
+        $rule = 'string|max:255';
+
+        return $nullable ? 'nullable|' . $rule : 'required|' . $rule;
+    }
+
+    private function normalizePlatform(?string $platform): string
+    {
+        $platform = strtolower(trim((string) $platform));
+        $platform = preg_replace('/\s+/', ' ', $platform);
+
+        return (string) $platform;
+    }
+
+    private function resolvePlatformInput(array $validated): string
+    {
+        $platform = trim((string) ($validated['platform'] ?? ''));
+        $customPlatform = trim((string) ($validated['custom_platform'] ?? ''));
+
+        if ($platform === '__custom__') {
+            $platform = $customPlatform;
+        }
+
+        if ($platform === '' && $customPlatform !== '') {
+            $platform = $customPlatform;
+        }
+
+        return $this->normalizePlatform($platform);
+    }
+
+    private function platformSuggestions()
+    {
+        $accountPlatforms = MarketplaceAccount::query()
+            ->where('created_by', \Auth::user()->creatorId())
+            ->pluck('platform');
+
+        $listingPlatforms = Schema::hasTable('marketplace_listings')
+            ? MarketplaceListing::query()
+                ->where('created_by', \Auth::user()->creatorId())
+                ->pluck('platform')
+            : collect();
+
+        return $accountPlatforms
+            ->merge($listingPlatforms)
+            ->filter(fn ($platform) => trim((string) $platform) !== '')
+            ->map(fn ($platform) => $this->normalizePlatform((string) $platform))
+            ->unique()
+            ->sort()
+            ->values();
+    }
 
     /**
      * Display a listing of the resource.
@@ -221,7 +271,7 @@ class ProductController extends Controller
         $accountColumns = $products
             ->flatMap(function ($product) {
                 return $product->marketplaceListings->map(function ($listing) {
-                    $platform = strtolower(trim((string) ($listing->platform ?? '')));
+                    $platform = $this->normalizePlatform((string) ($listing->platform ?? ''));
                     $accountName = trim((string) ($listing->account_name ?? '')) ?: 'Primary Account';
 
                     return [
@@ -258,7 +308,7 @@ class ProductController extends Controller
             // $data['categories'] = Category::pluck('name', 'id')->toArray();
 
             $data['gst_all'] = GstSlabMaster::where('created_by',\Auth::user()->creatorId())->pluck('rate', 'id')->toArray();
-            $data['supportedPlatforms'] = $this->supportedPlatforms;
+            $data['platformSuggestions'] = $this->platformSuggestions();
             $data['listingStatuses'] = $this->listingStatuses;
             $data['fulfillmentTypes'] = $this->fulfillmentTypes;
             $data['marketplaceEnabled'] = Schema::hasTable('marketplace_listings');
@@ -405,14 +455,14 @@ class ProductController extends Controller
                 ->get();
 
             $gst_all = GstSlabMaster::where('created_by',\Auth::user()->creatorId())->pluck('rate', 'id')->toArray();
-            $supportedPlatforms = $this->supportedPlatforms;
+            $platformSuggestions = $this->platformSuggestions();
             $listingStatuses = $this->listingStatuses;
             $fulfillmentTypes = $this->fulfillmentTypes;
             $marketplaceEnabled = Schema::hasTable('marketplace_listings');
             if ($marketplaceEnabled) {
                 $product->load('marketplaceListings');
             }
-            return view('products.edit', compact('product', 'unitTypes', 'units', 'categories','gst_all', 'supportedPlatforms', 'listingStatuses', 'fulfillmentTypes', 'marketplaceEnabled'));
+            return view('products.edit', compact('product', 'unitTypes', 'units', 'categories','gst_all', 'platformSuggestions', 'listingStatuses', 'fulfillmentTypes', 'marketplaceEnabled'));
         } else {
             return response()->json(['error' => __('Permission Denied.')], 401);
         }
@@ -425,7 +475,7 @@ class ProductController extends Controller
         }
 
         $product = Products::where('created_by', \Auth::user()->creatorId())->findOrFail($id);
-        $supportedPlatforms = $this->supportedPlatforms;
+        $platformSuggestions = $this->platformSuggestions();
         $listingStatuses = $this->listingStatuses;
         $fulfillmentTypes = $this->fulfillmentTypes;
         $marketplaceEnabled = Schema::hasTable('marketplace_listings');
@@ -618,7 +668,7 @@ class ProductController extends Controller
 
         return view('products.marketplace', compact(
             'product',
-            'supportedPlatforms',
+            'platformSuggestions',
             'listingStatuses',
             'fulfillmentTypes',
             'marketplaceEnabled',
@@ -657,8 +707,12 @@ class ProductController extends Controller
         }
 
         $search = trim((string) $request->input('search', ''));
+        $period = trim((string) $request->input('period', 'all'));
+        $movement = trim((string) $request->input('movement', 'all'));
+        $dateFrom = trim((string) $request->input('date_from', ''));
+        $dateTo = trim((string) $request->input('date_to', ''));
 
-        $query = ProductStockActivity::query()
+        $baseQuery = ProductStockActivity::query()
             ->with([
                 'created_user:id,name',
                 'product:id,name,sku_code,created_by',
@@ -666,6 +720,30 @@ class ProductController extends Controller
             ->whereHas('product', function ($productQuery) {
                 $productQuery->where('created_by', \Auth::user()->creatorId());
             });
+
+        $query = clone $baseQuery;
+
+        if ($period === 'today') {
+            $query->whereDate('date_time', Carbon::today('Asia/Kolkata')->toDateString());
+        } elseif ($period === 'this_week') {
+            $query->whereBetween('date_time', [
+                Carbon::now('Asia/Kolkata')->startOfWeek()->copy()->timezone(config('app.timezone')),
+                Carbon::now('Asia/Kolkata')->endOfWeek()->copy()->timezone(config('app.timezone')),
+            ]);
+        } elseif ($period === 'this_month') {
+            $query->whereBetween('date_time', [
+                Carbon::now('Asia/Kolkata')->startOfMonth()->copy()->timezone(config('app.timezone')),
+                Carbon::now('Asia/Kolkata')->endOfMonth()->copy()->timezone(config('app.timezone')),
+            ]);
+        } elseif ($period === 'custom') {
+            if ($dateFrom !== '') {
+                $query->where('date_time', '>=', Carbon::parse($dateFrom, 'Asia/Kolkata')->startOfDay()->timezone(config('app.timezone')));
+            }
+
+            if ($dateTo !== '') {
+                $query->where('date_time', '<=', Carbon::parse($dateTo, 'Asia/Kolkata')->endOfDay()->timezone(config('app.timezone')));
+            }
+        }
 
         if ($search !== '') {
             $query->where(function ($stockQuery) use ($search) {
@@ -680,13 +758,22 @@ class ProductController extends Controller
             });
         }
 
-        $stockActivities = $query
+        $filteredActivities = (clone $query)
             ->orderByDesc('date_time')
             ->orderByDesc('id')
-            ->paginate(20)
-            ->withQueryString();
+            ->get();
 
-        $stockActivities->getCollection()->transform(function (ProductStockActivity $activity) {
+        $summary = [
+            'total_logs' => 0,
+            'added_logs' => 0,
+            'deducted_logs' => 0,
+            'added_qty' => 0,
+            'deducted_qty' => 0,
+            'net_change' => 0,
+            'affected_products' => 0,
+        ];
+
+        $filteredActivities->transform(function (ProductStockActivity $activity) use (&$summary) {
             [$direction, $delta, $before, $after] = $this->summarizeStockActivity($activity);
 
             $activity->inventory_direction = $direction;
@@ -694,36 +781,66 @@ class ProductController extends Controller
             $activity->inventory_before = $before;
             $activity->inventory_after = $after;
 
-            return $activity;
-        });
-
-        $summaryQuery = ProductStockActivity::query()
-            ->whereHas('product', function ($productQuery) {
-                $productQuery->where('created_by', \Auth::user()->creatorId());
-            })
-            ->with('product:id,created_by');
-
-        $allActivities = $summaryQuery->get();
-        $summary = [
-            'total_logs' => $allActivities->count(),
-            'added_logs' => 0,
-            'deducted_logs' => 0,
-            'net_change' => 0,
-        ];
-
-        foreach ($allActivities as $activity) {
-            [$direction, $delta] = $this->summarizeStockActivity($activity);
-
+            $summary['total_logs']++;
             if ($direction === 'added') {
                 $summary['added_logs']++;
+                $summary['added_qty'] += $delta;
                 $summary['net_change'] += $delta;
             } elseif ($direction === 'deducted') {
                 $summary['deducted_logs']++;
+                $summary['deducted_qty'] += $delta;
                 $summary['net_change'] -= $delta;
             }
+
+            return $activity;
+        });
+
+        $summary['affected_products'] = $filteredActivities->pluck('product_id')->filter()->unique()->count();
+
+        if ($movement !== 'all') {
+            $filteredActivities = $filteredActivities->filter(function ($activity) use ($movement) {
+                return ($activity->inventory_direction ?? 'neutral') === $movement;
+            })->values();
         }
 
-        return view('products.inventory_activity', compact('stockActivities', 'summary', 'search'));
+        $currentPage = max((int) $request->input('page', 1), 1);
+        $perPage = 20;
+        $currentItems = $filteredActivities->slice(($currentPage - 1) * $perPage, $perPage)->values();
+
+        $stockActivities = new \Illuminate\Pagination\LengthAwarePaginator(
+            $currentItems,
+            $filteredActivities->count(),
+            $perPage,
+            $currentPage,
+            [
+                'path' => $request->url(),
+                'query' => $request->query(),
+            ]
+        );
+
+        $todayStats = $this->inventoryActivityStats(
+            (clone $baseQuery)->whereDate('date_time', Carbon::today('Asia/Kolkata')->toDateString())->get()
+        );
+        $monthStats = $this->inventoryActivityStats(
+            (clone $baseQuery)->whereBetween('date_time', [
+                Carbon::now('Asia/Kolkata')->startOfMonth()->copy()->timezone(config('app.timezone')),
+                Carbon::now('Asia/Kolkata')->endOfMonth()->copy()->timezone(config('app.timezone')),
+            ])->get()
+        );
+
+        $stockActivities = $stockActivities->withQueryString();
+
+        return view('products.inventory_activity', compact(
+            'stockActivities',
+            'summary',
+            'todayStats',
+            'monthStats',
+            'search',
+            'period',
+            'movement',
+            'dateFrom',
+            'dateTo'
+        ));
     }
 
     public function marketplaceAccounts()
@@ -734,13 +851,14 @@ class ProductController extends Controller
 
         $accounts = MarketplaceAccount::query()
             ->where('created_by', \Auth::user()->creatorId())
+            ->withCount('listings')
             ->orderBy('platform')
             ->orderBy('name')
             ->get();
 
         return view('products.accounts.index', [
             'accounts' => $accounts,
-            'supportedPlatforms' => $this->supportedPlatforms,
+            'platformSuggestions' => $this->platformSuggestions(),
         ]);
     }
 
@@ -751,13 +869,18 @@ class ProductController extends Controller
         }
 
         $validated = $request->validate([
-            'platform' => 'required|in:amazon,flipkart',
+            'platform' => $this->supportedPlatformRule(),
+            'custom_platform' => 'nullable|string|max:255',
             'name' => 'required|string|max:255',
             'is_active' => 'nullable|boolean',
         ]);
 
-        $platform = strtolower(trim((string) $validated['platform']));
+        $platform = $this->resolvePlatformInput($validated);
         $name = trim((string) $validated['name']);
+
+        if ($platform === '') {
+            return redirect()->back()->with('error', 'Platform is required.')->withInput();
+        }
 
         $exists = MarketplaceAccount::query()
             ->where('created_by', \Auth::user()->creatorId())
@@ -776,6 +899,12 @@ class ProductController extends Controller
             'is_active' => (bool) ($validated['is_active'] ?? true),
         ]);
 
+        $redirectTo = trim((string) $request->input('redirect_to', ''));
+
+        if ($redirectTo !== '') {
+            return redirect($redirectTo)->with('success', 'Marketplace account added successfully.');
+        }
+
         return redirect()->route('products.marketplace.accounts.index')->with('success', 'Marketplace account added successfully.');
     }
 
@@ -790,13 +919,18 @@ class ProductController extends Controller
             ->findOrFail($accountId);
 
         $validated = $request->validate([
-            'platform' => 'required|in:amazon,flipkart',
+            'platform' => $this->supportedPlatformRule(),
+            'custom_platform' => 'nullable|string|max:255',
             'name' => 'required|string|max:255',
             'is_active' => 'nullable|boolean',
         ]);
 
-        $platform = strtolower(trim((string) $validated['platform']));
+        $platform = $this->resolvePlatformInput($validated);
         $name = trim((string) $validated['name']);
+
+        if ($platform === '') {
+            return redirect()->back()->with('error', 'Platform is required.')->withInput();
+        }
 
         $exists = MarketplaceAccount::query()
             ->where('created_by', \Auth::user()->creatorId())
@@ -882,12 +1016,12 @@ class ProductController extends Controller
             'reserved_stock' => 0,
         ]);
 
-        $supportedPlatforms = $this->supportedPlatforms;
+        $platformSuggestions = $this->platformSuggestions();
         $listingStatuses = $this->listingStatuses;
         $fulfillmentTypes = $this->fulfillmentTypes;
         $marketplaceAccounts = $this->marketplaceAccountsForForms();
 
-        return view('products.listings.create', compact('product', 'listing', 'supportedPlatforms', 'listingStatuses', 'fulfillmentTypes', 'marketplaceAccounts'));
+        return view('products.listings.create', compact('product', 'listing', 'platformSuggestions', 'listingStatuses', 'fulfillmentTypes', 'marketplaceAccounts'));
     }
 
     public function storeMarketplaceListing(Request $request, string $id)
@@ -919,12 +1053,12 @@ class ProductController extends Controller
         $product = Products::where('created_by', \Auth::user()->creatorId())->findOrFail($productId);
         $listing = MarketplaceListing::where('product_id', $product->id)->findOrFail($listingId);
 
-        $supportedPlatforms = $this->supportedPlatforms;
+        $platformSuggestions = $this->platformSuggestions();
         $listingStatuses = $this->listingStatuses;
         $fulfillmentTypes = $this->fulfillmentTypes;
         $marketplaceAccounts = $this->marketplaceAccountsForForms();
 
-        return view('products.listings.edit', compact('product', 'listing', 'supportedPlatforms', 'listingStatuses', 'fulfillmentTypes', 'marketplaceAccounts'));
+        return view('products.listings.edit', compact('product', 'listing', 'platformSuggestions', 'listingStatuses', 'fulfillmentTypes', 'marketplaceAccounts'));
     }
 
     public function updateMarketplaceListing(Request $request, string $productId, string $listingId)
@@ -1529,7 +1663,7 @@ class ProductController extends Controller
             }
 
             $platformSku = trim((string) ($row['platform_sku'] ?? ''));
-            $platform = strtolower(trim((string) ($row['platform'] ?? '')));
+            $platform = $this->normalizePlatform((string) ($row['platform'] ?? ''));
             $marketplaceAccountId = !empty($row['marketplace_account_id']) ? (int) $row['marketplace_account_id'] : null;
             $accountName = trim((string) ($row['account_name'] ?? '')) ?: 'Primary Account';
 
@@ -1540,7 +1674,7 @@ class ProductController extends Controller
                     ->first();
 
                 if ($account) {
-                    $platform = strtolower(trim((string) $account->platform));
+                    $platform = $this->normalizePlatform((string) $account->platform);
                     $accountName = trim((string) $account->name);
                 }
             }
@@ -1574,7 +1708,7 @@ class ProductController extends Controller
             ];
 
             validator($payload, [
-                'platform' => 'required|in:amazon,flipkart',
+                'platform' => $this->supportedPlatformRule(),
                 'marketplace_account_id' => 'nullable|integer|exists:marketplace_accounts,id',
                 'account_name' => 'nullable|string|max:255',
                 'platform_sku' => 'required|string|max:255',
@@ -1613,7 +1747,7 @@ class ProductController extends Controller
     private function validateMarketplaceListing(Request $request, Products $product, ?int $listingId = null): array
     {
         $validated = $request->validate([
-            'platform' => 'nullable|in:amazon,flipkart',
+            'platform' => $this->supportedPlatformRule(true),
             'marketplace_account_id' => 'required|integer|exists:marketplace_accounts,id',
             'platform_sku' => 'required|string|max:255',
             'marketplace_item_id' => 'nullable|string|max:255',
@@ -1633,13 +1767,13 @@ class ProductController extends Controller
             'external_sync_note' => 'nullable|string|max:255',
         ]);
 
-        $platform = strtolower(trim((string) $validated['platform']));
+        $platform = $this->normalizePlatform((string) $validated['platform']);
         $account = MarketplaceAccount::query()
             ->where('created_by', \Auth::user()->creatorId())
             ->where('id', (int) $validated['marketplace_account_id'])
             ->firstOrFail();
         $accountName = trim((string) $account->name);
-        $platform = strtolower(trim((string) $account->platform));
+        $platform = $this->normalizePlatform((string) $account->platform);
         $platformSku = trim((string) $validated['platform_sku']);
         $marketplaceItemId = trim((string) ($validated['marketplace_item_id'] ?? '')) ?: null;
 
@@ -1792,6 +1926,31 @@ class ProductController extends Controller
         }
 
         return [$direction, $delta, $before, $after];
+    }
+
+    private function inventoryActivityStats($activities): array
+    {
+        $stats = [
+            'total_logs' => 0,
+            'added_qty' => 0,
+            'deducted_qty' => 0,
+            'net_change' => 0,
+        ];
+
+        foreach ($activities as $activity) {
+            [$direction, $delta] = $this->summarizeStockActivity($activity);
+            $stats['total_logs']++;
+
+            if ($direction === 'added') {
+                $stats['added_qty'] += $delta;
+                $stats['net_change'] += $delta;
+            } elseif ($direction === 'deducted') {
+                $stats['deducted_qty'] += $delta;
+                $stats['net_change'] -= $delta;
+            }
+        }
+
+        return $stats;
     }
 
     private function formatStockValue(?float $value): string

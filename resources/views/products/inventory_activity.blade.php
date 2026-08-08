@@ -60,6 +60,63 @@
         .inventory-activity-suite .activity-table td {
             vertical-align: top;
         }
+
+        .inventory-activity-suite .filter-shell {
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            background: #f8fafc;
+            padding: 1rem;
+        }
+
+        .inventory-activity-suite .filter-label {
+            display: block;
+            margin-bottom: 0.35rem;
+            color: #64748b;
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        .inventory-activity-suite .inventory-pagination .pagination {
+            justify-content: flex-end;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 0;
+        }
+
+        .inventory-activity-suite .inventory-pagination .page-item .page-link {
+            min-width: 40px;
+            height: 40px;
+            border: 1px solid #dbe4f0;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #475569;
+            background: #fff;
+            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.04);
+        }
+
+        .inventory-activity-suite .inventory-pagination .page-item.active .page-link {
+            color: #fff;
+            background: #2563eb;
+            border-color: #2563eb;
+            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.2);
+        }
+
+        .inventory-activity-suite .inventory-pagination .page-item.disabled .page-link {
+            color: #94a3b8;
+            background: #f8fafc;
+            border-color: #e2e8f0;
+            box-shadow: none;
+        }
+
+        @media (max-width: 767.98px) {
+            .inventory-activity-suite .inventory-pagination .pagination {
+                justify-content: center;
+            }
+        }
     </style>
 @endsection
 
@@ -90,38 +147,76 @@
                 <div class="col-md-6 col-xl-3">
                     <div class="summary-card h-100">
                         <div class="card-body">
-                            <span class="summary-label">Total Logs</span>
+                            <span class="summary-label">Filtered Logs</span>
                             <h3 class="mb-1">{{ number_format($summary['total_logs'] ?? 0) }}</h3>
-                            <p class="text-muted mb-0">All recorded inventory movements.</p>
+                            <p class="text-muted mb-0">Inventory movements for the selected filter.</p>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6 col-xl-3">
                     <div class="summary-card h-100">
                         <div class="card-body">
-                            <span class="summary-label">Added Entries</span>
-                            <h3 class="mb-1 text-success">{{ number_format($summary['added_logs'] ?? 0) }}</h3>
-                            <p class="text-muted mb-0">Stock increase events across products.</p>
+                            <span class="summary-label">Added Quantity</span>
+                            <h3 class="mb-1 text-success">{{ number_format((float) ($summary['added_qty'] ?? 0), 2) }}</h3>
+                            <p class="text-muted mb-0">{{ number_format($summary['added_logs'] ?? 0) }} stock increase entries.</p>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6 col-xl-3">
                     <div class="summary-card h-100">
                         <div class="card-body">
-                            <span class="summary-label">Deducted Entries</span>
-                            <h3 class="mb-1 text-danger">{{ number_format($summary['deducted_logs'] ?? 0) }}</h3>
-                            <p class="text-muted mb-0">Stock reduction events across products.</p>
+                            <span class="summary-label">Deducted Quantity</span>
+                            <h3 class="mb-1 text-danger">{{ number_format((float) ($summary['deducted_qty'] ?? 0), 2) }}</h3>
+                            <p class="text-muted mb-0">{{ number_format($summary['deducted_logs'] ?? 0) }} stock reduction entries.</p>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6 col-xl-3">
                     <div class="summary-card h-100">
                         <div class="card-body">
-                            <span class="summary-label">Net Change</span>
+                            <span class="summary-label">Affected Products</span>
+                            <h3 class="mb-1">{{ number_format($summary['affected_products'] ?? 0) }}</h3>
+                            <p class="text-muted mb-0">Unique products touched in this result set.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-md-6 col-xl-4">
+                    <div class="summary-card h-100">
+                        <div class="card-body">
+                            <span class="summary-label">Today</span>
+                            <h3 class="mb-1">{{ number_format((float) ($todayStats['net_change'] ?? 0), 2) }}</h3>
+                            <p class="text-muted mb-0">
+                                {{ number_format($todayStats['total_logs'] ?? 0) }} logs |
+                                +{{ number_format((float) ($todayStats['added_qty'] ?? 0), 2) }} /
+                                -{{ number_format((float) ($todayStats['deducted_qty'] ?? 0), 2) }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-4">
+                    <div class="summary-card h-100">
+                        <div class="card-body">
+                            <span class="summary-label">This Month</span>
+                            <h3 class="mb-1">{{ number_format((float) ($monthStats['net_change'] ?? 0), 2) }}</h3>
+                            <p class="text-muted mb-0">
+                                {{ number_format($monthStats['total_logs'] ?? 0) }} logs |
+                                +{{ number_format((float) ($monthStats['added_qty'] ?? 0), 2) }} /
+                                -{{ number_format((float) ($monthStats['deducted_qty'] ?? 0), 2) }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-4">
+                    <div class="summary-card h-100">
+                        <div class="card-body">
+                            <span class="summary-label">Filtered Net Change</span>
                             <h3 class="mb-1 {{ ($summary['net_change'] ?? 0) >= 0 ? 'text-success' : 'text-danger' }}">
                                 {{ number_format((float) ($summary['net_change'] ?? 0), 2) }}
                             </h3>
-                            <p class="text-muted mb-0">Overall net inventory movement.</p>
+                            <p class="text-muted mb-0">Net movement for the currently selected filters.</p>
                         </div>
                     </div>
                 </div>
@@ -129,18 +224,54 @@
 
             <div class="shell-card">
                 <div class="card-body p-4">
+                    <div class="filter-shell mb-4">
+                        <form method="GET" action="{{ route('products.inventory_activity') }}">
+                            <div class="row g-3 align-items-end">
+                                <div class="col-md-6 col-xl-3">
+                                    <label class="filter-label" for="inventory-search">Search</label>
+                                    <input type="text" class="form-control" id="inventory-search" name="search" value="{{ $search }}" placeholder="Product, SKU, user, message">
+                                </div>
+                                <div class="col-md-6 col-xl-2">
+                                    <label class="filter-label" for="inventory-period">Period</label>
+                                    <select class="form-select" id="inventory-period" name="period">
+                                        <option value="all" {{ $period === 'all' ? 'selected' : '' }}>All Time</option>
+                                        <option value="today" {{ $period === 'today' ? 'selected' : '' }}>Today</option>
+                                        <option value="this_week" {{ $period === 'this_week' ? 'selected' : '' }}>This Week</option>
+                                        <option value="this_month" {{ $period === 'this_month' ? 'selected' : '' }}>This Month</option>
+                                        <option value="custom" {{ $period === 'custom' ? 'selected' : '' }}>Custom Range</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 col-xl-2">
+                                    <label class="filter-label" for="inventory-movement">Movement</label>
+                                    <select class="form-select" id="inventory-movement" name="movement">
+                                        <option value="all" {{ $movement === 'all' ? 'selected' : '' }}>All</option>
+                                        <option value="added" {{ $movement === 'added' ? 'selected' : '' }}>Added</option>
+                                        <option value="deducted" {{ $movement === 'deducted' ? 'selected' : '' }}>Deducted</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 col-xl-2">
+                                    <label class="filter-label" for="inventory-date-from">Date From</label>
+                                    <input type="date" class="form-control" id="inventory-date-from" name="date_from" value="{{ $dateFrom }}">
+                                </div>
+                                <div class="col-md-6 col-xl-2">
+                                    <label class="filter-label" for="inventory-date-to">Date To</label>
+                                    <input type="date" class="form-control" id="inventory-date-to" name="date_to" value="{{ $dateTo }}">
+                                </div>
+                                <div class="col-md-6 col-xl-1 d-grid">
+                                    <button type="submit" class="btn btn-primary btn-sm">Apply</button>
+                                </div>
+                                <div class="col-md-6 col-xl-12 d-flex justify-content-end">
+                                    <a href="{{ route('products.inventory_activity') }}" class="btn btn-light btn-sm">Reset Filters</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
                     <div class="d-flex justify-content-between align-items-end flex-wrap gap-3 mb-3">
                         <div>
                             <h5 class="mb-1">All Inventory Logs</h5>
-                            <p class="text-muted mb-0">Search by product, SKU, user, or activity message.</p>
+                            <p class="text-muted mb-0">Use filters to review daily, monthly, or custom inventory movement.</p>
                         </div>
-                        <form method="GET" action="{{ route('products.inventory_activity') }}" class="d-flex gap-2 flex-wrap">
-                            <input type="text" class="form-control" name="search" value="{{ $search }}" placeholder="Search product, SKU, user..." style="min-width:260px;">
-                            <button type="submit" class="btn btn-primary btn-sm">Search</button>
-                            @if($search !== '')
-                                <a href="{{ route('products.inventory_activity') }}" class="btn btn-light btn-sm">Clear</a>
-                            @endif
-                        </form>
                     </div>
 
                     <div class="table-responsive">
@@ -191,8 +322,8 @@
                     </div>
 
                     @if ($stockActivities->hasPages())
-                        <div class="mt-3">
-                            {{ $stockActivities->onEachSide(1)->links() }}
+                        <div class="mt-3 inventory-pagination">
+                            {{ $stockActivities->onEachSide(1)->links('pagination::bootstrap-5') }}
                         </div>
                     @endif
                 </div>
