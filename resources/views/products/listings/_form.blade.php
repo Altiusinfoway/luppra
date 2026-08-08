@@ -1,14 +1,50 @@
 <div class="row g-3">
+    <div class="col-12">
+        <div class="border rounded-4 p-3 bg-light-subtle" style="border-color:#dbeafe !important; background:linear-gradient(135deg, #f8fbff 0%, #eff6ff 100%) !important;">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <div>
+                    <h6 class="mb-1">Add Marketplace Account</h6>
+                    <p class="text-muted mb-0">If the needed Amazon or Flipkart account is missing, create it here and then select it below.</p>
+                </div>
+                <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#quickMarketplaceAccountForm" aria-expanded="false" aria-controls="quickMarketplaceAccountForm">
+                    Add Account
+                </button>
+            </div>
+
+            <div class="collapse" id="quickMarketplaceAccountForm">
+                <form action="{{ route('products.marketplace.accounts.store') }}" method="POST" class="row g-3">
+                    @csrf
+                    <input type="hidden" name="redirect_to" value="{{ url()->full() }}">
+
+                    <div class="col-md-4">
+                        <label class="form-label">Platform</label>
+                        <input type="text" class="form-control" name="platform" list="platform-suggestions" placeholder="Amazon, Flipkart, Meesho..." required>
+                    </div>
+
+                    <div class="col-md-5">
+                        <label class="form-label">Account Name</label>
+                        <input type="text" class="form-control" name="name" placeholder="Example: Amazon Account 1" required>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label d-block">Status</label>
+                        <div class="form-check form-switch pt-2">
+                            <input class="form-check-input" type="checkbox" role="switch" id="quick-account-active" name="is_active" value="1" checked>
+                            <label class="form-check-label" for="quick-account-active">Active</label>
+                        </div>
+                    </div>
+
+                    <div class="col-12 d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary btn-sm">Save Account</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <div class="col-md-6">
         <label class="form-label">Platform</label>
-        <select class="form-select" name="platform" id="listing-platform" required>
-            <option value="">Select Platform</option>
-            @foreach ($supportedPlatforms as $platformKey => $platformLabel)
-                <option value="{{ $platformKey }}" {{ old('platform', $listing->platform) === $platformKey ? 'selected' : '' }}>
-                    {{ $platformLabel }}
-                </option>
-            @endforeach
-        </select>
+        <input type="text" class="form-control" name="platform" id="listing-platform" list="platform-suggestions" value="{{ old('platform', $listing->platform) }}" placeholder="Amazon, Flipkart, Meesho..." required>
         @error('platform')
             <small class="text-danger">{{ $message }}</small>
         @enderror
@@ -22,11 +58,14 @@
         <select class="form-select" name="marketplace_account_id" id="listing-account" required data-selected-account="{{ old('marketplace_account_id', $listing->marketplace_account_id) }}">
             <option value="">Select Marketplace Account</option>
             @foreach ($marketplaceAccounts as $account)
-                <option value="{{ $account->id }}" data-platform="{{ $account->platform }}" {{ (string) old('marketplace_account_id', $listing->marketplace_account_id) === (string) $account->id ? 'selected' : '' }}>
+                <option value="{{ $account->id }}" data-platform="{{ $account->platform }}" data-account-name="{{ $account->name }}" {{ (string) old('marketplace_account_id', $listing->marketplace_account_id) === (string) $account->id ? 'selected' : '' }}>
                     {{ ucfirst($account->platform) }} / {{ $account->name }}
                 </option>
             @endforeach
         </select>
+        @if ($marketplaceAccounts->isEmpty())
+            <small class="text-muted d-block mt-1">No active marketplace accounts found yet. Create one above first.</small>
+        @endif
         @error('marketplace_account_id')
             <small class="text-danger">{{ $message }}</small>
         @enderror
@@ -189,6 +228,12 @@
     </div>
 </div>
 
+<datalist id="platform-suggestions">
+    @foreach (($platformSuggestions ?? collect()) as $platformOption)
+        <option value="{{ $platformOption }}">{{ ucwords($platformOption) }}</option>
+    @endforeach
+</datalist>
+
 <script>
     (function () {
         const platformSelect = document.getElementById('listing-platform');
@@ -199,11 +244,28 @@
             return;
         }
 
-        const selectedAccountId = accountSelect.dataset.selectedAccount || accountSelect.value;
+        const getSelectedOption = function () {
+            return accountSelect.options[accountSelect.selectedIndex] || null;
+        };
+
+        const syncAccountMeta = function () {
+            const selectedOption = getSelectedOption();
+            const selectedPlatform = selectedOption && selectedOption.value
+                ? (selectedOption.dataset.platform || '')
+                : '';
+
+            if (selectedPlatform) {
+                platformSelect.value = selectedPlatform;
+            }
+
+            accountNameInput.value = selectedOption && selectedOption.value
+                ? (selectedOption.dataset.accountName || '')
+                : '';
+        };
 
         const syncAccounts = function () {
             const platform = platformSelect.value;
-            let matched = false;
+            const currentValue = accountSelect.value || accountSelect.dataset.selectedAccount || '';
 
             Array.from(accountSelect.options).forEach(function (option, index) {
                 if (index === 0) {
@@ -218,29 +280,29 @@
                 if (!visible && option.selected) {
                     option.selected = false;
                 }
-
-                if (visible && option.value === selectedAccountId) {
-                    option.selected = true;
-                    matched = true;
-                }
             });
 
-            if (!matched && accountSelect.selectedIndex <= 0) {
+            if (currentValue) {
+                const matchingOption = Array.from(accountSelect.options).find(function (option, index) {
+                    return index > 0 && !option.hidden && option.value === currentValue;
+                });
+
+                if (matchingOption) {
+                    matchingOption.selected = true;
+                }
+            }
+
+            if (accountSelect.selectedIndex <= 0) {
                 accountSelect.value = '';
             }
 
-            const selectedOption = accountSelect.options[accountSelect.selectedIndex];
-            accountNameInput.value = selectedOption && selectedOption.value
-                ? selectedOption.text.split('/').slice(1).join('/').trim()
-                : '';
+            syncAccountMeta();
         };
 
         platformSelect.addEventListener('change', syncAccounts);
         accountSelect.addEventListener('change', function () {
-            const selectedOption = accountSelect.options[accountSelect.selectedIndex];
-            accountNameInput.value = selectedOption && selectedOption.value
-                ? selectedOption.text.split('/').slice(1).join('/').trim()
-                : '';
+            accountSelect.dataset.selectedAccount = accountSelect.value || '';
+            syncAccountMeta();
         });
 
         syncAccounts();

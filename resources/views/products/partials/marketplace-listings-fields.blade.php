@@ -58,12 +58,7 @@
                 <div class="row g-3">
                     <div class="col-md-3">
                         <label class="form-label">Platform</label>
-                        <select class="form-select" name="marketplace_listings[{{ $index }}][platform]">
-                            <option value="">Select Platform</option>
-                            @foreach ($supportedPlatforms as $platformKey => $platformLabel)
-                                <option value="{{ $platformKey }}" {{ ($listing['platform'] ?? '') === $platformKey ? 'selected' : '' }}>{{ $platformLabel }}</option>
-                            @endforeach
-                        </select>
+                        <input type="text" class="form-control" name="marketplace_listings[{{ $index }}][platform]" value="{{ $listing['platform'] ?? '' }}" list="inline-platform-suggestions" placeholder="Amazon, Flipkart, Meesho...">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Platform SKU</label>
@@ -133,12 +128,7 @@
         <div class="row g-3">
             <div class="col-md-3">
                 <label class="form-label">Platform</label>
-                <select class="form-select" name="marketplace_listings[__INDEX__][platform]">
-                    <option value="">Select Platform</option>
-                    @foreach ($supportedPlatforms as $platformKey => $platformLabel)
-                        <option value="{{ $platformKey }}">{{ $platformLabel }}</option>
-                    @endforeach
-                </select>
+                <input type="text" class="form-control" name="marketplace_listings[__INDEX__][platform]" list="inline-platform-suggestions" placeholder="Amazon, Flipkart, Meesho...">
             </div>
             <div class="col-md-3">
                 <label class="form-label">Platform SKU</label>
@@ -199,6 +189,12 @@
         </div>
     </div>
 </template>
+
+<datalist id="inline-platform-suggestions">
+    @foreach (($platformSuggestions ?? collect()) as $platformOption)
+        <option value="{{ $platformOption }}">{{ ucwords($platformOption) }}</option>
+    @endforeach
+</datalist>
 
 <script>
     (function () {
