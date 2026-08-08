@@ -53,10 +53,12 @@
 
         .marketplace-accounts-suite .accounts-table td {
             vertical-align: middle;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
         }
 
         .marketplace-accounts-suite .accounts-table .manage-cell {
-            min-width: 360px;
+            min-width: 430px;
         }
 
         .marketplace-accounts-suite .account-manage-form .form-control,
@@ -80,7 +82,7 @@
 
         .marketplace-accounts-suite .account-manage-actions {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-start;
             align-items: center;
             gap: 10px;
             margin-top: 10px;
@@ -101,6 +103,24 @@
             font-weight: 700;
         }
 
+        .marketplace-accounts-suite .manage-panel {
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            background: #fbfdff;
+            padding: 12px;
+        }
+
+        .marketplace-accounts-suite .table-account-name {
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .marketplace-accounts-suite .table-account-meta {
+            margin-top: 4px;
+            font-size: 12px;
+            color: #64748b;
+        }
+
         @media (max-width: 1199.98px) {
             .marketplace-accounts-suite .account-manage-grid {
                 grid-template-columns: 1fr;
@@ -116,7 +136,7 @@
 
 @section('content')
     @php
-        $platformOptions = collect($platformSuggestions ?? collect())->filter()->values();
+        $platformOptions = collect($platformSuggestions ?? $supportedPlatforms ?? collect())->filter()->values();
     @endphp
 
     <div class="page-content marketplace-accounts-suite">
@@ -128,8 +148,8 @@
                             <div class="row align-items-center g-4">
                                 <div class="col-lg-8">
                                     <span class="eyebrow">Marketplace Accounts</span>
-                                    <h2 class="mt-3 mb-2">Amazon & Flipkart Accounts</h2>
-                                    <p class="text-muted mb-0">Create reusable seller accounts like Flipkart 1, Flipkart 2, Amazon 1, and Amazon 2. Listings can then use the same SKU under different accounts with separate stock buckets.</p>
+                                    <h2 class="mt-3 mb-2">Marketplace Accounts</h2>
+                                    <p class="text-muted mb-0">Create reusable seller accounts for any marketplace and manage separate stock buckets under each account.</p>
                                 </div>
                                 <div class="col-lg-4">
                                     <div class="d-flex justify-content-lg-end">
@@ -217,7 +237,10 @@
                                             @endphp
                                             <tr>
                                                 <td><span class="account-pill">{{ ucfirst($account->platform) }}</span></td>
-                                                <td>{{ $account->name }}</td>
+                                                <td>
+                                                    <div class="table-account-name">{{ $account->name }}</div>
+                                                    <div class="table-account-meta">{{ ucfirst($account->platform) }} seller account</div>
+                                                </td>
                                                 <td>{{ number_format((int) ($account->listings_count ?? 0)) }}</td>
                                                 <td>
                                                     <span class="badge {{ $account->is_active ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary' }}">
@@ -225,48 +248,50 @@
                                                     </span>
                                                 </td>
                                                 <td class="manage-cell">
-                                                    <form action="{{ route('products.marketplace.accounts.update', $account->id) }}" method="POST" class="account-manage-form">
-                                                        @csrf
-                                                        @method('PATCH')
-                                                        <div class="account-manage-grid">
-                                                            <div>
-                                                                <label class="form-label small text-muted mb-1">Platform</label>
-                                                                <select name="platform" class="form-select form-select-sm js-platform-select" data-custom-target="edit-custom-platform-{{ $account->id }}" required>
-                                                                    @foreach ($editPlatformOptions as $platformOption)
-                                                                        <option value="{{ $platformOption }}" {{ $account->platform === $platformOption ? 'selected' : '' }}>
-                                                                            {{ ucwords($platformOption) }}
-                                                                        </option>
-                                                                    @endforeach
-                                                                    <option value="__custom__">Add New Platform</option>
-                                                                </select>
+                                                    <div class="manage-panel">
+                                                        <form action="{{ route('products.marketplace.accounts.update', $account->id) }}" method="POST" class="account-manage-form">
+                                                            @csrf
+                                                            @method('PATCH')
+                                                            <div class="account-manage-grid">
+                                                                <div>
+                                                                    <label class="form-label small text-muted mb-1">Platform</label>
+                                                                    <select name="platform" class="form-select form-select-sm js-platform-select" data-custom-target="edit-custom-platform-{{ $account->id }}" required>
+                                                                        @foreach ($editPlatformOptions as $platformOption)
+                                                                            <option value="{{ $platformOption }}" {{ $account->platform === $platformOption ? 'selected' : '' }}>
+                                                                                {{ ucwords($platformOption) }}
+                                                                            </option>
+                                                                        @endforeach
+                                                                        <option value="__custom__">Add New Platform</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div>
+                                                                    <label class="form-label small text-muted mb-1">Account Name</label>
+                                                                    <input type="text" name="name" value="{{ $account->name }}" class="form-control form-control-sm" required>
+                                                                </div>
+                                                                <div>
+                                                                    <label class="form-label small text-muted mb-1">Status</label>
+                                                                    <select name="is_active" class="form-select form-select-sm">
+                                                                        <option value="1" {{ $account->is_active ? 'selected' : '' }}>Active</option>
+                                                                        <option value="0" {{ !$account->is_active ? 'selected' : '' }}>Inactive</option>
+                                                                    </select>
+                                                                </div>
                                                             </div>
-                                                            <div>
-                                                                <label class="form-label small text-muted mb-1">Account Name</label>
-                                                                <input type="text" name="name" value="{{ $account->name }}" class="form-control form-control-sm" required>
+                                                            <div class="row g-2 mt-1">
+                                                                <div class="col-12 col-lg-7 d-none" id="edit-custom-platform-{{ $account->id }}">
+                                                                    <label class="form-label small text-muted mb-1">New Platform Name</label>
+                                                                    <input type="text" name="custom_platform" class="form-control form-control-sm" placeholder="Enter platform name">
+                                                                </div>
                                                             </div>
-                                                            <div>
-                                                                <label class="form-label small text-muted mb-1">Status</label>
-                                                                <select name="is_active" class="form-select form-select-sm">
-                                                                    <option value="1" {{ $account->is_active ? 'selected' : '' }}>Active</option>
-                                                                    <option value="0" {{ !$account->is_active ? 'selected' : '' }}>Inactive</option>
-                                                                </select>
+                                                            <div class="account-manage-actions">
+                                                                <button type="submit" class="btn btn-sm btn-primary">Update</button>
                                                             </div>
-                                                        </div>
-                                                        <div class="row g-2 mt-1">
-                                                            <div class="col-12 col-lg-7 d-none" id="edit-custom-platform-{{ $account->id }}">
-                                                                <label class="form-label small text-muted mb-1">New Platform Name</label>
-                                                                <input type="text" name="custom_platform" class="form-control form-control-sm" placeholder="Enter platform name">
-                                                            </div>
-                                                        </div>
-                                                        <div class="account-manage-actions">
-                                                            <button type="submit" class="btn btn-sm btn-primary">Update</button>
-                                                        </div>
-                                                    </form>
-                                                    <form action="{{ route('products.marketplace.accounts.destroy', $account->id) }}" method="POST" class="mt-2" onsubmit="return confirm('Delete this marketplace account?');">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-                                                    </form>
+                                                        </form>
+                                                        <form action="{{ route('products.marketplace.accounts.destroy', $account->id) }}" method="POST" onsubmit="return confirm('Delete this marketplace account?');" class="mt-2">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                                        </form>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         @empty

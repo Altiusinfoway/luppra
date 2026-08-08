@@ -856,9 +856,13 @@ class ProductController extends Controller
             ->orderBy('name')
             ->get();
 
+        $platformSuggestions = $this->platformSuggestions();
+
         return view('products.accounts.index', [
             'accounts' => $accounts,
-            'platformSuggestions' => $this->platformSuggestions(),
+            'platformSuggestions' => $platformSuggestions,
+            // Backward-compatible fallback for any stale compiled views on live.
+            'supportedPlatforms' => $platformSuggestions,
         ]);
     }
 
