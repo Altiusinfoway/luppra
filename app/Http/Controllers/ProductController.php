@@ -650,6 +650,82 @@ class ProductController extends Controller
         return view('products.activity', compact('product', 'activityTimeline', 'stockActivities'));
     }
 
+    public function inventoryActivity(Request $request)
+    {
+        if (!\Auth::user()->can('edit product & service')) {
+            return redirect()->back()->with('error', 'Permission denied.');
+        }
+
+        $search = trim((string) $request->input('search', ''));
+
+        $query = ProductStockActivity::query()
+            ->with([
+                'created_user:id,name',
+                'product:id,name,sku_code,created_by',
+            ])
+            ->whereHas('product', function ($productQuery) {
+                $productQuery->where('created_by', \Auth::user()->creatorId());
+            });
+
+        if ($search !== '') {
+            $query->where(function ($stockQuery) use ($search) {
+                $stockQuery->where('message', 'like', '%' . $search . '%')
+                    ->orWhereHas('product', function ($productQuery) use ($search) {
+                        $productQuery->where('name', 'like', '%' . $search . '%')
+                            ->orWhere('sku_code', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('created_user', function ($userQuery) use ($search) {
+                        $userQuery->where('name', 'like', '%' . $search . '%');
+                    });
+            });
+        }
+
+        $stockActivities = $query
+            ->orderByDesc('date_time')
+            ->orderByDesc('id')
+            ->paginate(20)
+            ->withQueryString();
+
+        $stockActivities->getCollection()->transform(function (ProductStockActivity $activity) {
+            [$direction, $delta, $before, $after] = $this->summarizeStockActivity($activity);
+
+            $activity->inventory_direction = $direction;
+            $activity->inventory_delta = $delta;
+            $activity->inventory_before = $before;
+            $activity->inventory_after = $after;
+
+            return $activity;
+        });
+
+        $summaryQuery = ProductStockActivity::query()
+            ->whereHas('product', function ($productQuery) {
+                $productQuery->where('created_by', \Auth::user()->creatorId());
+            })
+            ->with('product:id,created_by');
+
+        $allActivities = $summaryQuery->get();
+        $summary = [
+            'total_logs' => $allActivities->count(),
+            'added_logs' => 0,
+            'deducted_logs' => 0,
+            'net_change' => 0,
+        ];
+
+        foreach ($allActivities as $activity) {
+            [$direction, $delta] = $this->summarizeStockActivity($activity);
+
+            if ($direction === 'added') {
+                $summary['added_logs']++;
+                $summary['net_change'] += $delta;
+            } elseif ($direction === 'deducted') {
+                $summary['deducted_logs']++;
+                $summary['net_change'] -= $delta;
+            }
+        }
+
+        return view('products.inventory_activity', compact('stockActivities', 'summary', 'search'));
+    }
+
     public function marketplaceAccounts()
     {
         if (!\Auth::user()->can('edit product & service')) {
@@ -1684,6 +1760,38 @@ class ProductController extends Controller
                 'context' => $contextMessage,
             ],
         ]);
+    }
+
+    private function summarizeStockActivity(ProductStockActivity $activity): array
+    {
+        $message = (string) ($activity->message ?? '');
+        $direction = 'neutral';
+        $delta = 0.0;
+        $before = null;
+        $after = null;
+
+        if (preg_match('/Stock initialized to ([0-9]+(?:\.[0-9]+)?)/i', $message, $matches)) {
+            $direction = 'added';
+            $after = (float) $matches[1];
+            $delta = $after;
+
+            return [$direction, $delta, $before, $after];
+        }
+
+        if (preg_match('/Stock changed from ([0-9]+(?:\.[0-9]+)?) to ([0-9]+(?:\.[0-9]+)?)/i', $message, $matches)) {
+            $before = (float) $matches[1];
+            $after = (float) $matches[2];
+
+            if ($after > $before) {
+                $direction = 'added';
+                $delta = $after - $before;
+            } elseif ($after < $before) {
+                $direction = 'deducted';
+                $delta = $before - $after;
+            }
+        }
+
+        return [$direction, $delta, $before, $after];
     }
 
     private function formatStockValue(?float $value): string

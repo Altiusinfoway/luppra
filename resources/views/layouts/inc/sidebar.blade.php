@@ -1053,7 +1053,8 @@
 
                 @php
                     $isPartialInventoryRoute = request()->routeIs('products.partial_inventory');
-                    $isProductsMenuOpen = $isProductRoute || $isPartialInventoryRoute;
+                    $isInventoryActivityRoute = request()->routeIs('products.inventory_activity');
+                    $isProductsMenuOpen = $isProductRoute || $isPartialInventoryRoute || $isInventoryActivityRoute;
                 @endphp
 
                 @if ($uiCanSales && \Auth::user()->can('manage product & service'))
@@ -1075,6 +1076,12 @@
                                     <a href="{{ route('products.partial_inventory') }}"
                                         class="nav-link {{ $isPartialInventoryRoute ? 'active' : '' }}">
                                         Partial Inventory
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('products.inventory_activity') }}"
+                                        class="nav-link {{ $isInventoryActivityRoute ? 'active' : '' }}">
+                                        Inventory Activity
                                     </a>
                                 </li>
                             </ul>
