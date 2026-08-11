@@ -262,25 +262,72 @@ class ProductController extends Controller
             return redirect()->back()->with('error', 'Permission denied.');
         }
 
-        $products = Products::query()
+        $search = trim((string) request('search', ''));
+        $dateFrom = trim((string) request('date_from', ''));
+        $dateTo = trim((string) request('date_to', ''));
+        $perPageOptions = [50, 100, 250, 500];
+        $perPage = (int) request('per_page', 100);
+
+        if (!in_array($perPage, $perPageOptions, true)) {
+            $perPage = 100;
+        }
+
+        $baseQuery = Products::query()
             ->where('created_by', \Auth::user()->creatorId())
-            ->with(['marketplaceListings', 'getGstSlabMaster'])
+            ->with(['marketplaceListings', 'getGstSlabMaster']);
+
+        if ($search !== '') {
+            $baseQuery->where(function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('sku_code', 'like', '%' . $search . '%')
+                    ->orWhereHas('marketplaceListings', function ($listingQuery) use ($search) {
+                        $listingQuery->where('platform_sku', 'like', '%' . $search . '%')
+                            ->orWhere('listing_title', 'like', '%' . $search . '%')
+                            ->orWhere('platform', 'like', '%' . $search . '%')
+                            ->orWhere('account_name', 'like', '%' . $search . '%');
+                    });
+            });
+        }
+
+        if ($dateFrom !== '') {
+            $baseQuery->where(function ($query) use ($dateFrom) {
+                $query->whereDate('updated_at', '>=', $dateFrom)
+                    ->orWhereHas('marketplaceListings', function ($listingQuery) use ($dateFrom) {
+                        $listingQuery->whereDate('updated_at', '>=', $dateFrom);
+                    });
+            });
+        }
+
+        if ($dateTo !== '') {
+            $baseQuery->where(function ($query) use ($dateTo) {
+                $query->whereDate('updated_at', '<=', $dateTo)
+                    ->orWhereHas('marketplaceListings', function ($listingQuery) use ($dateTo) {
+                        $listingQuery->whereDate('updated_at', '<=', $dateTo);
+                    });
+            });
+        }
+
+        $filteredProductIds = (clone $baseQuery)->pluck('id');
+
+        $products = (clone $baseQuery)
             ->orderBy('name')
-            ->get();
+            ->paginate($perPage)
+            ->withQueryString();
 
-        $accountColumns = $products
+        $accountColumns = MarketplaceListing::query()
+            ->where('created_by', \Auth::user()->creatorId())
+            ->whereIn('product_id', $filteredProductIds)
+            ->get()
             ->flatMap(function ($product) {
-                return $product->marketplaceListings->map(function ($listing) {
-                    $platform = $this->normalizePlatform((string) ($listing->platform ?? ''));
-                    $accountName = trim((string) ($listing->account_name ?? '')) ?: 'Primary Account';
+                $platform = $this->normalizePlatform((string) ($product->platform ?? ''));
+                $accountName = trim((string) ($product->account_name ?? '')) ?: 'Primary Account';
 
-                    return [
-                        'key' => $platform . '::' . $accountName,
-                        'platform' => $platform,
-                        'account_name' => $accountName,
-                        'label' => trim(ucfirst($platform) . ' / ' . $accountName),
-                    ];
-                });
+                return [[
+                    'key' => $platform . '::' . $accountName,
+                    'platform' => $platform,
+                    'account_name' => $accountName,
+                    'label' => trim(ucfirst($platform) . ' / ' . $accountName),
+                ]];
             })
             ->unique('key')
             ->sortBy('label')
@@ -289,7 +336,15 @@ class ProductController extends Controller
         return view('products.partial_inventory', [
             'products' => $products,
             'accountColumns' => $accountColumns,
+            'platformSuggestions' => $this->platformSuggestions(),
             'listingStatuses' => $this->listingStatuses,
+            'fulfillmentTypes' => $this->fulfillmentTypes,
+            'marketplaceAccounts' => $this->marketplaceAccountsForForms(),
+            'search' => $search,
+            'dateFrom' => $dateFrom,
+            'dateTo' => $dateTo,
+            'perPage' => $perPage,
+            'perPageOptions' => $perPageOptions,
         ]);
     }
 
@@ -1044,6 +1099,12 @@ class ProductController extends Controller
         $listing = new MarketplaceListing();
         $listing->fill($payload);
         $listing->save();
+
+        $redirectTo = trim((string) $request->input('redirect_to', ''));
+
+        if ($redirectTo !== '') {
+            return redirect($redirectTo)->with('success', 'Marketplace listing added successfully.');
+        }
 
         return redirect()->route('products.marketplace', $product->id)->with('success', 'Marketplace listing added successfully.');
     }

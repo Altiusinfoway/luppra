@@ -1,3 +1,10 @@
+<style>
+    .listing-required-dot {
+        color: #dc2626;
+        margin-left: 3px;
+    }
+</style>
+
 <div class="row g-3">
     <div class="col-12">
         <div class="border rounded-4 p-3 bg-light-subtle" style="border-color:#dbeafe !important; background:linear-gradient(135deg, #f8fbff 0%, #eff6ff 100%) !important;">
@@ -17,12 +24,12 @@
                     <input type="hidden" name="redirect_to" value="{{ url()->full() }}">
 
                     <div class="col-md-4">
-                        <label class="form-label">Platform</label>
+                        <label class="form-label">Platform <span class="listing-required-dot">*</span></label>
                         <input type="text" class="form-control" name="platform" list="platform-suggestions" placeholder="Amazon, Flipkart, Meesho..." required>
                     </div>
 
                     <div class="col-md-5">
-                        <label class="form-label">Account Name</label>
+                        <label class="form-label">Account Name <span class="listing-required-dot">*</span></label>
                         <input type="text" class="form-control" name="name" placeholder="Example: Amazon Account 1" required>
                     </div>
 
@@ -43,7 +50,7 @@
     </div>
 
     <div class="col-md-6">
-        <label class="form-label">Platform</label>
+        <label class="form-label">Platform <span class="listing-required-dot">*</span></label>
         <input type="text" class="form-control" name="platform" id="listing-platform" list="platform-suggestions" value="{{ old('platform', $listing->platform) }}" placeholder="Amazon, Flipkart, Meesho..." required>
         @error('platform')
             <small class="text-danger">{{ $message }}</small>
@@ -52,7 +59,7 @@
 
     <div class="col-md-6">
         <div class="d-flex justify-content-between align-items-center gap-2">
-            <label class="form-label mb-0">Marketplace Account</label>
+            <label class="form-label mb-0">Marketplace Account <span class="listing-required-dot">*</span></label>
             <a href="{{ route('products.marketplace.accounts.index') }}" class="small text-decoration-none">Manage Accounts</a>
         </div>
         <select class="form-select" name="marketplace_account_id" id="listing-account" required data-selected-account="{{ old('marketplace_account_id', $listing->marketplace_account_id) }}">
@@ -72,7 +79,7 @@
     </div>
 
     <div class="col-md-6">
-        <label class="form-label">Platform SKU</label>
+        <label class="form-label">Platform SKU <span class="listing-required-dot">*</span></label>
         <input type="text" class="form-control" name="platform_sku" value="{{ old('platform_sku', $listing->platform_sku) }}" placeholder="AMZ-SKU-001" required>
         @error('platform_sku')
             <small class="text-danger">{{ $message }}</small>
@@ -90,7 +97,7 @@
     </div>
 
     <div class="col-md-6">
-        <label class="form-label">Status</label>
+        <label class="form-label">Status <span class="listing-required-dot">*</span></label>
         <select class="form-select" name="listing_status" required>
             @foreach ($listingStatuses as $statusKey => $statusLabel)
                 <option value="{{ $statusKey }}" {{ old('listing_status', $listing->listing_status ?? 'active') === $statusKey ? 'selected' : '' }}>
@@ -104,7 +111,7 @@
     </div>
 
     <div class="col-12">
-        <label class="form-label">Listing Title</label>
+        <label class="form-label">Listing Title <span class="listing-required-dot">*</span></label>
         <input type="text" class="form-control" name="listing_title" value="{{ old('listing_title', $listing->listing_title) }}" placeholder="Marketplace listing title" required>
         @error('listing_title')
             <small class="text-danger">{{ $message }}</small>
