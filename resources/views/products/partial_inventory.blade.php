@@ -298,7 +298,7 @@
 
         .inventory-accounts-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 220px));
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 205px), 205px));
             gap: 12px;
             padding: 16px;
             justify-content: flex-start;
@@ -546,7 +546,7 @@
         }
 
         .listing-form-row.is-actions {
-            grid-template-columns: minmax(84px, 96px) minmax(112px, 132px);
+            grid-template-columns: minmax(72px, 86px) minmax(96px, 110px);
             align-items: end;
         }
 
@@ -601,14 +601,14 @@
         }
 
         .mini-add-btn {
-            min-width: 44px;
+            min-width: 40px;
             min-height: 34px;
             border-radius: 10px;
-            flex: 0 0 44px;
+            flex: 0 0 40px;
         }
 
         .mini-save-btn {
-            min-width: 112px;
+            min-width: 96px;
             min-height: 34px;
             border-radius: 10px;
             width: auto;
