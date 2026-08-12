@@ -298,9 +298,9 @@
 
         .inventory-accounts-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 280px));
-            gap: 16px;
-            padding: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 220px));
+            gap: 12px;
+            padding: 16px;
             justify-content: flex-start;
             align-items: start;
         }
@@ -377,7 +377,7 @@
 
         .account-panel {
             border: 1px solid #dbe5f1;
-            border-radius: 18px;
+            border-radius: 16px;
             background: #f8fbff;
             overflow: hidden;
             min-width: 0;
@@ -395,7 +395,7 @@
             justify-content: space-between;
             align-items: flex-start;
             gap: 10px;
-            padding: 14px 16px;
+            padding: 10px 12px;
             border-bottom: 1px solid #dbe5f1;
             background: #fff;
         }
@@ -408,8 +408,8 @@
         }
 
         .account-panel-subtitle {
-            margin-top: 3px;
-            font-size: 11px;
+            margin-top: 2px;
+            font-size: 10px;
             color: #64748b;
         }
 
@@ -417,7 +417,7 @@
             display: flex;
             flex-wrap: wrap;
             gap: 6px;
-            margin-top: 8px;
+            margin-top: 6px;
         }
 
         .account-panel-chip {
@@ -432,7 +432,7 @@
         }
 
         .account-panel-body {
-            padding: 14px;
+            padding: 10px;
             min-width: 0;
         }
 
@@ -486,8 +486,8 @@
         .listing-editor {
             border: 1px solid #e2e8f0;
             border-left: 3px solid #bfdbfe;
-            border-radius: 14px;
-            padding: 12px;
+            border-radius: 12px;
+            padding: 8px;
             background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
             min-width: 0;
             transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
@@ -500,24 +500,24 @@
         }
 
         .listing-editor + .listing-editor {
-            margin-top: 10px;
+            margin-top: 8px;
         }
 
         .listing-editor form {
             display: grid;
-            gap: 10px;
+            gap: 8px;
         }
 
         .listing-top {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            gap: 8px;
+            gap: 6px;
             min-width: 0;
         }
 
         .listing-code {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
             color: #0f172a;
             line-height: 1.3;
@@ -525,16 +525,16 @@
         }
 
         .listing-title {
-            margin-top: 2px;
-            font-size: 11px;
+            margin-top: 1px;
+            font-size: 10px;
             color: #64748b;
             line-height: 1.35;
             word-break: break-word;
         }
 
         .listing-id-line {
-            margin-top: 5px;
-            font-size: 10px;
+            margin-top: 3px;
+            font-size: 9px;
             color: #64748b;
             line-height: 1.35;
             word-break: break-word;
@@ -542,7 +542,7 @@
 
         .listing-form-row {
             display: grid;
-            gap: 8px;
+            gap: 6px;
         }
 
         .listing-form-row.is-actions {
@@ -556,16 +556,16 @@
         }
 
         .listing-field-card {
-            padding: 8px;
+            padding: 6px;
             border: 1px solid #e2e8f0;
-            border-radius: 12px;
+            border-radius: 10px;
             background: rgba(255, 255, 255, 0.96);
             min-width: 0;
         }
 
         .mini-label {
             display: block;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
             font-size: 9px;
             font-weight: 700;
             color: #64748b;
@@ -575,15 +575,15 @@
 
         .listing-editor .form-control,
         .listing-editor .form-select {
-            min-height: 36px;
+            min-height: 34px;
             padding-top: .3rem;
             padding-bottom: .3rem;
-            font-size: 11px;
+            font-size: 10px;
         }
 
         .partial-adjust-row {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             align-items: end;
             min-width: 0;
         }
@@ -602,14 +602,14 @@
 
         .mini-add-btn {
             min-width: 44px;
-            min-height: 36px;
+            min-height: 34px;
             border-radius: 10px;
             flex: 0 0 44px;
         }
 
         .mini-save-btn {
             min-width: 112px;
-            min-height: 36px;
+            min-height: 34px;
             border-radius: 10px;
             width: auto;
         }
@@ -633,9 +633,9 @@
         .status-pill {
             display: inline-flex;
             align-items: center;
-            padding: 6px 10px;
+            padding: 5px 9px;
             border-radius: 999px;
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 700;
             white-space: nowrap;
         }
