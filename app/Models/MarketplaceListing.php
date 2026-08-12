@@ -17,6 +17,8 @@ class MarketplaceListing extends Model
         'marketplace_account_id',
         'platform_sku',
         'marketplace_item_id',
+        'asin',
+        'fsn',
         'listing_title',
         'pack_size',
         'selling_price',

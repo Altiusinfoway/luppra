@@ -30,6 +30,8 @@ use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
+    private ?array $marketplaceListingColumnCache = null;
+
     private array $listingStatuses = [
         'active' => 'Active',
         'inactive' => 'Inactive',
@@ -74,6 +76,30 @@ class ProductController extends Controller
         }
 
         return $this->normalizePlatform($platform);
+    }
+
+    private function marketplaceListingHasColumn(string $column): bool
+    {
+        if (!Schema::hasTable('marketplace_listings')) {
+            return false;
+        }
+
+        if ($this->marketplaceListingColumnCache === null) {
+            $this->marketplaceListingColumnCache = Schema::getColumnListing('marketplace_listings');
+        }
+
+        return in_array($column, $this->marketplaceListingColumnCache, true);
+    }
+
+    private function filterMarketplaceListingPayload(array $payload): array
+    {
+        foreach (['asin', 'fsn'] as $column) {
+            if (array_key_exists($column, $payload) && !$this->marketplaceListingHasColumn($column)) {
+                unset($payload[$column]);
+            }
+        }
+
+        return $payload;
     }
 
     private function platformSuggestions()
@@ -1155,11 +1181,19 @@ class ProductController extends Controller
             'allocated_stock' => 'nullable|integer|min:0',
             'reserved_stock' => 'nullable|integer|min:0',
             'listing_status' => 'required|in:' . implode(',', array_keys($this->listingStatuses)),
+            'marketplace_item_id' => 'nullable|string|max:255',
+            'asin' => 'nullable|string|max:255',
+            'fsn' => 'nullable|string|max:255',
         ]);
 
-        $listing->allocated_stock = $validated['allocated_stock'] ?? null;
-        $listing->reserved_stock = (int) ($validated['reserved_stock'] ?? 0);
-        $listing->listing_status = strtolower((string) $validated['listing_status']);
+        $listing->fill($this->filterMarketplaceListingPayload([
+            'allocated_stock' => $validated['allocated_stock'] ?? null,
+            'reserved_stock' => (int) ($validated['reserved_stock'] ?? 0),
+            'listing_status' => strtolower((string) $validated['listing_status']),
+            'marketplace_item_id' => trim((string) ($validated['marketplace_item_id'] ?? '')) ?: null,
+            'asin' => trim((string) ($validated['asin'] ?? '')) ?: null,
+            'fsn' => trim((string) ($validated['fsn'] ?? '')) ?: null,
+        ]));
         $listing->save();
 
         return redirect()->back()->with('success', 'Marketplace listing updated successfully.');
@@ -1756,6 +1790,8 @@ class ProductController extends Controller
                 'account_name' => $accountName,
                 'platform_sku' => $platformSku,
                 'marketplace_item_id' => trim((string) ($row['marketplace_item_id'] ?? '')) ?: null,
+                'asin' => trim((string) ($row['asin'] ?? '')) ?: null,
+                'fsn' => trim((string) ($row['fsn'] ?? '')) ?: null,
                 'listing_title' => trim((string) ($row['listing_title'] ?? '')),
                 'pack_size' => trim((string) ($row['pack_size'] ?? '')) ?: null,
                 'selling_price' => (float) ($row['selling_price'] ?? 0),
@@ -1777,6 +1813,8 @@ class ProductController extends Controller
                 'marketplace_account_id' => 'nullable|integer|exists:marketplace_accounts,id',
                 'account_name' => 'nullable|string|max:255',
                 'platform_sku' => 'required|string|max:255',
+                'asin' => 'nullable|string|max:255',
+                'fsn' => 'nullable|string|max:255',
                 'listing_title' => 'required|string|max:255',
                 'selling_price' => 'nullable|numeric|min:0',
                 'mrp' => 'nullable|numeric|min:0',
@@ -1798,7 +1836,7 @@ class ProductController extends Controller
             }
 
             $listing = $query->first() ?? new MarketplaceListing();
-            $listing->fill($payload);
+            $listing->fill($this->filterMarketplaceListingPayload($payload));
             $listing->save();
             $persistedIds[] = $listing->id;
         }
@@ -1816,6 +1854,8 @@ class ProductController extends Controller
             'marketplace_account_id' => 'required|integer|exists:marketplace_accounts,id',
             'platform_sku' => 'required|string|max:255',
             'marketplace_item_id' => 'nullable|string|max:255',
+            'asin' => 'nullable|string|max:255',
+            'fsn' => 'nullable|string|max:255',
             'listing_title' => 'required|string|max:255',
             'pack_size' => 'nullable|string|max:255',
             'selling_price' => 'nullable|numeric|min:0',
@@ -1841,6 +1881,8 @@ class ProductController extends Controller
         $platform = $this->normalizePlatform((string) $account->platform);
         $platformSku = trim((string) $validated['platform_sku']);
         $marketplaceItemId = trim((string) ($validated['marketplace_item_id'] ?? '')) ?: null;
+        $asin = trim((string) ($validated['asin'] ?? '')) ?: null;
+        $fsn = trim((string) ($validated['fsn'] ?? '')) ?: null;
 
         $duplicateSku = MarketplaceListing::query()
             ->where('created_by', \Auth::user()->creatorId())
@@ -1874,7 +1916,7 @@ class ProductController extends Controller
             }
         }
 
-        return [
+        return $this->filterMarketplaceListingPayload([
             'product_id' => $product->id,
             'created_by' => \Auth::user()->creatorId(),
             'platform' => $platform,
@@ -1882,6 +1924,8 @@ class ProductController extends Controller
             'account_name' => $accountName,
             'platform_sku' => $platformSku,
             'marketplace_item_id' => $marketplaceItemId,
+            'asin' => $asin,
+            'fsn' => $fsn,
             'listing_title' => trim((string) $validated['listing_title']),
             'pack_size' => trim((string) ($validated['pack_size'] ?? '')) ?: null,
             'selling_price' => (float) ($validated['selling_price'] ?? 0),
@@ -1896,7 +1940,7 @@ class ProductController extends Controller
             'external_revenue' => (float) ($validated['external_revenue'] ?? 0),
             'external_last_synced_at' => !empty($validated['external_last_synced_at']) ? $validated['external_last_synced_at'] : null,
             'external_sync_note' => trim((string) ($validated['external_sync_note'] ?? '')) ?: null,
-        ];
+        ]);
     }
 
     private function marketplaceAccountsForForms()

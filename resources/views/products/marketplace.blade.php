@@ -62,6 +62,19 @@
             box-shadow: 0 16px 36px rgba(15, 23, 42, 0.08);
         }
 
+        .marketplace-dashboard .listing-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+
+        .marketplace-dashboard .listing-actions form {
+            margin: 0;
+        }
+
         .marketplace-dashboard .platform-chip {
             display: inline-flex;
             align-items: center;
@@ -453,6 +466,19 @@
                                                             {{ $analytics->external_sync_note }}
                                                         </div>
                                                     @endif
+
+                                                    <div class="listing-actions">
+                                                        <a href="{{ route('products.marketplace.listings.edit', [$product->id, $listing->id]) }}" class="btn btn-light btn-sm">
+                                                            <i class="ri-pencil-line align-middle me-1"></i>Edit
+                                                        </a>
+                                                        <form action="{{ route('products.marketplace.listings.destroy', [$product->id, $listing->id]) }}" method="POST" onsubmit="return confirm('Delete this marketplace listing?');">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                                                <i class="ri-delete-bin-line align-middle me-1"></i>Delete
+                                                            </button>
+                                                        </form>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
