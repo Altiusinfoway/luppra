@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Auth;
 use File;
+use App\Exports\ProductInventoryExport;
 use App\Models\Utility;
 use App\Models\Products;
 use Illuminate\Support\Facades\Log;
@@ -303,6 +304,20 @@ class ProductController extends Controller
                 'error' => 'Unable to load products right now.',
             ]);
         }
+    }
+
+    public function export()
+    {
+        if (!\Auth::user()->can('manage product & service')) {
+            return redirect()->back()->with('error', 'Permission denied.');
+        }
+
+        $fileName = 'products_inventory_' . now()->format('Y_m_d_His') . '.xlsx';
+
+        return Excel::download(
+            new ProductInventoryExport(\Auth::user()->creatorId()),
+            $fileName
+        );
     }
 
     public function partialInventory()

@@ -203,6 +203,7 @@ Route::group(['prefix' => '', 'middleware' => ['auth']], function () {
 
     Route::post('/bulk-stock-update',[ProductController::class,'bulkStockUpdate'])->name('products.bulk_stock_update');
     Route::get('products/data', [ProductController::class, 'data'])->name('products.data');
+    Route::get('products/export', [ProductController::class, 'export'])->name('products.export');
     Route::get('products/partial-inventory', [ProductController::class, 'partialInventory'])->name('products.partial_inventory');
     Route::get('products/inventory-activity', [ProductController::class, 'inventoryActivity'])->name('products.inventory_activity');
     Route::get('marketplace-accounts', [ProductController::class, 'marketplaceAccounts'])->name('products.marketplace.accounts.index');
