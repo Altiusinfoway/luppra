@@ -21,6 +21,7 @@ use App\Models\Tenant;
 use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\TenantUsage;
+use App\Models\Category;
 use App\Support\Tenancy\TenancyManager;
 use Illuminate\Support\Facades\Schema;
 use League\CommonMark\Extension\SmartPunct\Quote;
@@ -35,6 +36,36 @@ class HomeController extends Controller
     public function __construct()
     {
         //$this->middleware('auth');
+    }
+
+    private function buildCategoryFilterOptions($groupedCategories, $parentId = null, string $prefix = ''): array
+    {
+        $result = [];
+
+        $children = $groupedCategories[$parentId] ?? collect();
+
+        foreach ($children as $category) {
+            $result[$category->id] = $prefix . $category->name;
+
+            if (($groupedCategories[$category->id] ?? collect())->count() > 0) {
+                $result += $this->buildCategoryFilterOptions($groupedCategories, $category->id, $prefix . '- ');
+            }
+        }
+
+        return $result;
+    }
+
+    private function normalizeDashboardCategoryFilter(Request $request): array
+    {
+        $raw = $request->query('inventory_category_ids', $request->query('inventory_category_id', []));
+        $raw = is_array($raw) ? $raw : [$raw];
+
+        return collect($raw)
+            ->map(fn ($value) => (int) $value)
+            ->filter(fn ($value) => $value > 0)
+            ->unique()
+            ->values()
+            ->all();
     }
 
     /**
@@ -215,6 +246,20 @@ class HomeController extends Controller
             case 'company':
 
                 $year = date('Y');
+                $selectedInventoryCategoryIds = $this->normalizeDashboardCategoryFilter($request);
+                $data['inventory_category_options'] = collect();
+                $data['selected_inventory_category_ids'] = $selectedInventoryCategoryIds;
+
+                if (Schema::connection($tenantConnection)->hasTable('categories')) {
+                    $allCategories = Category::query()
+                        ->select('id', 'parent_id', 'name')
+                        ->orderBy('name')
+                        ->get();
+
+                    $groupedCategories = $allCategories->groupBy('parent_id');
+                    $data['inventory_category_options'] = collect($this->buildCategoryFilterOptions($groupedCategories));
+                }
+
                 $rawData = DB::connection($tenantConnection)->table('lead_products')
                     ->join('products', 'products.id', '=', 'lead_products.product_id')
                     ->selectRaw('
@@ -222,7 +267,13 @@ class HomeController extends Controller
                         MONTH(lead_products.created_at) as month,
                         SUM(lead_products.price * lead_products.qty) as total
                     ')
-                    ->whereYear('lead_products.created_at', $year)
+                    ->whereYear('lead_products.created_at', $year);
+
+                if (!empty($selectedInventoryCategoryIds)) {
+                    $rawData->whereIn('products.category_id', $selectedInventoryCategoryIds);
+                }
+
+                $rawData = $rawData
                     ->groupBy('products.id', 'products.name', 'month')
                     ->get();
 
@@ -303,6 +354,47 @@ class HomeController extends Controller
                 $data['counts'] =\App\Models\Lead::select('stage_id', DB::raw('COUNT(*) as cnt'))
                         ->groupBy('stage_id')->pluck('cnt', 'stage_id')->toArray();
                 $data['totalLeads'] = array_sum($data['counts']);
+
+                $inventoryQuery = DB::connection($tenantConnection)->table('products');
+                if (Schema::connection($tenantConnection)->hasColumn('products', 'created_by')) {
+                    $inventoryQuery->where('created_by', \Auth::user()->creatorId());
+                }
+                if (!empty($selectedInventoryCategoryIds)) {
+                    $inventoryQuery->whereIn('category_id', $selectedInventoryCategoryIds);
+                }
+
+                $data['inventory_overview'] = [
+                    'total_products' => (clone $inventoryQuery)->count(),
+                    'active_products' => Schema::connection($tenantConnection)->hasColumn('products', 'is_active')
+                        ? (clone $inventoryQuery)->where('is_active', 1)->count()
+                        : (clone $inventoryQuery)->count(),
+                    'total_available_stock' => (float) ((clone $inventoryQuery)->sum('stock_qty') ?? 0),
+                    'category_breakdown' => collect(),
+                ];
+
+                if (Schema::connection($tenantConnection)->hasTable('categories')) {
+                    $categoryQuery = DB::connection($tenantConnection)->table('products')
+                        ->leftJoin('categories', 'categories.id', '=', 'products.category_id')
+                        ->select(
+                            DB::raw('COALESCE(categories.id, 0) as category_id'),
+                            DB::raw("COALESCE(categories.name, 'Uncategorized') as category_name"),
+                            DB::raw('COUNT(products.id) as product_count'),
+                            DB::raw('SUM(COALESCE(products.stock_qty, 0)) as stock_qty'),
+                            DB::raw("SUM(CASE WHEN COALESCE(products.is_active, 1) = 1 THEN 1 ELSE 0 END) as active_product_count")
+                        );
+
+                    if (Schema::connection($tenantConnection)->hasColumn('products', 'created_by')) {
+                        $categoryQuery->where('products.created_by', \Auth::user()->creatorId());
+                    }
+                    if (!empty($selectedInventoryCategoryIds)) {
+                        $categoryQuery->whereIn('products.category_id', $selectedInventoryCategoryIds);
+                    }
+
+                    $data['inventory_overview']['category_breakdown'] = $categoryQuery
+                        ->groupBy('categories.id', 'categories.name')
+                        ->orderByDesc('stock_qty')
+                        ->get();
+                }
 
                 //current month 20 follow-up list
                 $data['lead_cur_month_follow_all_list'] = LeadChat::with(['getLeadDetail','getLeadStatus','getUser'])

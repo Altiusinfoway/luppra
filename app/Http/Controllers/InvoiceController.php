@@ -253,7 +253,7 @@ class InvoiceController extends Controller
 
 
             $transport_list = Entity::IsTransport()->toArray();
-            $product_list = Products::with('getGstSlabMaster')->get();
+            $product_list = Products::active()->with('getGstSlabMaster')->get();
             if (Schema::hasTable('marketplace_listings')) {
                 $product_list->load('marketplaceListings');
             }

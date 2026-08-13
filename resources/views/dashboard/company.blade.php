@@ -140,6 +140,11 @@
     $leadToOrder = $total_lead_count > 0 ? round(($order_total_count / $total_lead_count) * 100, 2) : 0;
 
     $monthlyMomentum = $lead_cur_month > 0 ? round(($order_month_count / $lead_cur_month) * 100, 2) : 0;
+    $inventoryOverview = $inventory_overview ?? [];
+    $categoryBreakdown = $inventoryOverview['category_breakdown'] ?? collect();
+    $inventoryCategoryOptions = $inventory_category_options ?? collect();
+    $selectedInventoryCategoryIds = collect($selected_inventory_category_ids ?? [])->map(fn ($value) => (int) $value)->all();
+    $hasSelectedInventoryCategories = count($selectedInventoryCategoryIds) > 0;
 @endphp
 <div class="page-content dashboard-suite">
     <div class="hero-shell">
@@ -202,6 +207,56 @@
     </div>
 
     <div class="row g-3 mt-1">
+        <div class="col-12">
+            <div class="admin-card p-3">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-6 col-xl-4">
+                        <div class="kpi-title mb-2">Category Wise Filter</div>
+                        <div class="d-flex gap-2">
+                            <select class="form-select" id="dashboard-category-filter" multiple size="6">
+                                @foreach($inventoryCategoryOptions as $categoryId => $categoryName)
+                                    <option value="{{ $categoryId }}" {{ in_array((int) $categoryId, $selectedInventoryCategoryIds, true) ? 'selected' : '' }}>
+                                        {{ $categoryName }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @if($hasSelectedInventoryCategories)
+                                <a href="{{ route('dashboard') }}" class="btn btn-light btn-sm">Reset</a>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-xl-8">
+                        <div class="text-muted small">
+                            Filter the product-focused dashboard by multiple categories or subcategories to update available stock, active product counts, category inventory, and product trend on this screen.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4">
+            <div class="admin-card kpi-box">
+                <div class="kpi-title">Available Inventory</div>
+                <div class="kpi-value">{{ number_format((float) ($inventoryOverview['total_available_stock'] ?? 0), 0) }}</div>
+                <div class="kpi-sub">Total stock available {{ $hasSelectedInventoryCategories ? 'for the selected categories.' : 'across all products.' }}</div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4">
+            <div class="admin-card kpi-box">
+                <div class="kpi-title">Total Products</div>
+                <div class="kpi-value">{{ number_format((int) ($inventoryOverview['total_products'] ?? 0)) }}</div>
+                <div class="kpi-sub">{{ $hasSelectedInventoryCategories ? 'Master products in the selected categories.' : 'All master products currently in catalog.' }}</div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4">
+            <div class="admin-card kpi-box">
+                <div class="kpi-title">Active Products</div>
+                <div class="kpi-value">{{ number_format((int) ($inventoryOverview['active_products'] ?? 0)) }}</div>
+                <div class="kpi-sub">Products currently active for operations.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mt-1">
         <div class="col-12 col-xl-4">
             <div class="admin-card p-3 h-100">
                 <h5 class="mb-3">Conversion Snapshot</h5>
@@ -230,9 +285,62 @@
             <div class="admin-card p-3 h-100">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <h5 class="mb-0">Product Sales Trend (Monthly)</h5>
-                    <small class="text-muted">Current year</small>
+                    <small class="text-muted">{{ $hasSelectedInventoryCategories ? 'Current year | category filtered' : 'Current year' }}</small>
                 </div>
                 <div id="line_chart_basic" style="min-height:320px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mt-1">
+        <div class="col-12">
+            <div class="admin-card p-3 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0">Category Wise Inventory</h5>
+                    <span class="text-muted small">Stock grouped by product category</span>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Category</th>
+                                <th>Products</th>
+                                <th>Active Products</th>
+                                <th class="text-end">Available Stock</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($categoryBreakdown as $category)
+                                <tr>
+                                    <td>
+                                        <a href="{{ route('products.index', ['status' => 'all', 'category_id' => $category->category_id]) }}" class="text-decoration-none fw-semibold">
+                                            {{ $category->category_name }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="{{ route('products.index', ['status' => 'all', 'category_id' => $category->category_id]) }}" class="text-decoration-none">
+                                            {{ number_format((int) ($category->product_count ?? 0)) }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="{{ route('products.index', ['status' => 'active', 'category_id' => $category->category_id]) }}" class="text-decoration-none">
+                                            {{ number_format((int) ($category->active_product_count ?? 0)) }}
+                                        </a>
+                                    </td>
+                                    <td class="text-end">
+                                        <a href="{{ route('products.index', ['status' => 'all', 'category_id' => $category->category_id]) }}" class="text-decoration-none">
+                                            {{ number_format((float) ($category->stock_qty ?? 0), 0) }}
+                                        </a>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted py-3">No product inventory found yet.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -380,6 +488,20 @@
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        const categoryFilter = document.getElementById('dashboard-category-filter');
+        if (categoryFilter) {
+            categoryFilter.addEventListener('change', function () {
+                const url = new URL(@json(route('dashboard')), window.location.origin);
+                url.searchParams.delete('inventory_category_ids[]');
+                Array.from(this.selectedOptions).forEach(function (option) {
+                    if (option.value) {
+                        url.searchParams.append('inventory_category_ids[]', option.value);
+                    }
+                });
+                window.location.href = url.toString();
+            });
+        }
+
         var options = {
             chart: {
                 type: 'line',

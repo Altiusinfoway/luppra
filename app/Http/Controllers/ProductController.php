@@ -48,6 +48,24 @@ class ProductController extends Controller
         'dropship' => 'Dropship',
     ];
 
+    private function normalizeProductStatusFilter(?string $status): string
+    {
+        $status = strtolower(trim((string) $status));
+
+        return in_array($status, ['all', 'active', 'inactive'], true) ? $status : 'active';
+    }
+
+    private function normalizeCategoryFilter($categoryId): ?int
+    {
+        if ($categoryId === null || $categoryId === '') {
+            return null;
+        }
+
+        $categoryId = (int) $categoryId;
+
+        return $categoryId > 0 ? $categoryId : null;
+    }
+
     public function image(string $filename)
     {
         $filename = basename(str_replace('\\', '/', $filename));
@@ -157,14 +175,28 @@ class ProductController extends Controller
         }
 
         if (\Auth::user()->can('manage product & service')) {
+            $statusFilter = $this->normalizeProductStatusFilter($request->query('status'));
+            $selectedCategoryId = $this->normalizeCategoryFilter($request->query('category_id'));
             $products = Products::query()
                 ->where('created_by', \Auth::user()->creatorId())
                 ->with('getGstSlabMaster')
                 ->orderByDesc('id');
 
+            if ($statusFilter === 'active') {
+                $products->where('is_active', true);
+            } elseif ($statusFilter === 'inactive') {
+                $products->where('is_active', false);
+            }
+
+            if ($selectedCategoryId !== null) {
+                $products->where('category_id', $selectedCategoryId);
+            }
+
             if (Schema::hasTable('marketplace_listings')) {
                 $products->withCount('marketplaceListings');
             }
+
+            $categoryOptions = Category::query()->orderBy('name')->pluck('name', 'id');
 
             $productCollection = $products->get();
             $totalListings = Schema::hasTable('marketplace_listings')
@@ -181,6 +213,9 @@ class ProductController extends Controller
                 ->view('products.index', [
                 'products' => $productCollection,
                 'marketplaceEnabled' => Schema::hasTable('marketplace_listings'),
+                'statusFilter' => $statusFilter,
+                'categoryOptions' => $categoryOptions,
+                'selectedCategoryId' => $selectedCategoryId,
                 'productSummary' => [
                     'total_products' => $productCollection->count(),
                     'total_listings' => $totalListings,
@@ -208,9 +243,21 @@ class ProductController extends Controller
         }
 
         try {
+            $statusFilter = $this->normalizeProductStatusFilter($request->query('status'));
+            $selectedCategoryId = $this->normalizeCategoryFilter($request->query('category_id'));
             $query = Products::query()
                 ->where('created_by', \Auth::user()->creatorId())
                 ->orderByDesc('id');
+
+            if ($statusFilter === 'active') {
+                $query->where('is_active', true);
+            } elseif ($statusFilter === 'inactive') {
+                $query->where('is_active', false);
+            }
+
+            if ($selectedCategoryId !== null) {
+                $query->where('category_id', $selectedCategoryId);
+            }
 
             if (Schema::hasTable('marketplace_listings')) {
                 $query->withCount('marketplaceListings');
@@ -318,6 +365,36 @@ class ProductController extends Controller
             new ProductInventoryExport(\Auth::user()->creatorId()),
             $fileName
         );
+    }
+
+    public function toggleStatus(string $id)
+    {
+        if (!\Auth::user()->can('edit product & service')) {
+            return redirect()->back()->with('error', 'Permission denied.');
+        }
+
+        $product = Products::where('created_by', \Auth::user()->creatorId())->findOrFail($id);
+        $before = $this->productSnapshot($product);
+
+        $product->is_active = !$product->is_active;
+        $product->save();
+
+        $after = $this->productSnapshot($product);
+        $changes = ActivityLogger::diff($before, $after);
+
+        ActivityLogger::writeFor('products', 'update', $product, null, [
+            'event_key' => $product->is_active ? 'product.activated' : 'product.deactivated',
+            'description' => ($product->is_active ? 'Activated product ' : 'Deactivated product ') . $product->name . '.',
+            'properties' => [
+                'before' => $before,
+                'after' => $after,
+                'changes' => $changes,
+            ],
+        ]);
+
+        return redirect()
+            ->back()
+            ->with('success', 'Product status updated successfully.');
     }
 
     public function partialInventory()
@@ -1995,6 +2072,7 @@ class ProductController extends Controller
     {
         return [
             'name' => (string) ($product->name ?? ''),
+            'is_active' => (bool) ($product->is_active ?? false),
             'category' => optional($product->getCategory)->name,
             'sku_code' => (string) ($product->sku_code ?? ''),
             'price' => (float) ($product->price ?? 0),

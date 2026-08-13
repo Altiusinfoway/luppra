@@ -110,7 +110,7 @@ class LeadController extends Controller
         {
             $leadStagies = LeadStage::orderBy('order')->get(); //where('created_by', '=', \Auth::user()->creatorId())->
             $sources = LeadSource::get()->pluck('name', 'id'); //where('created_by', '=', \Auth::user()->creatorId())->
-            $products = Products::get()->pluck('name', 'id'); //where('created_by', '=', \Auth::user()->creatorId())->
+            $products = Products::active()->get()->pluck('name', 'id'); //where('created_by', '=', \Auth::user()->creatorId())->
             $stages = LeadStage::get()->pluck('name', 'id'); //where('created_by', '=', \Auth::user()->creatorId())->
             // $coutries = Coutries::isActive()->get();
 
@@ -583,7 +583,7 @@ class LeadController extends Controller
             }
 
             $list_data['sources'] = LeadSource::get()->pluck('name', 'id'); //where('created_by', '=', \Auth::user()->creatorId())->
-            $list_data['products'] = Products::get()->pluck('name', 'id'); //where('created_by', '=', \Auth::user()->creatorId())->
+            $list_data['products'] = Products::active()->get()->pluck('name', 'id'); //where('created_by', '=', \Auth::user()->creatorId())->
             $list_data['stages'] = LeadStage::get()->pluck('name', 'id'); //where('created_by', '=', \Auth::user()->creatorId())->
             $list_data['cust_list'] = Entity::GetCustomer()->pluck('name', 'id');
             $list_data['lead_type_list'] = LeadType::pluck('name', 'id');
@@ -823,7 +823,7 @@ class LeadController extends Controller
 
             $sources        = LeadSource::where('created_by', '=', \Auth::user()->creatorId())->get()->pluck('name', 'id');
 
-            $products       = Products::where('created_by', '=', \Auth::user()->creatorId())->get()->pluck('name', 'id');
+            $products       = Products::active()->where('created_by', '=', \Auth::user()->creatorId())->get()->pluck('name', 'id');
 
             $users          = User::where('created_by', '=', \Auth::user()->creatorId())->where('type', '!=', 'client')->where('type', '!=', 'company')->where('id', '!=', \Auth::user()->id)->get()->pluck('name', 'id');
 

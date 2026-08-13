@@ -351,6 +351,39 @@
                                         <input type="text" class="form-control" id="product-search"
                                             placeholder="Search by name, SKU, price, or GST...">
                                     </div>
+                                    <div class="col-md-6 col-xl-4">
+                                        <label class="filter-label d-block">Status</label>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            <a href="{{ route('products.index', array_filter(['status' => 'active', 'category_id' => $selectedCategoryId ?? null])) }}"
+                                                class="btn btn-sm {{ ($statusFilter ?? 'active') === 'active' ? 'btn-primary' : 'btn-outline-primary' }}">
+                                                Active
+                                            </a>
+                                            <a href="{{ route('products.index', array_filter(['status' => 'inactive', 'category_id' => $selectedCategoryId ?? null])) }}"
+                                                class="btn btn-sm {{ ($statusFilter ?? 'active') === 'inactive' ? 'btn-primary' : 'btn-outline-primary' }}">
+                                                Inactive
+                                            </a>
+                                            <a href="{{ route('products.index', array_filter(['status' => 'all', 'category_id' => $selectedCategoryId ?? null])) }}"
+                                                class="btn btn-sm {{ ($statusFilter ?? 'active') === 'all' ? 'btn-primary' : 'btn-outline-primary' }}">
+                                                All
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-xl-4">
+                                        <label class="filter-label" for="product-category-filter">Category</label>
+                                        <div class="d-flex gap-2">
+                                            <select class="form-select" id="product-category-filter">
+                                                <option value="">All Categories</option>
+                                                @foreach(($categoryOptions ?? collect()) as $categoryId => $categoryName)
+                                                    <option value="{{ $categoryId }}" {{ (int) ($selectedCategoryId ?? 0) === (int) $categoryId ? 'selected' : '' }}>
+                                                        {{ $categoryName }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            @if(!empty($selectedCategoryId))
+                                                <a href="{{ route('products.index', ['status' => $statusFilter ?? 'active']) }}" class="btn btn-light btn-sm">Reset</a>
+                                            @endif
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <table id="productStaticTable"
@@ -363,6 +396,7 @@
                                         <th data-ordering="false" style="width: 80px">image</th>
                                         <th data-ordering="false">Name</th>
                                         <th data-ordering="false">SKU Code</th>
+                                        <th data-ordering="false">Status</th>
                                         <th data-ordering="false">Marketplace Listings</th>
                                         <th>MRP</th>
                                         <th>GST</th>
@@ -384,6 +418,11 @@
                                             </td>
                                             <td>{{ $product->name }}</td>
                                             <td>{{ $product->sku_code }}</td>
+                                            <td>
+                                                <span class="badge {{ $product->is_active ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary' }}">
+                                                    {{ $product->is_active ? 'Active' : 'Inactive' }}
+                                                </span>
+                                            </td>
                                             <td>
                                                 @if(empty($marketplaceEnabled))
                                                     <span class="badge bg-light text-muted">Disabled</span>
@@ -439,6 +478,16 @@
                                                             <a class="dropdown-item" href="{{ route('products.activity', $product->id) }}">
                                                                 <i class="ri-history-line align-bottom me-2 text-muted"></i> Product Activity
                                                             </a>
+                                                        </li>
+                                                        <li>
+                                                            <form action="{{ route('products.toggle_status', $product->id) }}" method="POST" class="m-0">
+                                                                @csrf
+                                                                @method('PATCH')
+                                                                <button type="submit" class="dropdown-item">
+                                                                    <i class="ri-loop-left-line align-bottom me-2 text-muted"></i>
+                                                                    {{ $product->is_active ? 'Make Inactive' : 'Make Active' }}
+                                                                </button>
+                                                            </form>
                                                         </li>
                                                     </ul>
                                                 </div>
@@ -569,6 +618,24 @@
             neutralizeLegacyProductDataTable();
             setTimeout(neutralizeLegacyProductDataTable, 250);
             setTimeout(neutralizeLegacyProductDataTable, 1000);
+
+            $('#product-category-filter').on('change', function () {
+                const selectedCategoryId = $(this).val();
+                const status = @json($statusFilter ?? 'active');
+                const url = new URL(@json(route('products.index')), window.location.origin);
+
+                if (status) {
+                    url.searchParams.set('status', status);
+                }
+
+                if (selectedCategoryId) {
+                    url.searchParams.set('category_id', selectedCategoryId);
+                } else {
+                    url.searchParams.delete('category_id');
+                }
+
+                window.location.href = url.toString();
+            });
 
             $('#product-search').on('keyup change', function () {
                 const keyword = $(this).val().toString().trim().toLowerCase();

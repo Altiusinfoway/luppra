@@ -48,6 +48,11 @@ class Products extends Model
         return $query->where('type', 'vendor');
     }
 
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', 1);
+    }
+
      public function getImageAttribute($value)
     {
         if (empty($value)) {
