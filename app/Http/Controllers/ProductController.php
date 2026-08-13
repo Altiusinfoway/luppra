@@ -47,6 +47,29 @@ class ProductController extends Controller
         'dropship' => 'Dropship',
     ];
 
+    public function image(string $filename)
+    {
+        $filename = basename(str_replace('\\', '/', $filename));
+
+        abort_if(empty($filename), 404);
+
+        foreach (Products::productImagePaths($filename) as $path) {
+            if (is_file($path)) {
+                return response()->file($path, [
+                    'Cache-Control' => 'public, max-age=86400',
+                ]);
+            }
+        }
+
+        $fallback = public_path('build/assets/images/users/user-dummy-img.jpg');
+
+        abort_unless(is_file($fallback), 404);
+
+        return response()->file($fallback, [
+            'Cache-Control' => 'public, max-age=3600',
+        ]);
+    }
+
     private function supportedPlatformRule(bool $nullable = false): string
     {
         $rule = 'string|max:255';

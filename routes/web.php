@@ -72,6 +72,9 @@ Route::get('/website/checkout/status', [PublicWebsiteController::class, 'checkou
 Route::post('/website/checkout/order', [PublicWebsiteController::class, 'createOrder'])->name('website.checkout.order');
 Route::post('/website/checkout/verify', [PublicWebsiteController::class, 'verifyPayment'])->name('website.checkout.verify');
 Route::get('/website/thank-you', [PublicWebsiteController::class, 'thankYou'])->name('website.thankyou');
+Route::get('/media/products/{filename}', [ProductController::class, 'image'])
+    ->where('filename', '.*')
+    ->name('products.image');
 
 Route::redirect('/privacy-policy', '/login')->name('website.privacy.policy');
 Route::redirect('/terms-and-conditions', '/login')->name('terms.conditions');

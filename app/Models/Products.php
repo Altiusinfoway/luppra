@@ -50,11 +50,58 @@ class Products extends Model
 
      public function getImageAttribute($value)
     {
-        if (!empty($value)) {
-            return asset('storage/uploads/products/' . $value);
-        } else {
-            return '';
+        if (empty($value)) {
+            return Utility::defaultImage();
         }
+
+        if (filter_var($value, FILTER_VALIDATE_URL)) {
+            $filename = basename((string) parse_url($value, PHP_URL_PATH));
+
+            if (!empty($filename) && static::productImageExists($filename)) {
+                return route('products.image', ['filename' => $filename]);
+            }
+
+            return $value;
+        }
+
+        $filename = basename(str_replace('\\', '/', (string) $value));
+
+        if (empty($filename)) {
+            return Utility::defaultImage();
+        }
+
+        if (static::productImageExists($filename)) {
+            return route('products.image', ['filename' => $filename]);
+        }
+
+        return Utility::defaultImage();
+    }
+
+    public static function productImageExists(?string $filename): bool
+    {
+        if (empty($filename)) {
+            return false;
+        }
+
+        foreach (static::productImagePaths($filename) as $path) {
+            if (is_file($path)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static function productImagePaths(string $filename): array
+    {
+        $filename = basename(str_replace('\\', '/', $filename));
+
+        return [
+            storage_path('uploads/products/' . $filename),
+            public_path('uploads/products/' . $filename),
+            public_path('storage/uploads/products/' . $filename),
+            storage_path('app/public/uploads/products/' . $filename),
+        ];
     }
 
     public function getUnit()
