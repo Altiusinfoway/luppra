@@ -1862,6 +1862,13 @@ class ProductController extends Controller
             return;
         }
 
+        // Only sync if the request explicitly contains the marketplace_listings key.
+        // If the key is absent (e.g. standard product edit form that has no listing fields),
+        // we skip entirely — otherwise the delete-orphan logic below would wipe all listings.
+        if (!$request->has('marketplace_listings')) {
+            return;
+        }
+
         $rows = $request->input('marketplace_listings', []);
 
         if (!is_array($rows)) {
