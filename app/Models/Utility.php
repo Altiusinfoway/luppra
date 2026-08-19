@@ -1990,4 +1990,38 @@ class Utility extends Model
             'order_invoice' => $file_name
         ]);
     }
+
+    public static function formatIndianNumber($amount, int $decimals = 2): string
+    {
+        if ($amount === null || $amount === '') {
+            return '0' . ($decimals > 0 ? '.' . str_repeat('0', $decimals) : '');
+        }
+
+        $amount = (float) $amount;
+        $isNegative = $amount < 0;
+        $amount = abs($amount);
+
+        if (class_exists(\NumberFormatter::class)) {
+            $formatter = new \NumberFormatter('en_IN', \NumberFormatter::DECIMAL);
+            $formatter->setAttribute(\NumberFormatter::MIN_FRACTION_DIGITS, $decimals);
+            $formatter->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, $decimals);
+            $formatted = $formatter->format($amount);
+            if ($formatted !== false) {
+                return ($isNegative ? '-' : '') . $formatted;
+            }
+        }
+
+        $parts = explode('.', sprintf('%.' . $decimals . 'f', $amount));
+        $integerPart = $parts[0];
+        $decimalPart = isset($parts[1]) && $decimals > 0 ? '.' . $parts[1] : '';
+
+        if (strlen($integerPart) > 3) {
+            $lastThree = substr($integerPart, -3);
+            $remaining = substr($integerPart, 0, -3);
+            $remainingFormatted = preg_replace('/\B(?=(\d{2})+(?!\d))/', ',', $remaining);
+            $integerPart = $remainingFormatted . ',' . $lastThree;
+        }
+
+        return ($isNegative ? '-' : '') . $integerPart . $decimalPart;
+    }
 }

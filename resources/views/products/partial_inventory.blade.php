@@ -807,22 +807,22 @@
                                 <div class="hero-stats">
                                     <div class="hero-stat-card">
                                         <div class="hero-stat-label">Products</div>
-                                        <div class="hero-stat-value">{{ number_format($displayProducts->count()) }}</div>
+                                        <div class="hero-stat-value">{{ \App\Models\Utility::formatIndianNumber($displayProducts->count(), 0) }}</div>
                                         <div class="hero-stat-caption">Visible in this view</div>
                                     </div>
                                     <div class="hero-stat-card">
                                         <div class="hero-stat-label">Accounts</div>
-                                        <div class="hero-stat-value">{{ number_format($visibleAccountCount) }}</div>
+                                        <div class="hero-stat-value">{{ \App\Models\Utility::formatIndianNumber($visibleAccountCount, 0) }}</div>
                                         <div class="hero-stat-caption">Linked in this view</div>
                                     </div>
                                     <div class="hero-stat-card">
                                         <div class="hero-stat-label">Total Stock</div>
-                                        <div class="hero-stat-value">{{ number_format($totalStock ?? 0) }}</div>
+                                        <div class="hero-stat-value">{{ \App\Models\Utility::formatIndianNumber($totalStock ?? 0, 0) }}</div>
                                         <div class="hero-stat-caption">Total Master Stock</div>
                                     </div>
                                     <div class="hero-stat-card">
                                         <div class="hero-stat-label">Total Valuation (MRP)</div>
-                                        <div class="hero-stat-value">₹{{ number_format($totalValuation ?? 0, 2) }}</div>
+                                        <div class="hero-stat-value">₹{{ \App\Models\Utility::formatIndianNumber($totalValuation ?? 0, 2) }}</div>
                                         <div class="hero-stat-caption">Calculated Stock × MRP</div>
                                     </div>
                                 </div>

@@ -262,7 +262,7 @@
                     <div class="card summary-card h-100">
                         <div class="card-body">
                             <span class="label">Master Products</span>
-                            <h3>{{ number_format($productSummary['total_products'] ?? 0) }}</h3>
+                            <h3>{{ \App\Models\Utility::formatIndianNumber($productSummary['total_products'] ?? 0, 0) }}</h3>
                             <p class="text-muted mb-0 mt-2">Internal products available across your catalog.</p>
                         </div>
                     </div>
@@ -271,7 +271,7 @@
                     <div class="card summary-card h-100">
                         <div class="card-body">
                             <span class="label">Marketplace Listings</span>
-                            <h3>{{ number_format($productSummary['total_listings'] ?? 0) }}</h3>
+                            <h3>{{ \App\Models\Utility::formatIndianNumber($productSummary['total_listings'] ?? 0, 0) }}</h3>
                             <p class="text-muted mb-0 mt-2">Amazon and Flipkart child listings linked to master SKUs.</p>
                         </div>
                     </div>
@@ -280,7 +280,7 @@
                     <div class="card summary-card h-100">
                         <div class="card-body">
                             <span class="label">Total Stock</span>
-                            <h3>{{ number_format((float) ($productSummary['total_stock'] ?? 0)) }}</h3>
+                            <h3>{{ \App\Models\Utility::formatIndianNumber($productSummary['total_stock'] ?? 0, 0) }}</h3>
                             <p class="text-muted mb-0 mt-2">Master-stock inventory still remains the source of truth.</p>
                         </div>
                     </div>
@@ -289,7 +289,7 @@
                     <div class="card summary-card h-100">
                         <div class="card-body">
                             <span class="label">Average Price</span>
-                            <h3>₹{{ number_format((float) ($productSummary['average_price'] ?? 0), 2) }}</h3>
+                            <h3>₹{{ \App\Models\Utility::formatIndianNumber($productSummary['average_price'] ?? 0, 2) }}</h3>
                             <p class="text-muted mb-0 mt-2">Quick pricing pulse across the current catalog.</p>
                         </div>
                     </div>
@@ -298,7 +298,7 @@
                     <div class="card summary-card h-100 border-primary-subtle bg-primary-subtle bg-opacity-10">
                         <div class="card-body">
                             <span class="label text-primary">Total Valuation (MRP)</span>
-                            <h3 class="text-primary">₹{{ number_format((float) ($productSummary['total_valuation'] ?? 0), 2) }}</h3>
+                            <h3 class="text-primary">₹{{ \App\Models\Utility::formatIndianNumber($productSummary['total_valuation'] ?? 0, 2) }}</h3>
                             <p class="text-muted mb-0 mt-2">Total inventory worth calculated from stock × MRP price.</p>
                         </div>
                     </div>
