@@ -41,6 +41,7 @@ class ProductInventoryExport implements FromCollection, ShouldAutoSize, WithHead
             'MRP',
             'GST Rate',
             'Stock Qty',
+            'Total Valuation (MRP)',
             'Marketplace Listings',
             'Unit Type',
             'Unit',
@@ -50,15 +51,19 @@ class ProductInventoryExport implements FromCollection, ShouldAutoSize, WithHead
 
     public function map($product): array
     {
+        $mrp = (float) ($product->price ?? 0);
+        $stock = (float) ($product->stock_qty ?? 0);
+
         return [
             $product->id,
             $product->name,
             $product->getCategory?->name ?? '',
             $product->sku_code,
             $product->hsn_code ?? '',
-            (float) ($product->price ?? 0),
+            $mrp,
             (float) ($product?->getGstSlabMaster?->rate ?? 0),
-            (float) ($product->stock_qty ?? 0),
+            $stock,
+            $mrp * $stock,
             (int) ($product->marketplace_listings_count ?? 0),
             $product->getUnitType?->name ?? '',
             $product->getUnit?->name ?? '',

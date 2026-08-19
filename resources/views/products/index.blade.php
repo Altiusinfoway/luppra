@@ -258,7 +258,7 @@
             </div>
 
             <div class="row g-3 mb-4">
-                <div class="col-md-6 col-xl-3">
+                <div class="col-md-6 col-xl">
                     <div class="card summary-card h-100">
                         <div class="card-body">
                             <span class="label">Master Products</span>
@@ -267,7 +267,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6 col-xl-3">
+                <div class="col-md-6 col-xl">
                     <div class="card summary-card h-100">
                         <div class="card-body">
                             <span class="label">Marketplace Listings</span>
@@ -276,7 +276,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6 col-xl-3">
+                <div class="col-md-6 col-xl">
                     <div class="card summary-card h-100">
                         <div class="card-body">
                             <span class="label">Total Stock</span>
@@ -285,12 +285,21 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6 col-xl-3">
+                <div class="col-md-6 col-xl">
                     <div class="card summary-card h-100">
                         <div class="card-body">
                             <span class="label">Average Price</span>
-                            <h3>Rs. {{ number_format((float) ($productSummary['average_price'] ?? 0), 2) }}</h3>
+                            <h3>₹{{ number_format((float) ($productSummary['average_price'] ?? 0), 2) }}</h3>
                             <p class="text-muted mb-0 mt-2">Quick pricing pulse across the current catalog.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl">
+                    <div class="card summary-card h-100 border-primary-subtle bg-primary-subtle bg-opacity-10">
+                        <div class="card-body">
+                            <span class="label text-primary">Total Valuation (MRP)</span>
+                            <h3 class="text-primary">₹{{ number_format((float) ($productSummary['total_valuation'] ?? 0), 2) }}</h3>
+                            <p class="text-muted mb-0 mt-2">Total inventory worth calculated from stock × MRP price.</p>
                         </div>
                     </div>
                 </div>

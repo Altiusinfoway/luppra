@@ -815,6 +815,16 @@
                                         <div class="hero-stat-value">{{ number_format($visibleAccountCount) }}</div>
                                         <div class="hero-stat-caption">Linked in this view</div>
                                     </div>
+                                    <div class="hero-stat-card">
+                                        <div class="hero-stat-label">Total Stock</div>
+                                        <div class="hero-stat-value">{{ number_format($totalStock ?? 0) }}</div>
+                                        <div class="hero-stat-caption">Total Master Stock</div>
+                                    </div>
+                                    <div class="hero-stat-card">
+                                        <div class="hero-stat-label">Total Valuation (MRP)</div>
+                                        <div class="hero-stat-value">₹{{ number_format($totalValuation ?? 0, 2) }}</div>
+                                        <div class="hero-stat-caption">Calculated Stock × MRP</div>
+                                    </div>
                                 </div>
                                 <a href="{{ route('products.index') }}" class="btn btn-outline-secondary btn-sm">Back To Products</a>
                             </div>

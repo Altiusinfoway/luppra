@@ -208,6 +208,9 @@ class ProductController extends Controller
             $averagePrice = (float) $productCollection->avg(function ($product) {
                 return (float) ($product->price ?? 0);
             });
+            $totalValuation = (float) $productCollection->sum(function ($product) {
+                return ((float) ($product->stock_qty ?? 0)) * ((float) ($product->price ?? 0));
+            });
 
             return response()
                 ->view('products.index', [
@@ -221,6 +224,7 @@ class ProductController extends Controller
                     'total_listings' => $totalListings,
                     'total_stock' => $totalStock,
                     'average_price' => $averagePrice,
+                    'total_valuation' => $totalValuation,
                 ],
                 ])
                 ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
@@ -450,6 +454,14 @@ class ProductController extends Controller
 
         $filteredProductIds = (clone $baseQuery)->pluck('id');
 
+        $allFilteredProducts = (clone $baseQuery)->get();
+        $totalStock = (float) $allFilteredProducts->sum(function ($product) {
+            return (float) ($product->stock_qty ?? 0);
+        });
+        $totalValuation = (float) $allFilteredProducts->sum(function ($product) {
+            return ((float) ($product->stock_qty ?? 0)) * ((float) ($product->price ?? 0));
+        });
+
         $products = (clone $baseQuery)
             ->orderBy('name')
             ->paginate($perPage)
@@ -486,6 +498,8 @@ class ProductController extends Controller
             'dateTo' => $dateTo,
             'perPage' => $perPage,
             'perPageOptions' => $perPageOptions,
+            'totalStock' => $totalStock,
+            'totalValuation' => $totalValuation,
         ]);
     }
 
