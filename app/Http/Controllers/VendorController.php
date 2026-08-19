@@ -246,18 +246,17 @@ class VendorController extends Controller
         $vend = Entity::find($id);
         $vend->update($input);
 
-        VendorProduct::where(['vendor_id' => $id])->delete();
-        if($request->has('productIds') && !empty($request->productIds) && $request->productIds != null){
-
-            foreach($request->productIds as $key => $productId){
-
-                VendorProduct::create([
-                    'vendor_id'=> $id,
-                    'product_id'=> $productId,
-                    'price'=>$request->prices[$key],
-                    'unit_id'=>$request->units[$key]
-                ]);
-
+        if ($request->has('productIds')) {
+            VendorProduct::where(['vendor_id' => $id])->delete();
+            if (!empty($request->productIds) && $request->productIds != null) {
+                foreach ($request->productIds as $key => $productId) {
+                    VendorProduct::create([
+                        'vendor_id'  => $id,
+                        'product_id' => $productId,
+                        'price'      => $request->prices[$key] ?? 0,
+                        'unit_id'    => $request->units[$key] ?? null
+                    ]);
+                }
             }
         }
 
