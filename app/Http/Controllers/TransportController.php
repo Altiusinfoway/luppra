@@ -279,8 +279,12 @@ class TransportController extends Controller
         }
 
 
-        $deletedIds = array_diff($existingAddressIds, array_filter($submittedAddressIds));
-        EntityAddress::whereIn('id', $deletedIds)->delete();
+        // Only delete orphan addresses when address fields were submitted in this request.
+        if ($request->has('country')) {
+            $deletedIds = array_diff($existingAddressIds, array_filter($submittedAddressIds));
+            EntityAddress::whereIn('id', $deletedIds)->delete();
+        }
+
 
         return response()->json([
             'success' => 'Transport has been updated successfully.',

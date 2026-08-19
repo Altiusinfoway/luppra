@@ -678,11 +678,15 @@ class CustomerController extends Controller
             }
         }
 
-        $phones = $request->input('phones', []);
-        $existingPhoneIds = CustomerPhone::where('customer_id', $cust->id)->pluck('id')->toArray();
-        $submittedPhoneIds = [];
+        // Only sync phones if the request explicitly contains the 'phones' key.
+        // Without this guard, a partial update with no phone fields would wipe all phones.
+        if ($request->has('phones')) {
+            $phones = $request->input('phones', []);
+            $existingPhoneIds = CustomerPhone::where('customer_id', $cust->id)->pluck('id')->toArray();
+            $submittedPhoneIds = [];
 
-        foreach ($phones as $phoneData) {
+            foreach ($phones as $phoneData) {
+
             if (empty($phoneData['phone'])) continue;
 
             if (!empty($phoneData['id']) && CustomerPhone::where('id', $phoneData['id'])->where('customer_id', $cust->id)->exists()) {
@@ -723,7 +727,10 @@ class CustomerController extends Controller
             CustomerPhone::whereIn('id', $others)->update(['is_primary' => 0]);
         }
 
+        } // end if ($request->has('phones'))
+
         // ------ End multiple phone --------
+
 
 
         //---------- multiple company ------------
